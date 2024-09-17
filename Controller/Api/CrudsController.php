@@ -102,6 +102,10 @@ class CrudsController extends AppController {
     public function view($id = null){
 
         $data = $this->Crud->find('first', array(
+            'contain'       =>  array(
+                'CrudStatus' => array('name')
+
+            ),
             'conditions'    =>  array(
             'Crud.id'       =>  $id,
             'Crud.visible'  =>  true
