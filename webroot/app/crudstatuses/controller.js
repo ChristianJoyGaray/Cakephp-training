@@ -1,10 +1,10 @@
-app.controller('CrudController', function($scope, Crud) {
+app.controller('CrudStatusesController', function($scope, CrudStatuses) {
   // load data
   $scope.load = function(options) {
     options = typeof options !== 'undefined' ?  options : {};
-    Crud.query(options, function(e) {
+    CrudStatuses.query(options, function(e) {
       if (e.ok) {
-        $scope.cruds = e.data;
+        $scope.crud_statuses = e.data;      ///////dadadadadatatatatatat
         //pagination
         $scope.paginator = e.paginator;
         $scope.pages = paginator($scope.paginator, 5);
@@ -27,7 +27,7 @@ app.controller('CrudController', function($scope, Crud) {
   $scope.remove = function(data) {
     bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
       if (c) {
-        Crud.remove({ id: data.id }, function(e) {
+        CrudStatuses.remove({ id: data.id }, function(e) {
           if (e.ok) {
             $.gritter.add({
               title: 'Successful!',
@@ -41,7 +41,7 @@ app.controller('CrudController', function($scope, Crud) {
   }
 });
 
-app.controller('CrudAddController', function($scope, Crud, Select){
+app.controller('CrudStatusesAddController', function($scope, CrudStatuses, Select){
   $('#form').validationEngine('attach');
 
     // $('date').datepicker({
@@ -59,13 +59,13 @@ app.controller('CrudAddController', function($scope, Crud, Select){
       valid = $("#form").validationEngine('validate');
 
       if(valid){
-        Crud.save($scope.data,function(e) {
+        CrudStatuses.save($scope.data,function(e) {
           if (e.ok){
             $.gritter.add({
               title:'Successful!',
               text: e.msg,
             });
-            window.location = '#/cruds';
+            window.location = '#/crudstatuses';
           } else{
             $.gritter.add({
               title: 'Warning!',
@@ -78,6 +78,42 @@ app.controller('CrudAddController', function($scope, Crud, Select){
       }
     }
 });
+
+
+
+// app.controller('CrudStatusesAddController', function($scope, CrudStatuses, Select){
+//   $('#form').validationEngine('attach');
+
+//   // Fetching data
+//   Select.get({code: 'crud-status'}, function(e){
+//       $scope.status = e.data;
+//   });
+
+//   $scope.save = function(){
+//       var valid = $("#form").validationEngine('validate');
+
+//       if(valid){
+//           CrudStatuses.query(function(e) {
+//               if (e.ok){
+//                   $.gritter.add({
+//                       title:'Successful!',
+//                       text: e.msg,
+//                   });
+//                   window.location = '#/crudstatuses';
+//               } else {
+//                   $.gritter.add({
+//                       title: 'Warning!',
+//                       text: e.msg,
+//                   });
+//               }
+//           });
+//       }
+//   }
+// });
+
+
+
+
 
 app.controller('CrudViewController', function($scope, $routeParams, Crud) {
   $scope.id = $routeParams.id;

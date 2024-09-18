@@ -15,10 +15,13 @@
     'action'     => 'logout'
   ));
 
+// app/Config/routes.php
+// Router::connect('/api/select', array('controller' => 'crud_statuses', 'action' => 'select', 'api' => true));
+
     // api resources
     $resources = array(
       'users','select',
-      'cruds', 'assigns', 'names', 'suppliers', 'shipments', 'equips', 'trucks'
+      'cruds','crudstatuses', 'assigns', 'names', 'suppliers', 'shipments', 'equips', 'trucks'
     );
 
   Router::mapResources($resources, array('prefix' => 'api'));

@@ -5,34 +5,20 @@
     	<div class="col-md-12">
     	  <form id="form">
           <div class="row">
-            
-            <div class="col-md-12">
-              <div class="form-group">
-                <label> Name <i class="required">*</i></label>
-                <input type="text" class="form-control" ng-model="data.Crud.name" data-validation-engine="validate[required]">
-              </div>
-            </div>
-    
-            <div class="col-md-6">
-              <div class="form-group">
-                <label> Age <i class="required">*</i></label>
-                <input type="text" class="form-control" ng-model="data.Crud.age" data-validation-engine="validate[required]">
-              </div>
-            </div>
-
-            <div class="col-md-6">
+   
+            <!-- <div class="col-md-6">
               <div class="form-group">
                 <label> Status <i class="required">*</i></label>
                 <select class="form-control" ng-model="data.Crud.crudStatusId" ng-options="opt.id as opt.value for opt in status" data-validation-engine="validate[required]>
                   <option value=""></option>
                 </select>
               </div>
-            </div>
+            </div> -->
 
             <div class="col-md-12">
               <div class="form-group">
-                <label> Character</label>
-                <input type="text" class="form-control"  ng-model="data.Crud.character">
+                <label>Status</label>
+                <input type="text" class="form-control" ng-model="data.CrudStatus.name">
               </div>
             </div>
 
@@ -46,7 +32,7 @@
 			  <hr>
 				<div class="row">
 					<div class="col-md-3 pull-right">
-						<button class="btn btn-primary btn-sm btn-block" ng-click="save()">SAVE</button>
+						<button class="btn btn-primary btn-sm btn-block" ng-click="save()">ADD</button>
 					</div>
 				</div>
     	</div>

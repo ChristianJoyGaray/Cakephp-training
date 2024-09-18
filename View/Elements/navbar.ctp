@@ -31,7 +31,7 @@
 						</li>	
 						
 						<li>
-							<a href="#/crud_statuses">
+							<a href="#/crudstatuses">
 								<div class="menu-icon"><span class="svg-icon menu-icon-span" data-icon="settings"></span></div>
 								<div class="menu-label"> View CRUD status</div>
 							</a>
