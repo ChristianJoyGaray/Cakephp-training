@@ -1,7 +1,7 @@
 app.config(function($routeProvider) {
   $routeProvider
-  .when('/cruds', {
-    templateUrl: tmp + 'cruds__index',
+  .when('/crud_statuses', {
+    templateUrl: tmp + 'crud_statuses__index',
     controller: 'CrudController',
   })
   // .when('/crud/add', {
