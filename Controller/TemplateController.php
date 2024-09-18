@@ -29,6 +29,12 @@ class TemplateController extends AppController {
   public function cruds__view() {}
   public function cruds__edit() {}
   public function cruds__add() {}
+
+  public function crud_statuses__index(){}
+  public function crud_statuses__view(){}
+  public function crud_statuses__edit(){}
+  public function crud_statuses__add(){}
+
 }
 
 

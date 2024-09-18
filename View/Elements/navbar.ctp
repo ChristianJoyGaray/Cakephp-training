@@ -28,7 +28,15 @@
 								<div class="menu-label">CRUDS</div>
 							</a>
 
-						</li>		
+						</li>	
+						
+						<li>
+							<a href="#/crud_statuses">
+								<div class="menu-icon"><span class="svg-icon menu-icon-span" data-icon="settings"></span></div>
+								<div class="menu-label">CRUD STATUS</div>
+							</a>
+
+						</li>
 
 					</ul>
 				</div>
