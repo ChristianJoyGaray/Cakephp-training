@@ -13,8 +13,9 @@
       <div class="col-md-12">
         <div class="btn-group btn-group-sm pull-right btn-min">
 
-          <a href="#/crud/edit/{{ data.Crud.id }}" class="btn btn-primary btn-min"><i class="fa fa-edit"></i> EDIT</a> 
-          <button class="btn btn-danger btn-min" ng-click="remove(data.Crud)"><i class="fa fa-trash"></i> DELETE</button>
+          <a href="#/crudstatuses/edit/{{ data.id }}" class="btn btn-primary btn-min"><i class="fa fa-edit"></i> EDIT</a> 
+          <a href="javascript:void(0)" ng-click="remove(data)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i>DELETE</a>
+
 
         </div> 
       </div>

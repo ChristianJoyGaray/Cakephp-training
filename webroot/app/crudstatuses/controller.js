@@ -78,6 +78,22 @@ app.controller('CrudStatusesController', function($scope, CrudStatuses) {
   };
 
   // Remove function
+  // $scope.remove = function(data) {
+  //   bootbox.confirm('Are you sure you want to delete ' + data.name + '?', function(confirm) {
+  //     if (confirm) {
+  //       CrudStatuses.remove({ id: data.id }, function(response) {
+  //         if (response.ok) {
+  //           $.gritter.add({
+  //             title: 'Successful!',
+  //             text: response.msg,
+  //           });
+  //           $scope.load(); // Reload data after deletion
+  //         }
+  //       });
+  //     }
+  //   });
+  // };
+
   $scope.remove = function(data) {
     bootbox.confirm('Are you sure you want to delete ' + data.name + '?', function(confirm) {
       if (confirm) {
@@ -88,11 +104,21 @@ app.controller('CrudStatusesController', function($scope, CrudStatuses) {
               text: response.msg,
             });
             $scope.load(); // Reload data after deletion
+          } else {
+            $.gritter.add({
+              title: 'Error!',
+              text: 'Failed to delete the status: ' + response.msg,
+            });
           }
         });
       }
     });
   };
+  
+
+
+
+
 });
 
 
@@ -245,31 +271,25 @@ app.controller('CrudStatusesViewController', function($scope, $routeParams, Crud
   // }
   // remove 
   $scope.remove = function(data) {
-    bootbox.confirm('Are you sure you want to remove '+ data.name +' ?', function(c) {
-      if (c) {
-        CrudStatuses.remove({ id: data.id }, function(e) {
-
-          if (e.ok) {
-
+    bootbox.confirm('Are you sure you want to delete ' + data.name + '?', function(confirm) {
+      if (confirm) {
+        CrudStatuses.remove({ id: data.id }, function(response) {
+          if (response.ok) {
             $.gritter.add({
-
               title: 'Successful!',
-
-              text:  e.msg,
-
+              text: response.msg,
             });
-
-            window.location = "#/crudstatuses";
-
+            $scope.load(); // Reload data after deletion
+          } else {
+            $.gritter.add({
+              title: 'Error!',
+              text: 'Failed to delete the status: ' + response.msg,
+            });
           }
-
         });
-
       }
-
     });
-
-  } 
+  };
 
   // add permission
 
@@ -461,234 +481,275 @@ app.controller('CrudStatusesViewController', function($scope, $routeParams, Crud
 
 
 
-app.controller('CrudEditController', function($scope, $routeParams, Crud) {
+
+
+
+
+// app.controller('CrudStatusesEditController', function($scope, $routeParams, CrudStatuses) {
 
   
+//   $scope.id = $routeParams.id;
+
+//   $("#form").validationEngine('attach');
+  
+//   // load 
+
+//   $scope.load = function() {
+
+//     CrudStatuses.get({ id: $scope.id }, function(e) {
+
+//       $scope.data = e.data;
+
+//       // $scope.data.User.password = '';
+
+//       // $scope.confirmPassword = '';
+
+//       // $scope.putIndex();
+
+//     });
+
+//   }
+
+//   $scope.load();
+  
+//   $scope.update = function() {
+
+//     valid = $("#form").validationEngine('validate');
+
+//     if(valid){
+//       CrudStatuses.update({ id:$scope.id },$scope.data,function(e) {
+//         if (e.ok){
+//           $.gritter.add({
+//             title:'Successful!',
+//             text: e.msg,
+//           });
+//           window.location = '#/crudstatuses';
+//         } else{
+//           $.gritter.add({
+//             title: 'Warning!',
+//             text: e.msg,
+//           });
+//         }
+//       }) 
+        
+      
+//     }
+
+    
+
+      
+//     }
+    
+    
+  
+
+  
+//   // $scope.data = {};
+  
+//   // $scope.bool = [{ id: true, value: 'Yes' }, { id: false, value: 'No' }];
+
+//   // // get session
+
+//   // Select.get({code: 'session'}, function(e){
+
+//   //   $scope.roleId = e.data.roleId;
+
+//   // });
+
+//   // // get roles
+
+//   // Select.get({code: 'roles'}, function(e){
+
+//   //   $scope.roles = e.data;
+
+//   // });
+
+//   // // get branches
+
+//   // Select.get({code: 'branch'}, function(e){
+
+//   //   $scope.branches = e.data;
+
+//   // });
+  
+//   // // get permissions
+
+//   // Select.get({code: 'permissions'}, function(e){
+
+//   //   $scope.permissions = e.data;
+
+//   // });
+
+
+//   // $scope.compute = function(){
+
+//   //   amount = 0;
+
+//   //   if($scope.data.UserPermission.length > 0){
+
+//   //     $.each($scope.data.UserPermission,function(key,val){
+
+//   //       if(val.visible != 0){
+
+//   //         amount += parseFloat(val['amount']);
+
+//   //       }
+
+//   //     });
+
+//   //   }
+
+//   //   $scope.data.User.total = amount;
+
+//   // }
+
+//   // $scope.getPermission = function(id){
+
+//   //   if($scope.permissions.length > 0){
+
+//   //     $.each($scope.permissions,function(key,val){
+
+//   //       if(id == val.id){
+
+//   //         $scope.adata.permission = val.value;
+          
+//   //       }
+
+//   //     });
+
+//   //   }
+  
+//   // }
+
+//   // $scope.putIndex = function(){
+
+//   //   if($scope.data.UserPermission.length > 0){
+
+//   //     index = 0;
+
+//   //     $.each($scope.data.UserPermission,function(key,val){
+
+//   //       if(val.visible != 0){
+
+//   //         index += 1;
+
+//   //         $scope.data.UserPermission[key].index = index;
+          
+//   //       }
+
+//   //     });
+
+//   //   }
+
+//   // }
+
+//   // $scope.addPermission = function() {
+
+//   //   $('#add_permission').validationEngine('attach');
+
+//   //   $scope.adata = {};
+
+//   //   $('#add-permission-modal').modal('show');  
+
+//   // }
+
+//   // $scope.savePermission = function(data){
+
+//   //   valid = $('#add_permission').validationEngine('validate');
+
+//   //   if(valid){
+
+//   //     data.amount = number_format(data.amount, 2, '.', ''); 
+
+//   //     $scope.data.UserPermission.push(data);
+
+//   //     $scope.compute();
+
+//   //     $scope.putIndex();
+
+//   //     $('#add-permission-modal').modal('hide');  
+
+//   //   }
+    
+//   // }
+
+//   // $scope.editPermission = function(index,data) {
+
+//   //   $('#edit_permission').validationEngine('attach');
+
+//   //   data.index = index;
+
+//   //   $scope.adata = data;
+
+//   //   $('#edit-permission-modal').modal('show');  
+
+//   // }
+
+//   // $scope.updatePermission = function(data,index) {
+
+//   //   valid = $('#edit_permission').validationEngine('validate');
+
+//   //   if(valid){
+
+//   //     data.amount = number_format(data.amount, 2, '.', ''); 
+
+//   //     $scope.data.UserPermission[data.index] = data;
+
+//   //     $scope.compute();
+
+//   //     $scope.putIndex();
+
+//   //     $('#edit-permission-modal').modal('hide');  
+
+//   //   }
+
+//   // }
+
+//   // $scope.removePermission = function(index){
+
+//   //   $scope.data.UserPermission[index].visible = 0;
+
+//   //   $scope.compute();
+
+//   //   $scope.putIndex();
+
+//   // }
+
+// }); 
+
+app.controller('CrudStatusesEditController', function($scope, $routeParams, CrudStatuses) {
   $scope.id = $routeParams.id;
 
   $("#form").validationEngine('attach');
   
-  // load 
-
+  // Load the existing status data
   $scope.load = function() {
-
-    Crud.get({ id: $scope.id }, function(e) {
-
+    CrudStatuses.get({ id: $scope.id }, function(e) {
       $scope.data = e.data;
-
-      // $scope.data.User.password = '';
-
-      // $scope.confirmPassword = '';
-
-      // $scope.putIndex();
-
     });
-
   }
 
   $scope.load();
   
+  // Update the status
   $scope.update = function() {
-
     valid = $("#form").validationEngine('validate');
 
-    if(valid){
-      Crud.update({ id:$scope.id },$scope.data,function(e) {
-        if (e.ok){
+    if(valid) {
+      CrudStatuses.update({ id: $scope.id }, $scope.data, function(e) {
+        if (e.ok) {
           $.gritter.add({
-            title:'Successful!',
+            title: 'Successful!',
             text: e.msg,
           });
-          window.location = '#/cruds';
-        } else{
+          window.location = '#/crudstatuses';
+        } else {
           $.gritter.add({
             title: 'Warning!',
             text: e.msg,
           });
         }
-      }) 
-        
-      
+      });
     }
-
-    
-
-      
-    }
-    
-    
-  
-
-  
-  // $scope.data = {};
-  
-  // $scope.bool = [{ id: true, value: 'Yes' }, { id: false, value: 'No' }];
-
-  // // get session
-
-  // Select.get({code: 'session'}, function(e){
-
-  //   $scope.roleId = e.data.roleId;
-
-  // });
-
-  // // get roles
-
-  // Select.get({code: 'roles'}, function(e){
-
-  //   $scope.roles = e.data;
-
-  // });
-
-  // // get branches
-
-  // Select.get({code: 'branch'}, function(e){
-
-  //   $scope.branches = e.data;
-
-  // });
-  
-  // // get permissions
-
-  // Select.get({code: 'permissions'}, function(e){
-
-  //   $scope.permissions = e.data;
-
-  // });
-
-
-  // $scope.compute = function(){
-
-  //   amount = 0;
-
-  //   if($scope.data.UserPermission.length > 0){
-
-  //     $.each($scope.data.UserPermission,function(key,val){
-
-  //       if(val.visible != 0){
-
-  //         amount += parseFloat(val['amount']);
-
-  //       }
-
-  //     });
-
-  //   }
-
-  //   $scope.data.User.total = amount;
-
-  // }
-
-  // $scope.getPermission = function(id){
-
-  //   if($scope.permissions.length > 0){
-
-  //     $.each($scope.permissions,function(key,val){
-
-  //       if(id == val.id){
-
-  //         $scope.adata.permission = val.value;
-          
-  //       }
-
-  //     });
-
-  //   }
-  
-  // }
-
-  // $scope.putIndex = function(){
-
-  //   if($scope.data.UserPermission.length > 0){
-
-  //     index = 0;
-
-  //     $.each($scope.data.UserPermission,function(key,val){
-
-  //       if(val.visible != 0){
-
-  //         index += 1;
-
-  //         $scope.data.UserPermission[key].index = index;
-          
-  //       }
-
-  //     });
-
-  //   }
-
-  // }
-
-  // $scope.addPermission = function() {
-
-  //   $('#add_permission').validationEngine('attach');
-
-  //   $scope.adata = {};
-
-  //   $('#add-permission-modal').modal('show');  
-
-  // }
-
-  // $scope.savePermission = function(data){
-
-  //   valid = $('#add_permission').validationEngine('validate');
-
-  //   if(valid){
-
-  //     data.amount = number_format(data.amount, 2, '.', ''); 
-
-  //     $scope.data.UserPermission.push(data);
-
-  //     $scope.compute();
-
-  //     $scope.putIndex();
-
-  //     $('#add-permission-modal').modal('hide');  
-
-  //   }
-    
-  // }
-
-  // $scope.editPermission = function(index,data) {
-
-  //   $('#edit_permission').validationEngine('attach');
-
-  //   data.index = index;
-
-  //   $scope.adata = data;
-
-  //   $('#edit-permission-modal').modal('show');  
-
-  // }
-
-  // $scope.updatePermission = function(data,index) {
-
-  //   valid = $('#edit_permission').validationEngine('validate');
-
-  //   if(valid){
-
-  //     data.amount = number_format(data.amount, 2, '.', ''); 
-
-  //     $scope.data.UserPermission[data.index] = data;
-
-  //     $scope.compute();
-
-  //     $scope.putIndex();
-
-  //     $('#edit-permission-modal').modal('hide');  
-
-  //   }
-
-  // }
-
-  // $scope.removePermission = function(index){
-
-  //   $scope.data.UserPermission[index].visible = 0;
-
-  //   $scope.compute();
-
-  //   $scope.putIndex();
-
-  // }
-
-}); 
+  }
+});

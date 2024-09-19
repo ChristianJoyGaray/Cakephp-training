@@ -98,40 +98,6 @@ class CrudStatusesController extends AppController {
     //     ));
     // }
 
-
-
-    // public function view($id = null){
-
-    //     $data = $this->Crudstatuses->find('first', array(
-    //         'contain'       =>  array(
-    //             'CrudStatus' => array('name')
-
-    //         ),
-    //         'conditions'    =>  array(
-    //         'Crud.id'       =>  $id,
-    //         'Crud.visible'  =>  true
-    //         )
-    //     ));
-
-    //     //OR (findById is a cakephp syntax)
-
-    //     $data_ = $this->Crud->findById($id);   
-
-    //     $response = array(
-    //         'ok'    => true,
-    //         'msg'   => 'view',
-    //         'data'  => $data,
-    //     );
-
-
-    //     $this->set(array(
-    //         'response'=>$response,
-    //         '_serialize'=>'response'
-    //     ));
-
-    // }
-
-
     public function view($id = null) {
         if (!$id) {
             throw new NotFoundException(__('Invalid ID'));
@@ -163,47 +129,134 @@ class CrudStatusesController extends AppController {
 
 
 
- 
-    public function edit($id = null){
 
-        if($this->Crud->save($this->request->data['Crud'])){
+    // public function edit($id = null){
+
+    //     if($this->CrudStatuses->save($this->request->data['CrudStatuses'])){
+    //         $response = array(
+    //             'ok'    =>  true,
+    //             'msg'   =>  'Updated',
+    //             'data'  =>  $this->request->data,
+    //         );
+    //     }else{
+    //         $response = array(
+    //             'ok'    =>  false,
+    //             'msg'   =>  'Not updated',
+    //             'data'  =>  $this->request->data,
+    //         );
+    //     }
+
+    //         $this->set(array(
+    //             'response'     =>  $response,
+    //             '_serialize'   =>  'response'
+    //         ));
+    // }
+
+
+    public function edit($id = null) {
+        if (!$id) {
+            throw new NotFoundException(__('Invalid ID'));
+        }
+    
+        // Check if it is a POST or PUT request to save the data
+        if ($this->request->is(array('post', 'put'))) {
+            $this->CrudStatuses->id = $id;
+    
+            if ($this->CrudStatuses->save($this->request->data)) {
+                $response = array(
+                    'ok'    => true,
+                    'msg'   => 'Updated',
+                    'data'  => $this->request->data,
+                );
+            } else {
+                $response = array(
+                    'ok'    => false,
+                    'msg'   => 'Not updated',
+                    'data'  => $this->request->data,
+                );
+            }
+        } else {
+            // Fetch the existing data to pre-populate the form
+            $data = $this->CrudStatuses->findById($id);
+    
+            if (empty($data)) {
+                throw new NotFoundException(__('No data found'));
+            }
+    
             $response = array(
-                'ok'    =>  true,
-                'msg'   =>  'Updated',
-                'data'  =>  $this->request->data,
-            );
-        }else{
-            $response = array(
-                'ok'    =>  false,
-                'msg'   =>  'Not updated',
-                'data'  =>  $this->request->data,
+                'ok'    => true,
+                'msg'   => 'Data retrieved successfully',
+                'data'  => $data,
             );
         }
-
-            $this->set(array(
-                'response'     =>  $response,
-                '_serialize'   =>  'response'
-            ));
-    }
-
-    public function delete($id = null){
-        
-        if($this->Crud->hide($id)){
-            $response = array(
-                'ok'    =>  true,
-                'msg'   =>  'Deleted',
-                'data'  =>  $id,
-            );
-        }else{
-            $response = array(
-                'ok'    =>  false,
-                'msg'   =>  'Not deleted',
-                'data'  =>  $id,
-            );
-        }
+    
         $this->set(array(
-            'response'     =>  $response,
-            '_serialize'   =>  'response'
+            'response'     => $response,
+            '_serialize'   => 'response'
         ));
     }
+    
+
+
+
+
+    // public function delete($id = null){
+        
+    //     if($this->CrudStatuses->hide($id)){
+    //         $response = array(
+    //             'ok'    =>  true,
+    //             'msg'   =>  'Deleted',
+    //             'data'  =>  $id,
+    //         );
+    //     }else{
+    //         $response = array(
+    //             'ok'    =>  false,
+    //             'msg'   =>  'Not deleted',
+    //             'data'  =>  $id,
+    //         );
+    //     }
+    //     $this->set(array(
+    //         'response'     =>  $response,
+    //         '_serialize'   =>  'response'
+    //     ));
+    // }
+
+
+
+
+
+
+
+    public function delete($id = null){
+        // Check if the ID is valid
+        if (!$id || !$this->CrudStatuses->exists($id)) {
+            throw new NotFoundException(__('Invalid status ID'));
+        }
+    
+        // Attempt to delete the status
+        if ($this->CrudStatuses->delete($id)) {
+            $response = array(
+                'ok'    => true,
+                'msg'   => 'Deleted successfully',
+                'data'  => $id,
+            );
+        } else {
+            $response = array(
+                'ok'    => false,
+                'msg'   => 'Could not delete the status',
+                'data'  => $id,
+            );
+        }
+    
+        // Send the response
+        $this->set(array(
+            'response'     => $response,
+            '_serialize'   => 'response'
+        ));
+    }
+    
+
+
+
+
 }

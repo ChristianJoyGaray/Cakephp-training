@@ -6,26 +6,21 @@
     	  <form id="form">
           <div class="row">
             
-            <div class="col-md-6">
+
+            <!-- <div class="col-md-12">
               <div class="form-group">
-                <label> Name <i class="required">*</i></label>
-                <input type="text" class="form-control" ng-model="data.Crud.name" data-validation-engine="validate[required]">
+                <label>Status</label>
+                <input type="text" class="form-control" ng-model="data.CrudStatus.name" data-validation-engine="validate[required]">
               </div>
-            </div>
-    
-            <div class="col-md-6">
-              <div class="form-group">
-                <label> Age <i class="required">*</i></label>
-                <input type="text" class="form-control" ng-model="data.Crud.age" data-validation-engine="validate[required]">
-              </div>
-            </div>
+            </div> -->
 
             <div class="col-md-12">
               <div class="form-group">
-                <label> Character <i class="required">*</i></label>
-                <input type="text" class="form-control"  ng-model="data.Crud.character" data-validation-engine="validate[required]">
+                <label>Status</label>
+                <input type="text" class="form-control" ng-model="data.name" data-validation-engine="validate[required]">
               </div>
             </div>
+
            
           
             <div class="clearfix"></div>
