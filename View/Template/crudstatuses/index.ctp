@@ -24,20 +24,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="data in cruds">
-              <!--<td>{{ $index+1 }}</td>    if no paginator --> 
-              <td class="text-center">{{ (paginator.page - 1) * paginator.limit + $index + 1 }}</td> <!--if there's a paginator --> 
-              <td>{{ data.CrudStatus.name }}</td>
+            <tr ng-repeat="data in crudStatuses">
+            <td class="text-center">{{ (paginator.page ? paginator.page - 1 : 0) * (paginator.limit || 25) + ($index || 0) + 1 }}</td>
+
+              <td>{{ data.name }}</td>
               <td>
-                  <div class="btn-group-xs btn-group">
-                      <a href="#/crud/view/{{ data.id }}" class="btn btn-success" title="VIEW"><i class="fa fa-eye"></i></a> 
-                      <a href="#/crud/edit/{{ data.id }}" class="btn btn-primary" title="EDIT"><i class="fa fa-edit"></i></a> 
-                      <a href="javascript:void(0)" ng-click="remove(data)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
-                  </div>
+                <div class="btn-group-xs btn-group">
+                  <a href="#/crudstatuses/view/{{ data.id }}" class="btn btn-success" title="VIEW"><i class="fa fa-eye"></i></a> 
+                  <a href="#/crudstatuses/edit/{{ data.id }}" class="btn btn-primary" title="EDIT"><i class="fa fa-edit"></i></a> 
+                  <a href="javascript:void(0)" ng-click="remove(data)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
+                </div>
               </td>
             </tr>
           </tbody>
       </table>
+
       </div>
     </div>
         <ul class="pagination pull-right">

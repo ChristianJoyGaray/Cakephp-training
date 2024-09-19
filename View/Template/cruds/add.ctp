@@ -23,7 +23,7 @@
             <div class="col-md-6">
               <div class="form-group">
                 <label> Status <i class="required">*</i></label>
-                <select class="form-control" ng-model="data.Crud.crudStatusId" ng-options="opt.id as opt.value for opt in status" data-validation-engine="validate[required]>
+                <select class="form-control" ng-model="data.Crud.crudStatusId" ng-options="opt.id as opt.value for opt in status" data-validation-engine="validate[required]">
                   <option value=""></option>
                 </select>
               </div>

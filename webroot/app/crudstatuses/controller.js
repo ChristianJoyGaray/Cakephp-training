@@ -1,45 +1,105 @@
+// app.controller('CrudStatusesController', function($scope, CrudStatuses) {
+  
+//   //get crud status
+//   Select.get({code: 'crud-status'}, function(e){
+//     $scope.status = e.data;
+//   });
+
+//   // load 
+//   $scope.load = function(options) {
+//     options = typeof options !== 'undefined' ?  options : {};
+//     CrudStatuses.query(options, function(e) {
+//       if (e.ok) {
+//         $scope.crudstatus = e.data;
+//         //pagination
+//         $scope.paginator = e.paginator;
+//         $scope.pages = paginator($scope.paginator, 5);
+//       }
+//     });
+//   }
+//   $scope.load();
+//   //search
+//   $scope.search = function(search) {
+//     search = typeof search !== 'undefined' ? search : '';
+//     if (search.length > 0){
+//       $scope.load({
+//         search: search
+//       });
+//     }else{
+//       $scope.load();
+//     }
+//   }
+//   // remove
+//   $scope.remove = function(data) {
+//     bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+//       if (c) {
+//         CrudStatuses.remove({ id: data.id }, function(e) {
+//           if (e.ok) {
+//             $.gritter.add({
+//               title: 'Successful!',
+//               text:  e.msg,
+//             });
+//             $scope.load();
+//           }
+//         });
+//       }
+//     });
+//   }
+// });
+
+
+
+
 app.controller('CrudStatusesController', function($scope, CrudStatuses) {
-  // load data
+  // Load data from API
   $scope.load = function(options) {
-    options = typeof options !== 'undefined' ?  options : {};
-    CrudStatuses.query(options, function(e) {
-      if (e.ok) {
-        $scope.crud_statuses = e.data;      ///////dadadadadatatatatatat
-        //pagination
-        $scope.paginator = e.paginator;
+    options = typeof options !== 'undefined' ? options : {};
+    CrudStatuses.query(options, function(response) {
+      if (response.ok) {
+        $scope.crudStatuses = response.data;
+        // Handle pagination if necessary
+        $scope.paginator = response.paginator;
         $scope.pages = paginator($scope.paginator, 5);
       }
     });
-  }
+  };
+
+  // Initial data load
   $scope.load();
-  //search
+  
+  // Search function
   $scope.search = function(search) {
     search = typeof search !== 'undefined' ? search : '';
-    if (search.length > 0){
-      $scope.load({
-        search: search
-      });
-    }else{
+    if (search.length > 0) {
+      $scope.load({ search: search });
+    } else {
       $scope.load();
     }
-  }
-  // remove
+  };
+
+  // Remove function
   $scope.remove = function(data) {
-    bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
-      if (c) {
-        CrudStatuses.remove({ id: data.id }, function(e) {
-          if (e.ok) {
+    bootbox.confirm('Are you sure you want to delete ' + data.name + '?', function(confirm) {
+      if (confirm) {
+        CrudStatuses.remove({ id: data.id }, function(response) {
+          if (response.ok) {
             $.gritter.add({
               title: 'Successful!',
-              text:  e.msg,
+              text: response.msg,
             });
-            $scope.load();
+            $scope.load(); // Reload data after deletion
           }
         });
       }
     });
-  }
+  };
 });
+
+
+
+
+
+
 
 app.controller('CrudStatusesAddController', function($scope, CrudStatuses, Select){
   $('#form').validationEngine('attach');

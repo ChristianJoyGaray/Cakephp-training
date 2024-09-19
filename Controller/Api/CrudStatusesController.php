@@ -9,95 +9,39 @@ class CrudStatusesController extends AppController {
     }
 
 
-    public function index(){
-
-
-        // // without pagination
-        // $datas = $this->Crud->find('all', array());
-
-        // // transform data
-        // $cruds = array();
-        // foreach ($datas as $data){
-        //     $cruds[] = array( //data[0].Crud.name
-        //         'id'            =>   $data['Crud']['id'],
-        //         'name'          =>   properCase($data['Crud']['name']),
-        //         'age'           =>   $data['Crud']['age'],
-        //         'character'     =>   $data['Crud']['character'],
-        //         'visible'       =>   $data['Crud']['visible'],
-        //         'date_created'  =>   date('m/d/Y', strtotime($data['Crud']['created'])),
-        //     );
-        // }
-
-        //with pagination
-        //default page 1
-        $page = isset($this->request->query['page'])? $this->request->query['page'] : 1;
-
-
-        $conditions = array();
-        $conditions['Crud.visible'] = true;
-        //paginate data
-        $paginatorSettings = array(
-            'conditions' => $conditions,
-            'limit'      => 25,
-            'page'       => $page,
-            'order'      => array(
-            'Crud.name'  => 'ASC'
-            )
+    public function index() {
+        // Fetch data from the model
+        $crudStatuses = $this->CrudStatuses->find('all');
+    
+        // Transform data for the frontend if needed
+        $data = array();
+        foreach ($crudStatuses as $status) {
+            $data[] = array(
+                'id'   => $status['CrudStatuses']['id'],
+                'name' => $status['CrudStatuses']['name']
             );
-            $modelName = 'Crud'; //cruds in table
-            $this->Paginator->settings = $paginatorSettings;
-            $tmpData = $this->Paginator->paginate($modelName);
-            $paginator = $this->request->params['paging'][$modelName];
-
-            //transform data
-            $cruds_=array();
-            foreach ($tmpData as $crud){
-                $cruds_[] = array(
-                    'id'            =>   $crud['Crud']['id'],
-                    'name'          =>   properCase($crud['Crud']['name']),
-                    'age'           =>   $crud['Crud']['age'],
-                    'character'     =>   $crud['Crud']['character'],
-                    'visible'       =>   $crud['Crud']['visible'],
-                    'date_created'  =>   date('m/d/Y', strtotime($crud['Crud']['created'])),
-                );
-            }
-
-
+        }
+    
+        // Prepare response
         $response = array(
-            'ok'=>true,
-            'msg'=>'index',
-            // 'untransformed' => $tmpData,
-            'data' => $cruds_,
-            'paginator' => $paginator,
+            'ok'    => true,
+            'msg'   => 'Data retrieved successfully',
+            'data'  => $data
         );
-
+    
+        // Set the response and serialize it
         $this->set(array(
-            'response'=> $response,
-            '_serialize'=>'response'
+            'response'   => $response,
+            '_serialize' => 'response'
         ));
-
     }
+    
+    
+    
+    
 
 
-    // public function add() {
-    //     if ($this->CrudStatuses->save($this->request->data)) {
-    //         $response = array(
-    //             'ok'    => true,
-    //             'msg'   => 'Saved',
-    //             'data'  => $this->request->data
-    //         );
-    //     } else {
-    //         $response = array(
-    //             'ok'    => false,
-    //             'msg'   => 'Not saved',
-    //             'data'  => $this->request->data
-    //         );
-    //     }
-    //     $this->set(array(
-    //         'response'   => $response,
-    //         '_serialize' => 'response'
-    //     ));
-    // }
+
 
     public function add() {
         $this->CrudStatuses->create(); // Prepare the model for saving
@@ -158,7 +102,7 @@ class CrudStatusesController extends AppController {
 
     public function view($id = null){
 
-        $data = $this->Crud->find('first', array(
+        $data = $this->Crudstatuses->find('first', array(
             'contain'       =>  array(
                 'CrudStatus' => array('name')
 

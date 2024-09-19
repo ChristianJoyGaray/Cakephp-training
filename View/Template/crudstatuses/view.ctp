@@ -4,22 +4,8 @@
     <div class="row">
       <div class="col-md-6">
         <dl class="dl-horizontal dl-data dl-bordered">
-          <dt>Name:</dt>
-          <dd class="uppercase">{{ data.Crud.name }}</dd>
-
-          <dt>Age:</dt>
-          <dd>{{ data.Crud.age }}</dd>
-
           <dt>Status:</dt>
           <dd>{{ data.CrudStatus.name }}</dd> 
-          
-
-          <dt>Character:</dt>
-          <dd>{{ data.Crud.character }}</dd>
-          
-        </dl>
-
-
     <div class="clearfix"></div>
     <hr>
 
