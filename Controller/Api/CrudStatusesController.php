@@ -98,40 +98,72 @@ class CrudStatusesController extends AppController {
     //     ));
     // }
 
- 
 
-    public function view($id = null){
 
-        $data = $this->Crudstatuses->find('first', array(
-            'contain'       =>  array(
-                'CrudStatus' => array('name')
+    // public function view($id = null){
 
-            ),
-            'conditions'    =>  array(
-            'Crud.id'       =>  $id,
-            'Crud.visible'  =>  true
+    //     $data = $this->Crudstatuses->find('first', array(
+    //         'contain'       =>  array(
+    //             'CrudStatus' => array('name')
+
+    //         ),
+    //         'conditions'    =>  array(
+    //         'Crud.id'       =>  $id,
+    //         'Crud.visible'  =>  true
+    //         )
+    //     ));
+
+    //     //OR (findById is a cakephp syntax)
+
+    //     $data_ = $this->Crud->findById($id);   
+
+    //     $response = array(
+    //         'ok'    => true,
+    //         'msg'   => 'view',
+    //         'data'  => $data,
+    //     );
+
+
+    //     $this->set(array(
+    //         'response'=>$response,
+    //         '_serialize'=>'response'
+    //     ));
+
+    // }
+
+
+    public function view($id = null) {
+        if (!$id) {
+            throw new NotFoundException(__('Invalid ID'));
+        }
+    
+        // Retrieve the data
+        $data = $this->CrudStatuses->find('first', array(
+            'conditions' => array(
+                'CrudStatuses.id' => $id
             )
         ));
-
-        //OR (findById is a cakephp syntax)
-
-        $data_ = $this->Crud->findById($id);   
-
+    
+        if (empty($data)) {
+            throw new NotFoundException(__('No data found'));
+        }
+    
         $response = array(
             'ok'    => true,
-            'msg'   => 'view',
-            'data'  => $data,
+            'msg'   => 'Data retrieved successfully',
+            'data'  => $data['CrudStatuses'], // Ensure this matches the AngularJS view structure
         );
-
-
+    
         $this->set(array(
-            'response'=>$response,
-            '_serialize'=>'response'
+            'response'   => $response,
+            '_serialize' => 'response'
         ));
-
     }
+    
 
 
+
+ 
     public function edit($id = null){
 
         if($this->Crud->save($this->request->data['Crud'])){

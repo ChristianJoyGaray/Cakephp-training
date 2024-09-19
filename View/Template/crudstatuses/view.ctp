@@ -5,9 +5,9 @@
       <div class="col-md-6">
         <dl class="dl-horizontal dl-data dl-bordered">
           <dt>Status:</dt>
-          <dd>{{ data.CrudStatus.name }}</dd> 
-    <div class="clearfix"></div>
-    <hr>
+          <dd>{{ data.name }}</dd> 
+        </dl>
+
 
     <div class="row">
       <div class="col-md-12">
@@ -22,7 +22,7 @@
   </div>
 </div>
 
-
+ 
 <style>
   .table-wrapper{
     width:100%;

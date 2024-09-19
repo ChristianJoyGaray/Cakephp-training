@@ -170,12 +170,12 @@ app.controller('CrudStatusesAddController', function($scope, CrudStatuses, Selec
 //       }
 //   }
 // });
+ 
 
 
 
 
-
-app.controller('CrudViewController', function($scope, $routeParams, Crud) {
+app.controller('CrudStatusesViewController', function($scope, $routeParams, CrudStatuses) {
   $scope.id = $routeParams.id;
   
   // $scope.data = {};
@@ -183,7 +183,7 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud) {
   // $scope.data.UserPermission = []; 
   // load 
   $scope.load = function() {
-    Crud.get({ id: $scope.id }, function(e) {
+    CrudStatuses.get({ id: $scope.id }, function(e) {
       $scope.data = e.data;
       // $scope.permissions_temp = $scope.data.PermissionSelection;
       // $scope.compute();    
@@ -247,7 +247,7 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud) {
   $scope.remove = function(data) {
     bootbox.confirm('Are you sure you want to remove '+ data.name +' ?', function(c) {
       if (c) {
-        Crud.remove({ id: data.id }, function(e) {
+        CrudStatuses.remove({ id: data.id }, function(e) {
 
           if (e.ok) {
 
@@ -259,7 +259,7 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud) {
 
             });
 
-            window.location = "#/cruds";
+            window.location = "#/crudstatuses";
 
           }
 
@@ -456,6 +456,10 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud) {
   }
 
 });
+
+
+
+
 
 app.controller('CrudEditController', function($scope, $routeParams, Crud) {
 
