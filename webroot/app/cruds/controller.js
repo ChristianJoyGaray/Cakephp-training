@@ -44,7 +44,7 @@ app.controller('CrudController', function($scope, Crud) {
 app.controller('CrudAddController', function($scope, Crud, Select){
   $('#form').validationEngine('attach');
 
-    // $('date').datepicker({
+    // $('birthdate').datepicker({
     //   format: 'mm/dd/yy',
     //   autoclose: true
     // });
@@ -81,7 +81,11 @@ app.controller('CrudAddController', function($scope, Crud, Select){
 
 app.controller('CrudViewController', function($scope, $routeParams, Crud) {
   $scope.id = $routeParams.id;
-  
+
+  // $('birthdate').datepicker({
+  //   format: 'mm/dd/yy',
+  //   autoclose: true
+  // });
   // $scope.data = {};
   // $scope.data.PermissionSelection = [];
   // $scope.data.UserPermission = []; 

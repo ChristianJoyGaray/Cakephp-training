@@ -20,6 +20,13 @@
               </div>
             </div>
 
+            <div class="col-md-6">
+            <div class="form-group">
+              <label> BIRTHDATE <i class="required">*</i></label>
+              <input type="date" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]">
+            </div>
+          </div>
+
             <div class="col-md-12">
               <div class="form-group">
                 <label> Character <i class="required">*</i></label>

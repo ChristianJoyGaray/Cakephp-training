@@ -16,6 +16,9 @@
 
           <dt>Character:</dt>
           <dd>{{ data.Crud.character }}</dd>
+
+          <dt>Birth date:</dt>
+          <dd>{{ data.Crud.birthdate | date:'MM/dd/yyyy' }}</dd>
           
         </dl>
 
