@@ -77,26 +77,77 @@ class CrudsController extends AppController {
     }
 
 
-    public function add(){
+    // public function add(){
 
-        if($this->Crud->save($this->request->data['Crud'])){
-            $response = array(
-                'ok'    =>  true,
-                'msg'   =>  'Saved',
-                'data'  =>  $this->request->data['Crud'],
-            );
-        }else{
+    //     if($this->Crud->save($this->request->data['Crud'])){
+    //         $response = array(
+    //             'ok'    =>  true,
+    //             'msg'   =>  'Saved',
+    //             'data'  =>  $this->request->data['Crud'],
+    //         );
+    //     }else{
+    //         $response = array(
+    //             'ok'    =>  false,
+    //             'msg'   =>  'Not saved',
+    //             'data'  =>  $this->request->data['Crud'],
+    //         );
+    //     }
+    // $this->set(array(
+    //     'response'=> $response,
+    //     '_serialize'=>'response'
+    // ));
+    // }
+
+    public function add() {
+        if (!empty($this->request->data['Crud']['birthdate'])) {
+            $birthdate = $this->request->data['Crud']['birthdate'];
+    
+            // Convert birthdate to a DateTime object
+            $bdayDate = new DateTime($birthdate);
+            $today = new DateTime();
+    
+            // Calculate the age
+            $age = $today->diff($bdayDate)->y;
+    
+            // Add the computed age to the request data before saving
+            $this->request->data['Crud']['age'] = $age;
+    
+            // Save the data
+            if ($this->Crud->save($this->request->data['Crud'])) {
+                $response = array(
+                    'ok'    =>  true,
+                    'msg'   =>  'Saved',
+                    'data'  =>  $this->request->data['Crud'],
+                );
+            } else {
+                $response = array(
+                    'ok'    =>  false,
+                    'msg'   =>  'Not saved',
+                    'data'  =>  $this->request->data['Crud'],
+                );
+            }
+    
+            // Send the response
+            $this->set(array(
+                'response'=> $response,
+                '_serialize'=>'response'
+            ));
+        } else {
             $response = array(
                 'ok'    =>  false,
-                'msg'   =>  'Not saved',
-                'data'  =>  $this->request->data['Crud'],
+                'msg'   =>  'Birthdate is missing',
             );
+    
+            $this->set(array(
+                'response'=> $response,
+                '_serialize'=>'response'
+            ));
         }
-    $this->set(array(
-        'response'=> $response,
-        '_serialize'=>'response'
-    ));
     }
+    
+    
+    
+    
 
 
     public function view($id = null){
@@ -131,27 +182,86 @@ class CrudsController extends AppController {
     }
 
 
-    public function edit($id = null){
+    // public function edit($id = null){
 
-        if($this->Crud->save($this->request->data['Crud'])){
-            $response = array(
-                'ok'    =>  true,
-                'msg'   =>  'Updated',
-                'data'  =>  $this->request->data,
-            );
-        }else{
-            $response = array(
-                'ok'    =>  false,
-                'msg'   =>  'Not updated',
-                'data'  =>  $this->request->data,
-            );
+        
+
+    //     if($this->Crud->save($this->request->data['Crud'])){
+    //         $response = array(
+    //             'ok'    =>  true,
+    //             'msg'   =>  'Updated',
+    //             'data'  =>  $this->request->data,
+    //         );
+    //     }else{
+    //         $response = array(
+    //             'ok'    =>  false,
+    //             'msg'   =>  'Not updated',
+    //             'data'  =>  $this->request->data,
+    //         );
+    //     }
+
+    //         $this->set(array(
+    //             'response'     =>  $response,
+    //             '_serialize'   =>  'response'
+    //         ));
+    // }
+
+
+    public function edit($id = null) {
+        // Check if the record exists
+        $crud = $this->Crud->findById($id);
+        if (!$crud) {
+            throw new NotFoundException(__('Invalid record'));
         }
-
+    
+        if ($this->request->is(['post', 'put'])) {
+            // Get the birthdate from the form data
+            if (!empty($this->request->data['Crud']['birthdate'])) {
+                $birthdate = $this->request->data['Crud']['birthdate'];
+    
+                // Convert the birthdate to a DateTime object
+                $bdayDate = new DateTime($birthdate);
+                $today = new DateTime();
+    
+                // Calculate the age
+                $age = $today->diff($bdayDate)->y;
+    
+                // Add the computed age to the request data before saving
+                $this->request->data['Crud']['age'] = $age;
+            }
+    
+            // Save the data
+            if ($this->Crud->save($this->request->data['Crud'])) {
+                $response = array(
+                    'ok'    =>  true,
+                    'msg'   =>  'Updated',
+                    'data'  =>  $this->request->data,
+                );
+            } else {
+                $response = array(
+                    'ok'    =>  false,
+                    'msg'   =>  'Not updated',
+                    'data'  =>  $this->request->data,
+                );
+            }
+    
+            // Set the response
             $this->set(array(
                 'response'     =>  $response,
                 '_serialize'   =>  'response'
             ));
+        } else {
+            // If the request is not post or put, load the current data
+            $this->request->data = $crud;
+        }
     }
+    
+
+
+
+
+
+
 
     public function delete($id = null){
         

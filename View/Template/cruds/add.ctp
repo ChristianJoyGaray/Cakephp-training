@@ -12,15 +12,23 @@
                 <input type="text" class="form-control" ng-model="data.Crud.name" data-validation-engine="validate[required]">
               </div>
             </div>
+
+            <div class="col-md-4">
+            <div class="form-group">
+              <label> BIRTHDATE <i class="required">*</i></label>
+              <input id="bday" type="date" name="Crud[birthdate]" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]">
+            </div>
+          </div>
     
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="form-group">
                 <label> Age <i class="required">*</i></label>
-                <input type="text" class="form-control" ng-model="data.Crud.age" data-validation-engine="validate[required]">
+                <input type="number" id="age" name="Crud[age]" class="form-control" ng-model="data.Crud.age" data-validation-engine="validate[required]"> 
+                
               </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="form-group">
                 <label> Status <i class="required">*</i></label>
                 <select class="form-control" ng-model="data.Crud.crudStatusId" ng-options="opt.id as opt.value for opt in status" data-validation-engine="validate[required]">
@@ -28,13 +36,6 @@
                 </select>
               </div>
             </div>
-
-            <div class="col-md-6">
-            <div class="form-group">
-              <label> BIRTHDATE <i class="required">*</i></label>
-              <input type="date" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]">
-            </div>
-          </div>
 
             <div class="col-md-12">
               <div class="form-group">
@@ -157,3 +158,26 @@ $('#form').validationEngine('attach');
     </div>
   </div>
 </div>
+
+<script>
+    const bday = document.getElementById("bday");
+    const age = document.getElementById("age");
+
+    function calculateAge() {
+        const bdayInput = new Date(bday.value);
+        const today = new Date();
+
+        let computedAge = today.getFullYear() - bdayInput.getFullYear();
+        const monthDifference = today.getMonth() - bdayInput.getMonth();
+        const dayDifference = today.getDate() - bdayInput.getDate();
+
+        if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
+            computedAge--;
+        }
+
+        age.value = computedAge;  // Update the age input field
+    }
+
+    bday.addEventListener("input", calculateAge);  // Trigger calculation when birthdate changes
+</script>
+

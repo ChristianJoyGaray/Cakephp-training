@@ -90,6 +90,8 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud) {
   // $scope.data.PermissionSelection = [];
   // $scope.data.UserPermission = []; 
   // load 
+
+  
   $scope.load = function() {
     Crud.get({ id: $scope.id }, function(e) {
       $scope.data = e.data;
@@ -365,7 +367,7 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud) {
 
 });
 
-app.controller('CrudEditController', function($scope, $routeParams, Crud) {
+app.controller('CrudEditController', function($scope, $routeParams, Crud, Select) {
 
   
   $scope.id = $routeParams.id;
@@ -373,6 +375,11 @@ app.controller('CrudEditController', function($scope, $routeParams, Crud) {
   $("#form").validationEngine('attach');
   
   // load 
+
+  Select.get({code: 'crud-status'}, function(e){
+    $scope.status = e.data;
+  });
+
 
   $scope.load = function() {
 
