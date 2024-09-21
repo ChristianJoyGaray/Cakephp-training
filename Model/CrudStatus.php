@@ -9,5 +9,5 @@ class CrudStatus extends AppModel {
     )
   );
 
- 
+
 }

@@ -6,6 +6,8 @@ class CrudsController extends AppController {
         $this->RequestHandler->ext = 'json';
     }
 
+    public $uses = ['Crud', 'Beneficiary'];
+
 
     public function index(){
 
@@ -98,52 +100,209 @@ class CrudsController extends AppController {
     // ));
     // }
 
+    // public function add() {
+    //     if (!empty($this->request->data['Crud']['birthdate'])) {
+    //         $birthdate = $this->request->data['Crud']['birthdate'];
+    
+    //         // Convert birthdate to a DateTime object
+    //         $bdayDate = new DateTime($birthdate);
+    //         $today = new DateTime();
+    
+    //         // Calculate the age
+    //         $age = $today->diff($bdayDate)->y;
+    
+    //         // Add the computed age to the request data before saving
+    //         $this->request->data['Crud']['age'] = $age;
+    
+    //         // Save the data
+    //         if ($this->Crud->save($this->request->data['Crud'])) {
+    //             $response = array(
+    //                 'ok'    =>  true,
+    //                 'msg'   =>  'Saved',
+    //                 'data'  =>  $this->request->data['Crud'],
+    //             );
+    //         } else {
+    //             $response = array(
+    //                 'ok'    =>  false,
+    //                 'msg'   =>  'Not saved',
+    //                 'data'  =>  $this->request->data['Crud'],
+    //             );
+    //         }
+    
+    //         // Send the response
+    //         $this->set(array(
+    //             'response'=> $response,
+    //             '_serialize'=>'response'
+    //         ));
+    //     } else {
+    //         $response = array(
+    //             'ok'    =>  false,
+    //             'msg'   =>  'Birthdate is missing',
+    //         );
+    
+    //         $this->set(array(
+    //             'response'=> $response,
+    //             '_serialize'=>'response'
+    //         ));
+    //     }
+    // }
+    
+
+
+    // public function add() {
+    //     // Begin transaction
+    //     $this->Crud->getDataSource()->begin();
+    //     CakeLog::write('debug', 'Transaction started.');
+    
+    //     $crud = $this->request->data['Crud'];
+    //     $beneficiary = $this->request->data['Beneficiary'];
+    
+    //     // Check if birthdate is present
+    //     if (!empty($crud['birthdate'])) {
+    //         $birthdate = $crud['birthdate'];
+            
+    //         // Calculate age
+    //         $bdayDate = new DateTime($birthdate);
+    //         $today = new DateTime();
+    //         $age = $today->diff($bdayDate)->y;
+    
+    //         // Add age to request data
+    //         $crud['age'] = $age;
+    
+    //         // Log the request data before saving
+    //         CakeLog::write('debug', 'Request data: ' . print_r($this->request->data, true));
+    
+    //         // Validate the Crud data
+    //         $response = $this->Crud->validSave($crud);
+    
+    //         if ($response['ok']) {
+    //             // Save the Crud data
+    //             if ($this->Crud->save($crud)) {
+    //                 $crudId = $this->Crud->id; // Get the last inserted Crud ID
+    //                 CakeLog::write('debug', 'Crud saved successfully with ID: ' . $crudId);
+    
+    //                 // Prepare beneficiaries data if available
+    //                 if (!empty($beneficiary)) {
+    //                     foreach ($beneficiary as $key => $value) {
+    //                         $beneficiary[$key]['cruds_id'] = $crudId; // Set the foreign key
+                        
+    //                     }
+    //                     // Save beneficiaries data
+    //                     if ($this->Beneficiary->saveMany($beneficiary)) {
+    //                         // Commit transaction on success
+    //                         $this->Crud->getDataSource()->commit();
+    //                         CakeLog::write('debug', 'Beneficiaries saved successfully.');
+    //                         $response['msg'] = 'Crud and Beneficiaries saved successfully';
+    //                     } else {
+    //                         // Rollback transaction on failure
+    //                         $this->Crud->getDataSource()->rollback();
+    //                         debug($this->Beneficiary->validationErrors);
+    //                         $response = array(
+    //                             'ok' => false,
+    //                             'msg' => 'Could not save Beneficiaries',
+    //                         );
+    //                     }
+    //                 } else {
+    //                     // Commit transaction for Crud only if no beneficiaries
+    //                     $this->Crud->getDataSource()->commit();
+    //                     $response['msg'] = 'Crud saved successfully, no beneficiaries to save.';
+    //                 }
+    //             } else {
+    //                 // Rollback transaction on failure
+    //                 $this->Crud->getDataSource()->rollback();
+    //                 debug($this->Crud->validationErrors);
+    //                 $response = array(
+    //                     'ok' => false,
+    //                     'msg' => 'Could not save Crud',
+    //                 );
+    //             }
+    //         }
+    //     } else {
+    //         $response = array(
+    //             'ok' => false,
+    //             'msg' => 'Birthdate is missing',
+    //         );
+    
+    //         $this->set(array(
+    //             'response' => $response,
+    //             '_serialize' => 'response'
+    //         ));
+    //         debug($response);
+    //         return; // Early return if birthdate is missing
+    //     }
+    
+    //     // Send the response
+    //     $this->set(array(
+    //         'response' => $response,
+    //         '_serialize' => 'response'
+    //     ));
+    // }
+    
+    
+    
+    
+    
+    
+    
     public function add() {
-        if (!empty($this->request->data['Crud']['birthdate'])) {
-            $birthdate = $this->request->data['Crud']['birthdate'];
+        // Begin transaction
+        $this->Crud->getDataSource()->begin();
     
-            // Convert birthdate to a DateTime object
-            $bdayDate = new DateTime($birthdate);
-            $today = new DateTime();
+        // Save the Crud data first
+        if ($this->Crud->save($this->request->data['Crud'])) {
+            $crudId = $this->Crud->id; // Get the last inserted Crud ID
     
-            // Calculate the age
-            $age = $today->diff($bdayDate)->y;
+            // Prepare beneficiaries data
+            if (!empty($this->request->data['beneficiaries'])) {
+                foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+                    $beneficiary['cruds_id'] = $crudId; // Set the foreign key
+                }
     
-            // Add the computed age to the request data before saving
-            $this->request->data['Crud']['age'] = $age;
-    
-            // Save the data
-            if ($this->Crud->save($this->request->data['Crud'])) {
-                $response = array(
-                    'ok'    =>  true,
-                    'msg'   =>  'Saved',
-                    'data'  =>  $this->request->data['Crud'],
-                );
+                // Save beneficiaries
+                if ($this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+                    // Commit transaction on success
+                    $this->Crud->getDataSource()->commit();
+                    $response = array(
+                        'ok' => true,
+                        'msg' => 'Crud and Beneficiaries saved successfully',
+                        'data' => $this->request->data['Crud'],
+                    );
+                } else {
+                    // Rollback transaction on failure
+                    $this->Crud->getDataSource()->rollback();
+                    $response = array(
+                        'ok' => false,
+                        'msg' => 'Could not save Beneficiaries',
+                    );
+                }
             } else {
+                // No beneficiaries to save, just commit Crud
+                $this->Crud->getDataSource()->commit();
                 $response = array(
-                    'ok'    =>  false,
-                    'msg'   =>  'Not saved',
-                    'data'  =>  $this->request->data['Crud'],
+                    'ok' => true,
+                    'msg' => 'Crud saved successfully, no beneficiaries to save.',
+                    'data' => $this->request->data['Crud'],
                 );
             }
-    
-            // Send the response
-            $this->set(array(
-                'response'=> $response,
-                '_serialize'=>'response'
-            ));
         } else {
+            // Rollback if Crud saving fails
+            $this->Crud->getDataSource()->rollback();
             $response = array(
-                'ok'    =>  false,
-                'msg'   =>  'Birthdate is missing',
+                'ok' => false,
+                'msg' => 'Could not save Crud',
             );
-    
-            $this->set(array(
-                'response'=> $response,
-                '_serialize'=>'response'
-            ));
         }
+    
+        // Send the response
+        $this->set(array(
+            'response' => $response,
+            '_serialize' => 'response'
+        ));
     }
+    
+    
+
+    
     
     
     

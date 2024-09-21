@@ -21,6 +21,14 @@
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
+
+						<li>
+							<a href="#/users">
+								<div class="menu-icon"><span class="svg-icon menu-icon-span" data-icon="settings"></span></div>
+								<div class="menu-label">USERS</div>
+							</a>
+
+						</li>	
 						
 						<li>
 							<a href="#/cruds">

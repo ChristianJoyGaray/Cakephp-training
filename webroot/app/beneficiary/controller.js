@@ -95,7 +95,7 @@ app.controller('CrudController', function($scope, Crud) {
 
 
 
-////
+
 
 
 // app.controller('CrudAddController', function($scope, Crud, Select, Beneficiary) {
@@ -159,291 +159,43 @@ app.controller('CrudController', function($scope, Crud) {
 
 
 
-// app.controller('CrudAddController', function($scope, Crud, Beneficiary, Select) {
-//   $('#form').validationEngine('attach');
 
-//   $scope.data = {
-//       Crud: {},
-//       beneficiaries: []
-//   };
-
-//   // Get crud status
-//   Select.get({ code: 'crud-status' }, function(e) {
-//       $scope.status = e.data;
-//   });
-
-//   $scope.save = function() {
-//       var valid = $("#form").validationEngine('validate');
-
-//       if (valid) {
-//           // Include beneficiaries data with Crud data
-//           $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
-//           console.log($scope.data);
-
-//           Crud.save($scope.data, function(e) {
-//               if (e.ok) {
-//                   $.gritter.add({
-//                       title: 'Successful!',
-//                       text: e.msg,
-//                   });
-//                   window.location = '#/cruds';
-//               } else {
-//                   $.gritter.add({
-//                       title: 'Warning!',
-//                       text: e.msg,
-//                   });
-//               }
-//           });
-//       }
-//   };
-
-//   $scope.addBeneficiary = function() {
-//       // Reset the beneficiary data for a new entry
-//       $scope.newBeneficiary = {};
-//       $('#add-beneficiary-modal').modal('show');
-//   };
-
-//   $scope.saveBeneficiary = function(beneficiaryData) {
-//       if (beneficiaryData.birthdate) {
-//           // Calculate age based on birthdate
-//           const bdayDate = new Date(beneficiaryData.birthdate);
-//           const today = new Date();
-//           beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
-//           const monthDiff = today.getMonth() - bdayDate.getMonth();
-//           if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
-//               beneficiaryData.age--;
-//           }
-//       }
-
-//       $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
-//       $('#add-beneficiary-modal').modal('hide');
-//   };
-// });
-
-
-
-
-
-// app.controller('CrudAddController', function($scope, Crud, Beneficiary, Select) {
-//   $('#form').validationEngine('attach');
-
-//   $scope.data = {
-//       Crud: {},
-//       beneficiaries: []
-//   };
-
-//   // Get crud status
-//   Select.get({ code: 'crud-status' }, function(e) {
-//       $scope.status = e.data;
-//   });
-//   $scope.save = function() {
-//     var valid = $("#form").validationEngine('validate');
-
-//     if (valid) {
-//         // Ensure the birthdate is included in the Crud data
-//         $scope.data.Crud.birthdate = $scope.data.Crud.birthdate; // Set the birthdate explicitly
-
-//         Crud.save($scope.data.Crud, function(e) {
-//             if (e.ok) {
-//                 $.gritter.add({
-//                     title: 'Successful!',
-//                     text: e.msg,
-//                 });
-//                 window.location = '#/cruds';
-//             } else {
-//                 $.gritter.add({
-//                     title: 'Warning!',
-//                     text: e.msg,
-//                 });
-//             }
-//         });
-//     }
-// };
-
-
-
-//   $scope.addBeneficiary = function() {
-//       $('#add-beneficiary-modal').modal('show');
-//   };
-
-//   $scope.saveBeneficiary = function(beneficiaryData) {
-//       $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
-//       $('#add-beneficiary-modal').modal('hide');
-//   };
-// });
-
-
-// app.controller('CrudAddController', function($scope, Crud, Select) {
-//   // Initialize your data
-//   $scope.data = {
-//       Crud: {},
-//       beneficiaries: [],
-//       // statuses: [] // To hold the statuses
-//   };
-
-//   // Fetch crud statuses
-//   Select.get({code: 'crud-status'}, function(e){
-//       $scope.status = e.data; // Store statuses in the scope
-//   });
-
-//   // Function to save Crud and Beneficiaries
-//   $scope.saveCrud = function() {
-//       const dataToSend = {
-//           Crud: $scope.data.Crud,
-//           beneficiaries: $scope.data.beneficiaries // Include beneficiaries' data
-//       };
-
-//       Crud.save(dataToSend, function(response) {
-//           if (response.ok) {
-//               alert(response.msg);
-//               // Clear the form or redirect as needed
-//           } else {
-//               alert(response.msg);
-//               // Handle errors accordingly
-//           }
-//       }, function(error) {
-//           console.error('Error saving:', error);
-//       });
-//   };
-
-//   // Function to add a beneficiary
-//   $scope.addBeneficiary = function() {
-//       $scope.newBeneficiary = {}; // Reset new beneficiary form
-//       $('#add-beneficiary-modal').modal('show');
-//   };
-
-//   // Save new beneficiary
-//   $scope.saveBeneficiary = function(beneficiaryData) {
-//       if (beneficiaryData) {
-//           $scope.data.beneficiaries.push(beneficiaryData); // Add beneficiary to the array
-//           $('#add-beneficiary-modal').modal('hide');
-//       }
-//   };
-// });
-
-
-
-
-// app.controller('CrudAddController', function($scope, Crud, Select) {
-//   // Initialize your data
-//   $scope.data = {
-//       Crud: {},
-//       beneficiaries: []
-//   };
-
-
-//   Select.get({code: 'crud-status'}, function(e){
-//           $scope.status = e.data; // Store statuses in the scope
-//       });
-    
-//   // Function to save Crud and Beneficiaries
-//   $scope.saveCrud = function() {
-//       const dataToSend = {
-//           Crud: $scope.data.Crud,
-//           beneficiaries: $scope.data.beneficiaries // Include beneficiaries' data
-//       };
-
-//       Crud.save(dataToSend, function(response) {
-//           if (response.ok) {
-//               alert(response.msg);
-//               // Clear the form or redirect as needed
-//           } else {
-//               alert(response.msg);
-//               // Handle errors accordingly
-//           }
-//       }, function(error) {
-//           console.error('Error saving:', error);
-//       });
-//   };
-
-//   // Function to add a beneficiary
-//   $scope.addBeneficiary = function() {
-//       $scope.newBeneficiary = {}; // Reset new beneficiary form
-//       $('#add-beneficiary-modal').modal('show');
-//   };
-
-//   // Save new beneficiary
-//   $scope.saveBeneficiary = function(beneficiaryData) {
-//       if (beneficiaryData) {
-//           $scope.data.beneficiaries.push(beneficiaryData); // Add beneficiary to the array
-//           $('#add-beneficiary-modal').modal('hide');
-//       }
-//   };
-// });
-
-
-
-
-
-app.controller('CrudAddController', function($scope, Crud, Select) {
-  // Attach validation engine to the form
+app.controller('CrudAddController', function($scope, Beneficiary, Select) {
   $('#form').validationEngine('attach');
 
-  // Initialize data
-  $scope.data = {
-      Crud: {},
-      beneficiaries: []
-  };
-
-  // Fetch crud status
+  // Get crud status
   Select.get({ code: 'crud-status' }, function(e) {
-      $scope.status = e.data; // Store statuses in the scope
+    $scope.status = e.data;
   });
 
-  // Function to save Crud and Beneficiaries
   $scope.save = function() {
-      var valid = $("#form").validationEngine('validate');
+    var valid = $("#form").validationEngine('validate');
 
-      if (valid) {
-          // Include beneficiaries data with Crud data
-          $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
-          console.log($scope.data);
+    if (valid) {
+      // Set the correct cruds_id from the parent scope or relevant source
+      $scope.data.beneficiary.cruds_id = $scope.data.Crud.id;
 
-          Crud.save($scope.data, function(e) {
-              if (e.ok) {
-                  $.gritter.add({
-                      title: 'Successful!',
-                      text: e.msg,
-                  });
-                  window.location = '#/cruds'; // Redirect after success
-              } else {
-                  $.gritter.add({
-                      title: 'Warning!',
-                      text: e.msg,
-                  });
-              }
+      Beneficiary.save($scope.data.beneficiary, function(e) {
+        if (e.ok) {
+          $.gritter.add({
+            title: 'Successful!',
+            text: e.msg,
           });
-      }
-  };
-
-  // Function to add a beneficiary
-  $scope.addBeneficiary = function() {
-      // Reset the beneficiary data for a new entry
-      $scope.newBeneficiary = {};
-      $('#add-beneficiary-modal').modal('show');
-  };
-
-  // Save new beneficiary
-  $scope.saveBeneficiary = function(beneficiaryData) {
-      if (beneficiaryData.birthdate) {
-          // Calculate age based on birthdate
-          const bdayDate = new Date(beneficiaryData.birthdate);
-          const today = new Date();
-          beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
-          const monthDiff = today.getMonth() - bdayDate.getMonth();
-          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
-              beneficiaryData.age--;
-          }
-      }
-
-      $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
-      $('#add-beneficiary-modal').modal('hide');
-      $.gritter.add({
-          title: 'Beneficiary Added!',
-          text: 'The beneficiary has been added successfully.',
+          window.location = '#/beneficiaries'; // Adjust the redirect path as needed
+        } else {
+          $.gritter.add({
+            title: 'Warning!',
+            text: e.msg,
+          });
+        }
       });
+    }
   };
 });
+
+
+
+
 
 
 

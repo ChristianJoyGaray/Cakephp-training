@@ -74,6 +74,8 @@
               <a class="btn btn-warning btn-sm btn-block" id="save" ng-click="addPermission()">ADD PERMISSION</a><br/>
             </div>
 
+            
+
             <div class="clearfix"></div>
 
             <div class="col-md-12">

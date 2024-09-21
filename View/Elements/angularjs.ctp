@@ -17,7 +17,8 @@
   $scripts = array(
     'users',
     'cruds',
-    'crudstatuses'
+    'crudstatuses',
+    // 'beneficiary'
   );
 ?>
 
