@@ -51,12 +51,69 @@
 
           </div>  
         </form>
+
+        <hr>
+        <div class="col-md-3 pull-left">
+              <a class="btn btn-warning btn-sm btn-block" id="save" ng-click="addBeneficiary()">ADD BENEFICIARY</a><br/>
+        </div>
+        
+        <div class="clearfix"></div>
+
+
+
+
+
+
+<div class="col-md-12">
+  <table class="table table-bordered table-striped table-hover">
+    <thead>
+      <tr>
+        <th class="w30px text-center">#</th>
+        <th class="text-center">Beneficiary Name</th>
+        <th class="text-center">Birthdate</th>
+        <th class="text-center">Age</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="beneficiary in data.beneficiaries">
+        <td class="text-center">{{ $index + 1 }}</td>
+        <td class="text-left">{{ beneficiary.name }}</td>
+        <td class="text-center">{{ beneficiary.birthdate | date: 'MM/dd/yyyy' }}</td>
+        <td class="text-center">{{ beneficiary.age }}</td>
+        <td class="text-center">
+          <div class="btn-group btn-group-xs">
+            <a href="javascript:void(0)" ng-click="editBeneficiary($index, beneficiary)" class="btn btn-success" title="EDIT"><i class="fa fa-edit"></i></a>
+            <a href="javascript:void(0)" ng-click="removeBeneficiary($index)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot ng-if="data.beneficiaries.length > 0">
+      <tr>
+        <th class="text-left" colspan="3">TOTAL</th>
+        <th class="text-right">{{ data.beneficiaries.length }}</th>
+        <th></th>
+      </tr>
+    </tfoot>
+    <tbody ng-if="data.beneficiaries.length === 0">
+      <tr>
+        <td colspan="5" class="text-center">No beneficiaries added</td>
+      </tr>
+    </tbody>          
+  </table>
+</div>
+
 			  <hr>
 				<div class="row">
 					<div class="col-md-3 pull-right">
 						<button class="btn btn-primary btn-sm btn-block" ng-click="update()"> UPDATE </button>
 					</div>
 				</div>
+
+
+
+        
     	</div>
     </div>
   </div>
@@ -65,52 +122,56 @@
 $('#form').validationEngine('attach');
 </script>
 
-<div class="modal fade" id="add-permission-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">ADD PERMISSION </h4>
-      </div>
-      <div class="modal-body">
-        <form id="add_permission">   
 
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>PERMISSION<i class="required">*</i></label>
-              <select class="form-control" ng-options="opt.id as opt.value for opt in permissions" ng-model="adata.permission_id" ng-change = "getPermission(adata.permission_id)">
-              </select>
-            </div>
-          </div> 
 
-          <div class="col-md-12">
-            <div class="form-group">
-              <label> DATE <i class="required">*</i></label>
-              <input type="text" class="form-control datepicker" ng-model="adata.date" data-validation-engine="validate[required]">
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>REMARKS<i class="required">*</i></label>
-              <textarea type="text" class="form-control" ng-model="adata.remarks" data-validation-engine="validate[required]"></textarea>
-            </div>
-          </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>AMOUNT<i class="required">*</i></label>
-              <input type="text" class="form-control" decimal = "true" ng-model="adata.amount" data-validation-engine="validate[required]">
-            </div>
-          </div>
 
-        </form>
-       </div>  
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger btn-sm btn-min" data-dismiss="modal">CANCEL</button>
-        <button type="button" class="btn btn-primary btn-sm btn-min" ng-click="savePermission(adata)">SAVE</button>
-      </div>
+<div class="modal fade" id="add-beneficiary-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">ADD BENEFICIARY</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <h4>Beneficiary Information</h4>
+                    <div class="form-group">
+                        <label>Beneficiary Name <i class="required">*</i></label>
+                        <input type="text" class="form-control" ng-model="newBeneficiary.name" ng-required="true">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Beneficiary Birthdate <i class="required">*</i></label>
+                        <input id="bday2" type="date" class="form-control" ng-model="newBeneficiary.birthdate" ng-required="true">
+                    </div>
+                </div>
+
+                <!-- Remove this section if age is calculated from birthdate -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label>Beneficiary Age <i class="required">*</i></label>
+                        <input id="age2" type="number" class="form-control" ng-model="newBeneficiary.age" ng-required="true">
+                    </div>
+                </div>
+
+                <input type="hidden" ng-model="newBeneficiary.cruds_id" ng-value="selectedCrudId">
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">CANCEL</button>
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="saveBeneficiary(newBeneficiary)" ng-disabled="!newBeneficiary.name || !newBeneficiary.birthdate">ADD BENEFICIARY</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
+
+
+
+
 
 <div class="modal fade" id="edit-permission-modal">
   <div class="modal-dialog">

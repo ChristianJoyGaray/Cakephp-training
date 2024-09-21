@@ -393,36 +393,75 @@ class CrudsController extends AppController {
     
 
 
-    public function view($id = null){
+    // public function view($id = null){
 
+    //     $data = $this->Crud->find('first', array(
+    //         'contain'       =>  array(
+    //             'CrudStatus' => array('name')
+
+    //         ),
+    //         'conditions'    =>  array(
+    //         'Crud.id'       =>  $id,
+    //         'Crud.visible'  =>  true
+    //         )
+    //     ));
+
+    //     //OR (findById is a cakephp syntax)
+
+    //     $data_ = $this->Crud->findById($id);   
+
+    //     $response = array(
+    //         'ok'    => true,
+    //         'msg'   => 'view',
+    //         'data'  => $data,
+    //     );
+
+
+    //     $this->set(array(
+    //         'response'=>$response,
+    //         '_serialize'=>'response'
+    //     ));
+
+    // }
+
+    public function view($id = null) {
         $data = $this->Crud->find('first', array(
-            'contain'       =>  array(
-                'CrudStatus' => array('name')
-
+            'contain' => array(
+                'CrudStatus' => array('name'),
+                'Beneficiary' =>array(
+                    'name','birthdate','age')// Include the related Beneficiary data here
             ),
-            'conditions'    =>  array(
-            'Crud.id'       =>  $id,
-            'Crud.visible'  =>  true
+            'conditions' => array(
+                'Crud.id' => $id,
+                'Crud.visible' => true
             )
         ));
-
-        //OR (findById is a cakephp syntax)
-
-        $data_ = $this->Crud->findById($id);   
-
-        $response = array(
-            'ok'    => true,
-            'msg'   => 'view',
-            'data'  => $data,
-        );
-
-
+    
+        if (!$data) {
+            $response = array(
+                'ok' => false,
+                'msg' => 'No data found for this Crud.'
+            );
+        } else {
+            $response = array(
+                'ok' => true,
+                'msg' => 'view',
+                'data' => $data
+            );
+        }
+    
         $this->set(array(
-            'response'=>$response,
-            '_serialize'=>'response'
+            'response' => $response,
+            '_serialize' => 'response'
         ));
-
     }
+    
+
+
+
+
+
+
 
 
     // public function edit($id = null){
