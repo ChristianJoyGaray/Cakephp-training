@@ -16,6 +16,13 @@ app.factory("Beneficiary", function($resource) {
   });
 });
 
+// Crud.deleteBeneficiary = function(data, callback) {
+//   return $http.post('/path-to-your-delete-api', data).then(function(response) {
+//       callback(response.data);
+//   });
+// };
+
+
 // app.factory("UserPermission", function($resource) {
 //   return $resource( api + 'user-permissions/:id', {id:'@id'}, {
 //     query: { method: 'GET', isArray: false },

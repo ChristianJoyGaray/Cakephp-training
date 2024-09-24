@@ -15,6 +15,13 @@
     'action'     => 'logout'
   ));
 
+  Router::connect(
+    '/beneficiary/:id',
+    ['controller' => 'Beneficiaries', 'action' => 'delete'],
+    ['pass' => ['id'], 'id' => '\d+']
+);
+
+
 // app/Config/routes.php
 // Router::connect('/api/select', array('controller' => 'crud_statuses', 'action' => 'select', 'api' => true));
 

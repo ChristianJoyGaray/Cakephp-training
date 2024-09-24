@@ -8,5 +8,6 @@ class Beneficiary extends AppModel {
             'foreignKey' => 'cruds_id',
         )
     );
+    public $primaryKey = 'id';
 }
 

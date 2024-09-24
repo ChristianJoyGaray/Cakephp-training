@@ -3,7 +3,7 @@
     <div class="panel-heading"><i class="fa fa-dot-circle-o"></i> EDIT </div>
     <div class="panel-body">
     	<div class="col-md-12">
-    	  <form id="form ">
+    	  <form id="form">
           <div class="row">
             
             <div class="col-md-12">
@@ -63,8 +63,7 @@
 
 
 
-
-<div class="col-md-12">
+        <div class="col-md-12">
   <table class="table table-bordered table-striped table-hover">
     <thead>
       <tr>
@@ -82,10 +81,22 @@
         <td class="text-center">{{ beneficiary.birthdate | date: 'MM/dd/yyyy' }}</td>
         <td class="text-center">{{ beneficiary.age }}</td>
         <td class="text-center">
-          <div class="btn-group btn-group-xs">
-            <a href="javascript:void(0)" ng-click="editBeneficiary($index, beneficiary)" class="btn btn-success" title="EDIT"><i class="fa fa-edit"></i></a>
-            <a href="javascript:void(0)" ng-click="removeBeneficiary($index)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
-          </div>
+            <div class="btn-group btn-group-xs">
+                <a href="javascript:void(0)" ng-click="editBeneficiary($index, beneficiary)" class="btn btn-success" title="EDIT"><i class="fa fa-edit"></i></a>
+                <!-- <a href="javascript:void(0)" ng-click="remove(beneficiary)"  class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a> -->
+                <!-- <a href="javascript:void(0)" ng-click=" remove(currentBeneficiary)"  class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a> -->
+                <!-- <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
+        {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
+    </button> -->
+
+
+
+
+
+
+
+    <!-- ///////////////////////////////////////// -->
+              </div>
         </td>
       </tr>
     </tbody>
@@ -98,7 +109,7 @@
     </tfoot>
     <tbody ng-if="data.beneficiaries.length === 0">
       <tr>
-        <td colspan="5" class="text-center">No beneficiaries added</td>
+        <td colspan="5" class="text-center">No Beneficiary added</td>
       </tr>
     </tbody>          
   </table>
@@ -112,7 +123,7 @@
 				</div>
 
 
-
+ 
         
     	</div>
     </div>
@@ -163,7 +174,9 @@ $('#form').validationEngine('attach');
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">CANCEL</button>
                     <button type="button" class="btn btn-primary btn-sm" ng-click="saveBeneficiary(newBeneficiary)" ng-disabled="!newBeneficiary.name || !newBeneficiary.birthdate">ADD BENEFICIARY</button>
-                </div>
+                    <!-- <button type="button" class="btn btn-primary btn-sm" ng-click="saveBeneficiary(newBeneficiary)" ng-disabled="!newBeneficiary.name || !newBeneficiary.birthdate || isSaving">ADD BENEFICIARY</button> -->
+
+                  </div>
             </div>
         </div>
     </div>
@@ -173,53 +186,62 @@ $('#form').validationEngine('attach');
 
 
 
-<div class="modal fade" id="edit-permission-modal">
+<div class="modal fade" id="edit-beneficiary-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">EDIT PERMISSION </h4>
+        <h4 class="modal-title">EDIT BENEFICIARY</h4>
       </div>
       <div class="modal-body">
-        <form id="edit_permission">   
-
+        <form id="edit_beneficiary">   
           <div class="col-md-12">
             <div class="form-group">
-              <label>PERMISSION<i class="required">*</i></label>
-              <select class="form-control" ng-options="opt.id as opt.value for opt in permissions" ng-model="adata.permission_id" ng-change = "getPermission(adata.permission_id)">
-              </select>
+              <label>Name<i class="required">*</i></label>
+              <input type="text" class="form-control" ng-model="currentBeneficiary.name" ng-required="true">
             </div>
           </div> 
-
-          <div class="col-md-12">
+          <div class="col-md-4">
             <div class="form-group">
-              <label> DATE <i class="required">*</i></label>
-              <input type="text" class="form-control datepicker" ng-model="adata.date" data-validation-engine="validate[required]">
+              <label>Birthdate<i class="required">*</i></label>
+              <input type="date" class="form-control" ng-model="currentBeneficiary.birthdate" ng-required="true">
             </div>
           </div>
-          <div class="col-md-12">
+          <div class="col-md-4">
             <div class="form-group">
-              <label>REMARKS<i class="required">*</i></label>
-              <textarea type="text" class="form-control" ng-model="adata.remarks" data-validation-engine="validate[required]"></textarea>
+              <label>Age<i class="required">*</i></label>
+              <input type="number" class="form-control" ng-model="currentBeneficiary.age" ng-required="true">
             </div>
           </div>
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>AMOUNT<i class="required">*</i></label>
-              <input type="text" class="form-control" decimal = "true" ng-model="adata.amount" data-validation-engine="validate[required]">
-            </div>
-          </div>
-
         </form>
-       </div>  
+      </div>  
       <div class="modal-footer">
+        <!-- Assuming this is in your edit modal -->
+        
+        <!-- <button type="button" class="btn btn-danger btn-sm btn-min" ng-click="editBeneficiaryVisibility(currentBeneficiary.id)">DELETE BENEFICIARY</button> -->
+     
+     
+     
+     <!-- //////////////////////// UNCOMMENT BELOW-->
+     
+     
+     
+     
+     
+        <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
+        {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
+    </button>
         <button type="button" class="btn btn-danger btn-sm btn-min" data-dismiss="modal">CANCEL</button>
-        <button type="button" class="btn btn-primary btn-sm btn-min" ng-click="updatePermission(adata)">SAVE</button>
+        <button type="button" class="btn btn-primary btn-sm btn-min" ng-click="updateBeneficiary()">SAVE</button>
       </div>
     </div>
   </div>
 </div>
 
+
+<script>
+$('#edit_beneficiary').validationEngine('attach');
+</script>
 
 
 <script>

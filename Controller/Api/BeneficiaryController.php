@@ -1,5 +1,5 @@
 <?php
-class CrudsController extends AppController {
+class BeneficiaryController extends AppController {
 
     public function beforeFilter(){
         parent::beforeFilter();
@@ -423,57 +423,13 @@ class CrudsController extends AppController {
     //     ));
 
     // }
-    //WORKING VISIBLEEEEEEEEEEEEEEE
-    // public function view($id = null) {
-    //     // Fetch the Crud along with its CrudStatus and Beneficiaries
-    //     $data = $this->Crud->find('first', array(
-    //         'contain' => array(
-    //             'CrudStatus' => array('name'), // Include CrudStatus name
-    //             'Beneficiary' => array( // Include Beneficiary fields and ensure 'id' is present
-    //                 'id', 'name', 'birthdate', 'age', 'visible'
-    //             )
-    //         ),
-    //         'conditions' => array(
-    //             'Crud.id' => $id, // Find by Crud id
-    //             'Crud.visible' => true // Ensure Crud is visible
-    //         )
-    //     ));
-    
-    //     if (!$data) {
-    //         // Return response if no data is found
-    //         $response = array(
-    //             'ok' => false,
-    //             'msg' => 'No data found for this Crud.'
-    //         );
-    //     } else {
-    //         // Filter out hidden beneficiaries (visible = 0)
-    //         $data['Beneficiary'] = array_filter($data['Beneficiary'], function($beneficiary) {
-    //             return $beneficiary['visible'] == 1; // Only include visible beneficiaries
-    //         });
-    
-    //         // Return the found data
-    //         $response = array(
-    //             'ok' => true,
-    //             'msg' => 'view',
-    //             'data' => $data
-    //         );
-    //     }
-    
-    //     // Set response and serialize it
-    //     $this->set(array(
-    //         'response' => $response,
-    //         '_serialize' => 'response'
-    //     ));
-    // }
-    
+
     public function view($id = null) {
         $data = $this->Crud->find('first', array(
             'contain' => array(
                 'CrudStatus' => array('name'),
-                'Beneficiary' => array(
-                    'conditions' => array('Beneficiary.visible' => 1), // Only fetch visible beneficiaries
-                    'fields' => array('id','name', 'birthdate', 'age','visible') // Include required fields
-                )
+                'Beneficiary' =>array(
+                    'name','birthdate','age')// Include the related Beneficiary data here
             ),
             'conditions' => array(
                 'Crud.id' => $id,
@@ -499,7 +455,6 @@ class CrudsController extends AppController {
             '_serialize' => 'response'
         ));
     }
-    
     
 
 
@@ -1096,180 +1051,47 @@ class CrudsController extends AppController {
 //     $this->set('_serialize', 'response');
 // }
 
-//LATEST
-// public function edit($id = null) {
-//     $crudData = $this->request->data['Crud'];
-//     $deletedBeneficiaries = $this->request->data['deletedBeneficiaries'];
 
-//     // Log the received data
-//     debug($deletedBeneficiaries);
-    
-//     // Check if the crudData is being saved
-//     if ($this->Crud->save($crudData)) {
-//         // Handle deleted beneficiaries
-//         foreach ($deletedBeneficiaries as $delBeneficiary) {
-//             if (isset($delBeneficiary['name']) && !empty($delBeneficiary['name']) &&
-//                 isset($delBeneficiary['birthdate']) && !empty($delBeneficiary['birthdate'])) {
-        
-//                 // Find beneficiary by name and birthdate
-//                 $beneficiary = $this->Beneficiary->find('first', [
-//                     'conditions' => [
-//                         'name' => $delBeneficiary['name'],
-//                         'birthdate' => $delBeneficiary['birthdate']
-//                     ]
-//                 ]);
-
-//                 if ($beneficiary) {
-//                     // Attempt deletion
-//                     if ($this->Beneficiary->delete($beneficiary['Beneficiary']['id'])) {
-//                         $this->log('Deleted beneficiary ID: ' . $beneficiary['Beneficiary']['id'], 'debug');
-//                     } else {
-//                         $this->log('Failed to delete beneficiary ID: ' . $beneficiary['Beneficiary']['id'], 'debug');
-//                     }
-//                 } else {
-//                     $this->log('Beneficiary not found for deletion: ' . json_encode($delBeneficiary), 'debug');
-//                 }
-//             } else {
-//                 $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
-//             }
-//         }
-        
-//         // Respond with success
-//         $response = ['ok' => true, 'msg' => 'Updated successfully.'];
-//     } else {
-//         $response = ['ok' => false, 'msg' => 'Update failed.'];
-//     }
-
-//     $this->set(compact('response'));
-//     $this->set('_serialize', 'response');
-// }
-
-
-// public function remove() {
-//     $this->request->allowMethod(['post', 'delete']);
-    
-//     $name = $this->request->getData('name');
-//     $birthdate = $this->request->getData('birthdate');
-
-//     // Check if the beneficiary exists
-//     $beneficiary = $this->Beneficiary->find('first', [
-//         'conditions' => [
-//             'name' => $name,
-//             'birthdate' => $birthdate
-//         ]
-//     ]);
-
-//     if (!$beneficiary) {
-//         throw new NotFoundException(__('Invalid Beneficiary name or birthdate'));
-//     }
-
-//     // Attempt to delete the beneficiary
-//     if ($this->Beneficiary->delete($beneficiary['Beneficiary']['id'])) {
-//         $response = [
-//             'ok' => true,
-//             'msg' => 'Deleted successfully',
-//             'data' => $name,
-//         ];
-//     } else {
-//         $response = [
-//             'ok' => false,
-//             'msg' => 'Could not delete the beneficiary',
-//             'data' => $name,
-//         ];
-//     }
-
-//     $this->set([
-//         'response' => $response,
-//         '_serialize' => 'response'
-//     ]);
-// }
-//LATEST
-// public function edit($id = null) {
-//     $crudData = $this->request->data['Crud'];
-//     $deletedBeneficiaries = $this->request->data['deletedBeneficiaries'];
-
-//     // Log the received data
-//     debug($deletedBeneficiaries);
-    
-//     // Check if the crudData is being saved
-//     if ($this->Crud->save($crudData)) {
-//         // Handle "deletion" by setting `visible` to 0
-//         foreach ($deletedBeneficiaries as $delBeneficiary) {
-//             if (isset($delBeneficiary['id']) && !empty($delBeneficiary['id'])) {
-//                 // Update the `visible` field to 0 for the beneficiary with the given ID
-//                 $this->Beneficiary->id = $delBeneficiary['id'];
-//                 if ($this->Beneficiary->saveField('visible', 0)) {
-//                     $this->log('Set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
-//                 } else {
-//                     $this->log('Failed to set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
-//                 }
-//             } else {
-//                 $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
-//             }
-//         }
-
-//         // Respond with success
-//         $response = ['ok' => true, 'msg' => 'Updated successfully.'];
-//     } else {
-//         $response = ['ok' => false, 'msg' => 'Update failed.'];
-//     }
-
-//     $this->set(compact('response'));
-//     $this->set('_serialize', 'response');
-// }
-//LAST WORKING WITH GOOD EDIT NO DUPS BUT NO DELETE
 public function edit($id = null) {
-    // Get Crud data from request
     $crudData = $this->request->data['Crud'];
     $deletedBeneficiaries = $this->request->data['deletedBeneficiaries'];
-    $beneficiariesData = $this->request->data['beneficiaries'];
 
-    // Log the received data for debugging
-    $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
-    $this->log('Crud Data: ' . json_encode($crudData), 'debug');
-    $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
-
-    // Check if the Crud data is being saved successfully
+    // Log the received data
+    debug($deletedBeneficiaries);
+    
+    // Check if the crudData is being saved
     if ($this->Crud->save($crudData)) {
-        // Handle "deletion" by setting `visible` to 0 for beneficiaries
+        // Handle deleted beneficiaries
         foreach ($deletedBeneficiaries as $delBeneficiary) {
-            if (!empty($delBeneficiary['id'])) {
-                // Fetch the beneficiary by ID
-                $this->Beneficiary->id = $delBeneficiary['id'];
-                
-                // Check if beneficiary exists in the database
-                if ($this->Beneficiary->exists()) {
-                    // Attempt to set `visible` to 0
-                    if ($this->Beneficiary->saveField('visible', 0)) {
-                        $this->log('Set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+            if (isset($delBeneficiary['name']) && !empty($delBeneficiary['name']) &&
+                isset($delBeneficiary['birthdate']) && !empty($delBeneficiary['birthdate'])) {
+        
+                // Find beneficiary by name and birthdate
+                $beneficiary = $this->Beneficiary->find('first', [
+                    'conditions' => [
+                        'name' => $delBeneficiary['name'],
+                        'birthdate' => $delBeneficiary['birthdate']
+                    ]
+                ]);
+
+                if ($beneficiary) {
+                    // Attempt deletion
+                    if ($this->Beneficiary->delete($beneficiary['Beneficiary']['id'])) {
+                        $this->log('Deleted beneficiary ID: ' . $beneficiary['Beneficiary']['id'], 'debug');
                     } else {
-                        $this->log('Failed to set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+                        $this->log('Failed to delete beneficiary ID: ' . $beneficiary['Beneficiary']['id'], 'debug');
                     }
                 } else {
-                    $this->log('Beneficiary ID: ' . $delBeneficiary['id'] . ' does not exist in the database.', 'debug');
+                    $this->log('Beneficiary not found for deletion: ' . json_encode($delBeneficiary), 'debug');
                 }
             } else {
                 $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
             }
         }
-
-        // Save or update remaining beneficiaries (for editing)
-        foreach ($beneficiariesData as $beneficiary) {
-            if (!empty($beneficiary['id'])) {
-                // Update existing beneficiary
-                $this->Beneficiary->id = $beneficiary['id'];
-                $this->Beneficiary->save($beneficiary);
-            } else {
-                // Add new beneficiary
-                $this->Beneficiary->create();
-                $this->Beneficiary->save($beneficiary);
-            }
-        }
-
+        
         // Respond with success
         $response = ['ok' => true, 'msg' => 'Updated successfully.'];
     } else {
-        // Respond with failure
         $response = ['ok' => false, 'msg' => 'Update failed.'];
     }
 
@@ -1278,19 +1100,6 @@ public function edit($id = null) {
 }
 
 
-// public function remove() {
-//     $this->request->allowMethod(['post']);
-//     $id = $this->request->data['id'];
-
-//     // Find the beneficiary and update the visible status
-//     $beneficiary = $this->Beneficiary->get($id);
-//     $beneficiary->visible = 0; // Set to hidden
-//     if ($this->Beneficiary->save($beneficiary)) {
-//         $this->set(['ok' => true, 'msg' => 'Beneficiary hidden successfully.', '_serialize' => ['ok', 'msg']]);
-//     } else {
-//         $this->set(['ok' => false, 'msg' => 'Failed to hide beneficiary.', '_serialize' => ['ok', 'msg']]);
-//     }
-// }
 
 
 
@@ -1300,58 +1109,6 @@ public function edit($id = null) {
 
 
 
-
-
-
-
-
-
-// public function save() {
-//     $this->Crud->create();
-
-//     $crudData = $this->request->data['Crud'];
-//     $beneficiariesData = $this->request->data['beneficiaries'];
-
-//     // Save the Crud data
-//     if ($this->Crud->save($crudData)) {
-//         foreach ($beneficiariesData as $beneficiary) {
-//             // Check if the beneficiary already exists by name
-//             $existingBeneficiary = $this->Beneficiary->find('first', array(
-//                 'conditions' => array(
-//                     'Beneficiary.name' => $beneficiary['name'],
-//                     'cruds_id' => $crudData['id'] // Ensure we're matching the right Crud
-//                 )
-//             ));
-
-//             if ($existingBeneficiary) {
-//                 // Update the existing beneficiary's visibility
-//                 $existingBeneficiary['Beneficiary']['visible'] = 0; // Mark as deleted
-//                 $this->Beneficiary->id = $existingBeneficiary['Beneficiary']['id'];
-//                 $this->Beneficiary->saveField('visible', 0);
-//             } else {
-//                 // If not existing, create a new beneficiary
-//                 $this->Beneficiary->create();
-//                 $this->Beneficiary->save($beneficiary);
-//             }
-//         }
-
-//         $this->set(array(
-//             'response' => array(
-//                 'ok' => true,
-//                 'msg' => 'Data saved successfully',
-//             ),
-//             '_serialize' => 'response'
-//         ));
-//     } else {
-//         $this->set(array(
-//             'response' => array(
-//                 'ok' => false,
-//                 'msg' => 'Failed to save Crud data',
-//             ),
-//             '_serialize' => 'response'
-//         ));
-//     }
-// }
 
 
 
@@ -1397,67 +1154,43 @@ public function edit($id = null) {
 
 
 
-// public function save() {
-//     // Assuming you've received the data from the frontend
-//     $crudData = $this->request->getData('Crud');
-//     $beneficiariesData = $this->request->getData('beneficiaries');
-//     $deletedBeneficiaries = $this->request->getData('deletedBeneficiaries');
-
-//     // Save or update the Crud data
-//     // ... (your existing logic for saving Crud data)
-
-//     // Handle beneficiaries
-//     if (!empty($beneficiariesData)) {
-//         foreach ($beneficiariesData as $beneficiary) {
-//             // Your logic for saving or updating beneficiaries
-//         }
-//     }
-
-//     // Handle deletions
-//     if (!empty($deletedBeneficiaries)) {
-//         foreach ($deletedBeneficiaries as $beneficiaryName) {
-//             // Find the beneficiary by name (or better yet, by ID if possible)
-//             $beneficiary = $this->Beneficiary->find('first', [
-//                 'conditions' => ['name' => $beneficiaryName]
-//             ]);
-//             if ($beneficiary) {
-//                 // Delete the beneficiary
-//                 $this->Beneficiary->delete($beneficiary->id);
-//             }
-//         }
-//     }
-
-//     // Return response
-//     $this->set(['response' => ['ok' => true, 'msg' => 'Saved successfully'], '_serialize' => 'response']);
-// }
 
 
 
 
 
-    //ORIGINAL
-    // public function delete($id = null){
-        
-    //     if($this->Crud->hide($id)){
-    //         $response = array(
-    //             'ok'    =>  true,
-    //             'msg'   =>  'Deleted',
-    //             'data'  =>  $id,
-    //         );
-    //     }else{
-    //         $response = array(
-    //             'ok'    =>  false,
-    //             'msg'   =>  'Not deleted',
-    //             'data'  =>  $id,
-    //         );
-    //     }
-    //     $this->set(array(
-    //         'response'     =>  $response,
-    //         '_serialize'   =>  'response'
-    //     ));
-    // }
 
-    // // public function delete($id = null) {
+public function delete($id = null){
+    // Check if the ID is valid
+    if (!$id || !$this->Beneficiary->exists($id)) {
+        throw new NotFoundException(__('Invalid status ID'));
+    }
+
+    // Attempt to delete the status
+    if ($this->Beneficiary->delete($id)) {
+        $response = array(
+            'ok'    => true,
+            'msg'   => 'Deleted successfully',
+            'data'  => $id,
+        );
+    } else {
+        $response = array(
+            'ok'    => false,
+            'msg'   => 'Could not delete the status',
+            'data'  => $id,
+        );
+    }
+
+    // Send the response
+    $this->set(array(
+        'response'     => $response,
+        '_serialize'   => 'response'
+    ));
+}
+
+
+
+    // public function delete($id = null) {
     //     $this->request->allowMethod(['post', 'delete']);
     //     $beneficiary = $this->Beneficiaries->get($id);
     
@@ -1469,47 +1202,5 @@ public function edit($id = null) {
     
     //     return $this->redirect(['action' => 'index']);
     // }
-    
-
-    public function delete($id = null) {
-        // Attempt to delete the Crud entry
-        if ($this->Crud->hide($id)) {
-            // If the Crud was successfully deleted, now handle the beneficiaries
-            // Loop through deletedBeneficiaries or pass the beneficiary name
-            $deletedBeneficiaries = $this->request->data['deletedBeneficiaries'] ?? [];
-    
-            foreach ($deletedBeneficiaries as $name) {
-                $beneficiary = $this->Beneficiary->find('first', [
-                    'conditions' => ['Beneficiary.name' => $name]
-                ]);
-    
-                if ($beneficiary) {
-                    // Attempt to delete the beneficiary by ID
-                    if ($this->Beneficiary->delete($beneficiary['Beneficiary']['name'])) {
-                        // Log success or do something if needed
-                    } else {
-                        // Handle failure to delete beneficiary
-                    }
-                }
-            }
-    
-            $response = [
-                'ok' => true,
-                'msg' => 'Deleted successfully',
-                'data' => $id,
-            ];
-        } else {
-            $response = [
-                'ok' => false,
-                'msg' => 'Not deleted',
-                'data' => $id,
-            ];
-        }
-    
-        $this->set(array(
-            'response' => $response,
-            '_serialize' => 'response'
-        ));
-    }
     
 }
