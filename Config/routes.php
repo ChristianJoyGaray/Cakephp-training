@@ -25,6 +25,12 @@
 // app/Config/routes.php
 // Router::connect('/api/select', array('controller' => 'crud_statuses', 'action' => 'select', 'api' => true));
 
+Router::connect('/crud/print/:id', 
+    ['controller' => 'cruds', 'action' => 'printCrud'], 
+    ['pass' => ['id'], 'id' => '[0-9]+']
+);
+
+
     // api resources
     $resources = array(
       'users','select',

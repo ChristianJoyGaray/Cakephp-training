@@ -1,4 +1,7 @@
 <?php
+App::uses('HttpSocket', 'Network/Http');
+App::import('Vendor', 'FPDF', array('file' => 'FPDF/fpdf.php'));
+
 class CrudsController extends AppController {
 
     public function beforeFilter(){
@@ -8,6 +11,75 @@ class CrudsController extends AppController {
 
     public $uses = ['Crud', 'Beneficiary'];
 
+    //OGGGGGG PRINT
+    // public function printCrud($id = null) {
+    //     // Load the specific Crud based on the ID
+    //     $crud = $this->Crud->findById($id);
+    //     if (empty($crud)) {
+    //         throw new NotFoundException(__('Invalid CRUD'));
+    //     }
+
+    //     // Initialize FPDF
+    //     $pdf = new FPDF();
+    //     $pdf->AddPage();
+    //     $pdf->SetFont('Arial', 'B', 16);
+
+    //     // Output CRUD data
+    //     $pdf->Cell(40, 10, 'CRUD Details');
+    //     $pdf->Ln(10); // Line break
+    //     $pdf->SetFont('Arial', '', 12);
+    //     $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+    //     $pdf->Ln(10);
+    //     $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+    //     $pdf->Ln(10);
+    //     $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+    //     $pdf->Ln(10);
+    //     $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+    //     $pdf->Ln(10);
+    //     $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : 'N/A'));
+
+    //     // Output the PDF
+    //     $this->response->type('application/pdf');
+    //     $pdf->Output();
+    //     return $this->response;
+    // }
+
+    public function printCrud($id = null) {
+        // Load the specific Crud based on the ID
+        $crud = $this->Crud->find('first', [
+            'conditions' => ['Crud.id' => $id],
+            'contain' => ['CrudStatuses'] // Use CrudStatuses here
+        ]);
+        
+        if (empty($crud)) {
+            throw new NotFoundException(__('Invalid CRUD'));
+        }
+    
+        // Initialize FPDF
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', 'B', 16);
+    
+        // Output CRUD data
+        $pdf->Cell(40, 10, 'CRUD Details');
+        $pdf->Ln(10); // Line break
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : 'N/A')); // Use CrudStatuses here
+    
+        // Output the PDF
+        $this->response->type('application/pdf');
+        $pdf->Output();
+        return $this->response;
+    }
+    
     //OGGGGGGGGGGGGGG before advance search
     // public function index(){
 
@@ -381,6 +453,7 @@ class CrudsController extends AppController {
                 'name' => $crud['Crud']['name'],
                 'age' => $crud['Crud']['age'],
                 'character' => $crud['Crud']['character'],
+                'birthdate' => $crud['Crud']['birthdate'],
                 'visible' => $crud['Crud']['visible'],
                 'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null,//status_name
             ];

@@ -22,6 +22,7 @@
               <th>NAME</th>
               <th>STATUS</th>
               <th class="w90x"></th>
+              <th class="w90x"></th>
             </tr>
           </thead>
           <tbody>
@@ -35,6 +36,11 @@
                       <a href="#/crud/edit/{{ crud.id }}" class="btn btn-primary" title="EDIT"><i class="fa fa-edit"></i></a> 
                       <a href="javascript:void(0)" ng-click="remove(crud)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
                   </div>
+              </td>
+              <td>
+                <div class="btn-group-xs btn-group">
+                <a href="/Training/cruds/printCrud/{{ crud.id }}" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+                </div>
               </td>
             </tr>
           </tbody>
