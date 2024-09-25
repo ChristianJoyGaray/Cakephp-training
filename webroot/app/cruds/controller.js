@@ -91,6 +91,21 @@ app.controller('CrudController', function($scope, Crud) {
 
   // Initialize load
   $scope.load();
+  $scope.remove = function(data) {
+        bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+          if (c) {
+            Crud.remove({ id: data.id }, function(e) {
+              if (e.ok) {
+                $.gritter.add({
+                  title: 'Successful!',
+                  text: e.msg,
+                });
+                $scope.load();
+              }
+            });
+          }
+        });
+      }
 });
 
 

@@ -18,6 +18,7 @@ class Crud extends AppModel {
     )
 );
 
+
     // Relationship with Beneficiary (one-to-many)
 
   public $hasMany = array(

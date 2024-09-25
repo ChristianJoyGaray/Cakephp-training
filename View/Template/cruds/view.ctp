@@ -11,7 +11,7 @@
           <dd>{{ data.Crud.age }}</dd>
 
           <dt>Status:</dt>
-          <dd>{{ data.CrudStatus.name }}</dd> 
+          <dd>{{ data.CrudStatuses.name }}</dd> 
           
 
           <dt>Character:</dt>

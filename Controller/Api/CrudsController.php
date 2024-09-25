@@ -382,7 +382,7 @@ class CrudsController extends AppController {
                 'age' => $crud['Crud']['age'],
                 'character' => $crud['Crud']['character'],
                 'visible' => $crud['Crud']['visible'],
-                'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null, //status_name for name
+                'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null,//status_name
             ];
         }
     
@@ -812,7 +812,7 @@ class CrudsController extends AppController {
     public function view($id = null) {
         $data = $this->Crud->find('first', array(
             'contain' => array(
-                'CrudStatus' => array('name'),
+                'CrudStatuses' => array('name'),
                 'Beneficiary' => array(
                     'conditions' => array('Beneficiary.visible' => 1), // Only fetch visible beneficiaries
                     'fields' => array('id','name', 'birthdate', 'age','visible') // Include required fields
