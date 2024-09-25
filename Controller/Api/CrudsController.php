@@ -8,76 +8,419 @@ class CrudsController extends AppController {
 
     public $uses = ['Crud', 'Beneficiary'];
 
-
-    public function index(){
-
-
-        // // without pagination
-        // $datas = $this->Crud->find('all', array());
-
-        // // transform data
-        // $cruds = array();
-        // foreach ($datas as $data){
-        //     $cruds[] = array( //data[0].Crud.name
-        //         'id'            =>   $data['Crud']['id'],
-        //         'name'          =>   properCase($data['Crud']['name']),
-        //         'age'           =>   $data['Crud']['age'],
-        //         'character'     =>   $data['Crud']['character'],
-        //         'visible'       =>   $data['Crud']['visible'],
-        //         'date_created'  =>   date('m/d/Y', strtotime($data['Crud']['created'])),
-        //     );
-        // }
-
-        //with pagination
-        //default page 1
-        $page = isset($this->request->query['page'])? $this->request->query['page'] : 1;
+    //OGGGGGGGGGGGGGG before advance search
+    // public function index(){
 
 
-        $conditions = array();
-        $conditions['Crud.visible'] = true;
-        //paginate data
-        $paginatorSettings = array(
-            'conditions' => $conditions,
-            'limit'      => 25,
-            'page'       => $page,
-            'order'      => array(
-            'Crud.name'  => 'ASC'
-            )
-            );
-            $modelName = 'Crud'; //cruds in table
-            $this->Paginator->settings = $paginatorSettings;
-            $tmpData = $this->Paginator->paginate($modelName);
-            $paginator = $this->request->params['paging'][$modelName];
 
-            //transform data
-            $cruds_=array();
-            foreach ($tmpData as $crud){
-                $cruds_[] = array(
-                    'id'            =>   $crud['Crud']['id'],
-                    'name'          =>   properCase($crud['Crud']['name']),
-                    'age'           =>   $crud['Crud']['age'],
-                    'character'     =>   $crud['Crud']['character'],
-                    'visible'       =>   $crud['Crud']['visible'],
-                    'date_created'  =>   date('m/d/Y', strtotime($crud['Crud']['created'])),
-                );
-            }
+    //     // // without pagination
+    //     // $datas = $this->Crud->find('all', array());
+
+    //     // // transform data
+    //     // $cruds = array();
+    //     // foreach ($datas as $data){
+    //     //     $cruds[] = array( //data[0].Crud.name
+    //     //         'id'            =>   $data['Crud']['id'],
+    //     //         'name'          =>   properCase($data['Crud']['name']),
+    //     //         'age'           =>   $data['Crud']['age'],
+    //     //         'character'     =>   $data['Crud']['character'],
+    //     //         'visible'       =>   $data['Crud']['visible'],
+    //     //         'date_created'  =>   date('m/d/Y', strtotime($data['Crud']['created'])),
+    //     //     );
+    //     // }
+
+    //     //with pagination
+    //     //default page 1
+    //     $page = isset($this->request->query['page'])? $this->request->query['page'] : 1;
 
 
-        $response = array(
-            'ok'=>true,
-            'msg'=>'index',
-            // 'untransformed' => $tmpData,
-            'data' => $cruds_,
-            'paginator' => $paginator,
-        );
+    //     $conditions = array();
+    //     $conditions['Crud.visible'] = true;
+    //     //paginate data
+    //     $paginatorSettings = array(
+    //         'conditions' => $conditions,
+    //         'limit'      => 25,
+    //         'page'       => $page,
+    //         'order'      => array(
+    //         'Crud.name'  => 'ASC'
+    //         )
+    //         );
+    //         $modelName = 'Crud'; //cruds in table
+    //         $this->Paginator->settings = $paginatorSettings;
+    //         $tmpData = $this->Paginator->paginate($modelName);
+    //         $paginator = $this->request->params['paging'][$modelName];
 
-        $this->set(array(
-            'response'=> $response,
-            '_serialize'=>'response'
-        ));
+    //         //transform data
+    //         $cruds_=array();
+    //         foreach ($tmpData as $crud){
+    //             $cruds_[] = array(
+    //                 'id'            =>   $crud['Crud']['id'],
+    //                 'name'          =>   properCase($crud['Crud']['name']),
+    //                 'age'           =>   $crud['Crud']['age'],
+    //                 'character'     =>   $crud['Crud']['character'],
+    //                 'visible'       =>   $crud['Crud']['visible'],
+    //                 'date_created'  =>   date('m/d/Y', strtotime($crud['Crud']['created'])),
+    //             );
+    //         }
 
+
+    //     $response = array(
+    //         'ok'=>true,
+    //         'msg'=>'index',
+    //         // 'untransformed' => $tmpData,
+    //         'data' => $cruds_,
+    //         'paginator' => $paginator,
+    //     );
+
+    //     $this->set(array(
+    //         'response'=> $response,
+    //         '_serialize'=>'response'
+    //     ));
+      
+    // }
+
+    //2ND OGGGGGGGGGG
+    // public function index(){
+    //     $cruds = $this->Crud->getAllCrudsWithStatuses();
+    
+    //     // default page 1
+    //     $page = isset($this->request->query['page']) ? $this->request->query['page'] : 1;
+    
+    //     $conditions = array();
+    //     $conditions['Crud.visible'] = true;
+        
+    
+    //     // paginate data
+    //     $paginatorSettings = array(
+    //         'conditions' => $conditions,
+    //         'limit'      => 25,
+    //         'extra' => array('conditions'=>$conditions),
+    //         'page'       => $page,
+    //         'order'      => array('Crud.name'  => 'ASC')
+    //     );
+    
+    //     $this->Paginator->settings = $paginatorSettings;
+    //     $tmpData = $this->Paginator->paginate('Crud');
+    //     $paginator = $this->request->params['paging']['Crud'];
+       
+    //     // Transform data
+    //     $cruds_ = array();
+    //     foreach ($tmpData as $crud) {
+    //         $cruds_[] = array(
+    //             'id'            =>   $crud['Crud']['id'],
+    //             'name'          =>   properCase($crud['Crud']['name']),
+    //             'age'           =>   $crud['Crud']['age'],
+    //             'character'     =>   $crud['Crud']['character'],
+    //             'visible'       =>   $crud['Crud']['visible'],
+    //             'date_created'  =>   date('m/d/Y', strtotime($crud['Crud']['created'])),
+    //             'crudStatusId' =>    $crud['Crud']['crudStatusId'], 
+
+    //         );
+
+    //     }
+    
+    //     $response = array(
+    //         'ok'        => true,
+    //         'msg'       => 'index',
+    //         'data'      => $cruds_,
+    //         'paginator' => $paginator,
+    //     );
+    
+    //     $this->set(array(
+    //         'response'  => $response,
+    //         '_serialize'=> 'response'
+    //     ));
+    // }
+
+    //3RD WORKING WITH STATUSES DISPLAY
+    // public function index() {
+    //     // default page 1
+    //     $page = isset($this->request->query['page']) ? $this->request->query['page'] : 1;
+    
+    //     $conditions = array();
+        
+    //     // Optionally add other search conditions here
+    
+    //     $this->paginate = array(
+    //         'Crud' => array(
+    //             'limit' => 25,
+    //             'page' => $page,
+    //             'contain' => array('CrudStatuses'), // Include CrudStatus in the query
+    //         )
+    //     );
+    
+    //     $tmpData = $this->paginate('Crud');
+       
+    //     // transform data
+    //     $cruds = array();
+    //     if (!empty($tmpData)) {
+    //         foreach ($tmpData as $crud) {
+    //             $cruds[] = array(
+    //                 'id' => $crud['Crud']['id'],
+    //                 'name' => $crud['Crud']['name'],
+    //                 'age' => $crud['Crud']['age'],
+    //                 'character' => $crud['Crud']['character'],
+    //                 'visible' => $crud['Crud']['visible'],
+    //                 'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : null // Safely check for existence
+    //             );
+    //         }
+    //     }
+    
+    //     $response = array(
+    //         'ok' => true,
+    //         'msg' => 'index',
+    //         'data' => $cruds,
+    //         'paginator' => $this->request->params['paging']['Crud']
+    //     );
+    
+    //     $this->set(array(
+    //         'response' => $response,
+    //         '_serialize' => 'response'
+    //     ));
+    
+    // }
+    //TEST
+    // public function index() {
+    //     // default page 1
+    //     $page = isset($this->request->query['page']) ? $this->request->query['page'] : 1;
+    
+    //     // Prepare conditions for pagination
+    //     $conditions = array('Crud.visible' => 1); // Assuming you want to fetch only visible cruds
+    
+    //     // Check for search input
+    //     if (!empty($this->request->query['search'])) {
+    //         $search = $this->request->query['search'];
+    //         $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Search condition for name
+    //     }
+    
+    //     // Pagination setup
+    //     $this->paginate = array(
+    //         'Crud' => array(
+    //             'conditions' => $conditions,
+    //             'limit' => 25,
+    //             'page' => $page,
+    //             'contain' => array('CrudStatuses'), // Include CrudStatus in the query
+    //         )
+    //     );
+    
+    //     $tmpData = $this->paginate('Crud');
+    
+    //     // Transform data
+    //     $cruds = array();
+    //     if (!empty($tmpData)) {
+    //         foreach ($tmpData as $crud) {
+    //             $cruds[] = array(
+    //                 'id' => $crud['Crud']['id'],
+    //                 'name' => $crud['Crud']['name'],
+    //                 'age' => $crud['Crud']['age'],
+    //                 'character' => $crud['Crud']['character'],
+    //                 'visible' => $crud['Crud']['visible'],
+    //                 'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : null // Safely check for existence
+    //             );
+    //         }
+    //     }
+    
+    //     $response = array(
+    //         'ok' => true,
+    //         'msg' => 'index',
+    //         'data' => $cruds,
+    //         'paginator' => $this->request->params['paging']['Crud']
+    //     );
+    
+    //     $this->set(array(
+    //         'response' => $response,
+    //         '_serialize' => 'response'
+    //     ));
+    // }
+    // public function index() {
+    //     // Default page 1
+    //     $page = isset($this->request->query['page']) ? $this->request->query['page'] : 1;
+    
+    //     // Prepare conditions for pagination
+    //     $conditions = array('Crud.visible' => 1); // Fetch only visible cruds
+    
+    //     // Check for search input
+    //     if (!empty($this->request->query['search'])) {
+    //         $search = $this->request->query['search'];
+    //         $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Search condition for name
+    //     }
+    
+    //     // Pagination setup
+    //     $this->paginate = array(
+    //         'Crud' => array(
+    //             'conditions' => $conditions,
+    //             'limit' => 25,
+    //             'page' => $page,
+    //             'contain' => array('CrudStatuses'), // Include CrudStatus in the query
+    //         )
+    //     );
+    
+    //     $tmpData = $this->paginate('Crud');
+    
+    //     // Transform data
+    //     $cruds = array();
+    //     if (!empty($tmpData)) {
+    //         foreach ($tmpData as $crud) {
+    //             $cruds[] = array(
+    //                 'id' => $crud['Crud']['id'],
+    //                 'name' => $crud['Crud']['name'],
+    //                 'age' => $crud['Crud']['age'],
+    //                 'character' => $crud['Crud']['character'],
+    //                 'visible' => $crud['Crud']['visible'],
+    //                 'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : null // Safely check for existence
+    //             );
+    //         }
+    //     }
+    
+    //     $response = array(
+    //         'ok' => true,
+    //         'msg' => 'index',
+    //         'data' => $cruds,
+    //         'paginator' => $this->request->params['paging']['Crud']
+    //     );
+    
+    //     $this->set(array(
+    //         'response' => $response,
+    //         '_serialize' => 'response'
+    //     ));
+    // }
+    // WORKING LATEST
+    // public function index() {
+    //     $page = isset($this->request->query['page']) ? (int)$this->request->query['page'] : 1;
+    
+    //     // Base conditions to fetch only visible cruds
+    //     $conditions = ['Crud.visible' => 1];
+    
+    //     // Check if there is a search term
+    //     if (!empty($this->request->query['search'])) {
+    //         $search = $this->request->query['search'];
+    //         $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Add the search condition
+    //     }
+    
+    //     // Log the final conditions before pagination
+    //     $this->log('Final Search Conditions: ' . print_r($conditions, true), 'debug');
+    
+    //     // Configure pagination
+    //     $this->paginate = [
+    //         'conditions' => $conditions,
+    //         'limit' => 25,
+    //         'page' => $page,
+    //         'contain' => ['CrudStatuses'], // Ensure correct model for contain
+    //     ];
+    
+    //     // Log the pagination settings for debugging
+    //     $this->log('Pagination Settings: ' . print_r($this->paginate, true), 'debug');
+    
+    //     // Perform the pagination
+    //     $cruds = $this->paginate('Crud');
+    
+    //     // Log the constructed SQL query after pagination
+    //     $this->log('Executed SQL Query: ' . print_r($this->Crud->getDataSource()->getLog(), true), 'debug');
+    
+    //     // Prepare response data
+    //     $responseCruds = [];
+    //     foreach ($cruds as $crud) {
+    //         $responseCruds[] = [
+    //             'id' => $crud['Crud']['id'],
+    //             'name' => $crud['Crud']['name'],
+    //             'age' => $crud['Crud']['age'],
+    //             'character' => $crud['Crud']['character'],
+    //             'visible' => $crud['Crud']['visible'],
+    //             'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : null,
+    //         ];
+    //     }
+    
+    //     // Prepare the response
+    //     $response = [
+    //         'ok' => true,
+    //         'msg' => 'index',
+    //         'data' => $responseCruds,
+    //         'paginator' => $this->request->params['paging']['Crud'],
+    //     ];
+    
+    //     $this->set([
+    //         'response' => $response,
+    //         '_serialize' => 'response',
+    //     ]);
+    // }
+
+    public function initialize() {
+        parent::initialize();
+        $this->loadModel('Crud'); // Load the Cruds model explicitly
     }
 
+    public function index() {
+        $page = isset($this->request->query['page']) ? (int)$this->request->query['page'] : 1;
+        
+        // Base conditions to fetch only visible cruds
+        $conditions = ['Crud.visible' => 1];
+    
+        // Check if there is a search term
+        if (!empty($this->request->query['search'])) {
+            $search = $this->request->query['search'];
+            $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Add the search condition
+        }
+    
+        // Log the final conditions before pagination
+        $this->log('Final Search Conditions: ' . print_r($conditions, true), 'debug');
+    
+        // Fetch cruds with the conditions
+        $cruds = $this->Crud->find('all', [
+            'conditions' => $conditions,
+            'limit' => 25,
+            'page' => $page,
+            'contain' => ['CrudStatuses'], // Ensure this relationship is defined correctly
+            'order' => ['Crud.id' => 'ASC']
+        ]);
+    
+        // Prepare response data
+        $responseCruds = [];
+        foreach ($cruds as $crud) {
+            $responseCruds[] = [
+                'id' => $crud['Crud']['id'],
+                'name' => $crud['Crud']['name'],
+                'age' => $crud['Crud']['age'],
+                'character' => $crud['Crud']['character'],
+                'visible' => $crud['Crud']['visible'],
+                'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null, //status_name for name
+            ];
+        }
+    
+        // Prepare the response with pagination information
+        $response = [
+            'ok' => true,
+            'msg' => 'index',
+            'data' => $responseCruds,
+            'paginator' => [
+                'page' => $page,
+                'limit' => 25,
+                'total' => $this->Crud->find('count', ['conditions' => $conditions]),
+            ],
+        ];
+    
+        $this->set([
+            'response' => $response,
+            '_serialize' => 'response',
+        ]);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     // public function add(){
 
@@ -1278,158 +1621,8 @@ public function edit($id = null) {
 }
 
 
-// public function remove() {
-//     $this->request->allowMethod(['post']);
-//     $id = $this->request->data['id'];
-
-//     // Find the beneficiary and update the visible status
-//     $beneficiary = $this->Beneficiary->get($id);
-//     $beneficiary->visible = 0; // Set to hidden
-//     if ($this->Beneficiary->save($beneficiary)) {
-//         $this->set(['ok' => true, 'msg' => 'Beneficiary hidden successfully.', '_serialize' => ['ok', 'msg']]);
-//     } else {
-//         $this->set(['ok' => false, 'msg' => 'Failed to hide beneficiary.', '_serialize' => ['ok', 'msg']]);
-//     }
-// }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// public function save() {
-//     $this->Crud->create();
-
-//     $crudData = $this->request->data['Crud'];
-//     $beneficiariesData = $this->request->data['beneficiaries'];
-
-//     // Save the Crud data
-//     if ($this->Crud->save($crudData)) {
-//         foreach ($beneficiariesData as $beneficiary) {
-//             // Check if the beneficiary already exists by name
-//             $existingBeneficiary = $this->Beneficiary->find('first', array(
-//                 'conditions' => array(
-//                     'Beneficiary.name' => $beneficiary['name'],
-//                     'cruds_id' => $crudData['id'] // Ensure we're matching the right Crud
-//                 )
-//             ));
-
-//             if ($existingBeneficiary) {
-//                 // Update the existing beneficiary's visibility
-//                 $existingBeneficiary['Beneficiary']['visible'] = 0; // Mark as deleted
-//                 $this->Beneficiary->id = $existingBeneficiary['Beneficiary']['id'];
-//                 $this->Beneficiary->saveField('visible', 0);
-//             } else {
-//                 // If not existing, create a new beneficiary
-//                 $this->Beneficiary->create();
-//                 $this->Beneficiary->save($beneficiary);
-//             }
-//         }
-
-//         $this->set(array(
-//             'response' => array(
-//                 'ok' => true,
-//                 'msg' => 'Data saved successfully',
-//             ),
-//             '_serialize' => 'response'
-//         ));
-//     } else {
-//         $this->set(array(
-//             'response' => array(
-//                 'ok' => false,
-//                 'msg' => 'Failed to save Crud data',
-//             ),
-//             '_serialize' => 'response'
-//         ));
-//     }
-// }
-
-
-
-// public function update() {
-//     $data = $this->request->getData();
-
-//     // Handle existing beneficiaries
-//     if (!empty($data['existingBeneficiaries'])) {
-//         foreach ($data['existingBeneficiaries'] as $beneficiaryData) {
-//             $beneficiary = $this->Beneficiaries->get($beneficiaryData['id']);
-//             $beneficiary = $this->Beneficiaries->patchEntity($beneficiary, $beneficiaryData);
-//             $this->Beneficiaries->save($beneficiary);
-//         }
-//     }
-
-//     // Handle new beneficiaries
-//     if (!empty($data['newBeneficiaries'])) {
-//         foreach ($data['newBeneficiaries'] as $newBeneficiaryData) {
-//             $beneficiary = $this->Beneficiaries->newEntity($newBeneficiaryData);
-//             $this->Beneficiaries->save($beneficiary);
-//         }
-//     }
-
-//     // Response logic
-//     $response = ['ok' => true, 'msg' => 'Updated successfully.'];
-//     $this->set(compact('response'));
-//     $this->viewBuilder()->setOption('serialize', 'response');
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// public function save() {
-//     // Assuming you've received the data from the frontend
-//     $crudData = $this->request->getData('Crud');
-//     $beneficiariesData = $this->request->getData('beneficiaries');
-//     $deletedBeneficiaries = $this->request->getData('deletedBeneficiaries');
-
-//     // Save or update the Crud data
-//     // ... (your existing logic for saving Crud data)
-
-//     // Handle beneficiaries
-//     if (!empty($beneficiariesData)) {
-//         foreach ($beneficiariesData as $beneficiary) {
-//             // Your logic for saving or updating beneficiaries
-//         }
-//     }
-
-//     // Handle deletions
-//     if (!empty($deletedBeneficiaries)) {
-//         foreach ($deletedBeneficiaries as $beneficiaryName) {
-//             // Find the beneficiary by name (or better yet, by ID if possible)
-//             $beneficiary = $this->Beneficiary->find('first', [
-//                 'conditions' => ['name' => $beneficiaryName]
-//             ]);
-//             if ($beneficiary) {
-//                 // Delete the beneficiary
-//                 $this->Beneficiary->delete($beneficiary->id);
-//             }
-//         }
-//     }
-
-//     // Return response
-//     $this->set(['response' => ['ok' => true, 'msg' => 'Saved successfully'], '_serialize' => 'response']);
-// }
 
 
 

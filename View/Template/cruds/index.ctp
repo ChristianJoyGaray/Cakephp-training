@@ -6,12 +6,12 @@
         <a href="#/crud/add" class="btn btn-primary btn-sm btn-block"><i class="fa fa-plus"></i> ADD </a>
       </div>
         
-      <!-- <div class="col-md-4 pull-right">
-    	  <input type="text" class="form-control search" placeholder="SEARCH HERE" ng-model="strSearch" ng-enter="search(strSearch)">
+      <div class="col-md-4 pull-right">
+        <input type="text" class="form-control search" placeholder="SEARCH HERE" ng-model="searchTxt" ng-enter="search(searchTxt)">
         <sup style="font-size:10px;color:gray">Press Enter to search</sup>
-    	</div>
+      </div>
 			
-      <div class="clearfix"></div><hr> -->
+      <div class="clearfix"></div><hr> 
 
       <div class="col-md-12">
         
@@ -20,19 +20,20 @@
             <tr>
               <th class="w10x">#</th>
               <th>NAME</th>
+              <th>STATUS</th>
               <th class="w90x"></th>
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="data in cruds">
-              <!--<td>{{ $index+1 }}</td>    if no paginator --> 
-              <td class="text-center">{{ (paginator.page - 1) * paginator.limit + $index + 1 }}</td> <!--if there's a paginator --> 
-              <td>{{ data.name }}</td>
+            <tr ng-repeat="crud in cruds">
+              <td class="text-center">{{ (paginator.page - 1) * paginator.limit + $index + 1 }}</td>
+              <td>{{ crud.name }}</td>
+              <td>{{ crud.crudStatus }}</td>
               <td>
                   <div class="btn-group-xs btn-group">
-                      <a href="#/crud/view/{{ data.id }}" class="btn btn-success" title="VIEW"><i class="fa fa-eye"></i></a> 
-                      <a href="#/crud/edit/{{ data.id }}" class="btn btn-primary" title="EDIT"><i class="fa fa-edit"></i></a> 
-                      <a href="javascript:void(0)" ng-click="remove(data)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
+                      <a href="#/crud/view/{{ crud.id }}" class="btn btn-success" title="VIEW"><i class="fa fa-eye"></i></a> 
+                      <a href="#/crud/edit/{{ crud.id }}" class="btn btn-primary" title="EDIT"><i class="fa fa-edit"></i></a> 
+                      <a href="javascript:void(0)" ng-click="remove(crud)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
                   </div>
               </td>
             </tr>
@@ -65,4 +66,3 @@
         </div>
   </div>
 </div>
-
