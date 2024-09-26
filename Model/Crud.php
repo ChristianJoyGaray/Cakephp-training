@@ -123,8 +123,27 @@ class Crud extends AppModel {
 //   return "SELECT * FROM cruds WHERE visible = true AND (name LIKE '%$search%')";
 // }
 
- // Method to get all cruds with optional search
- public function getAllCrudsWithStatuses($conditions = array()) {
+ //WORKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG FOR SEARCHHH
+//  public function getAllCrudsWithStatuses($conditions = array()) {
+//   // Start building the SQL query
+//   $sql = "SELECT Crud.*, CrudStatuses.name AS status_name 
+//           FROM cruds AS Crud 
+//           LEFT JOIN crud_statuses AS CrudStatuses ON Crud.CrudStatusId = CrudStatuses.id 
+//           WHERE Crud.visible = 1";
+
+//   // Append search condition if provided
+//   if (!empty($conditions['search'])) {
+//       $search = strtolower($this->escapeString($conditions['search']));
+//       $sql .= " AND LOWER(Crud.name) LIKE '%$search%'";
+//   }
+
+//   // Add ordering
+//   $sql .= " ORDER BY Crud.id ASC";
+
+//   return $sql; // Return the SQL query as a string
+// }
+
+public function getAllCrudsWithStatuses($conditions = array()) {
   // Start building the SQL query
   $sql = "SELECT Crud.*, CrudStatuses.name AS status_name 
           FROM cruds AS Crud 
@@ -133,15 +152,18 @@ class Crud extends AppModel {
 
   // Append search condition if provided
   if (!empty($conditions['search'])) {
-      $search = strtolower($this->escapeString($conditions['search']));
-      $sql .= " AND LOWER(Crud.name) LIKE '%$search%'";
+      $search = $conditions['search']; // Use directly instead of escapeString
+      $sql .= " AND LOWER(Crud.name) LIKE LOWER('%$search%')";
   }
 
   // Add ordering
   $sql .= " ORDER BY Crud.id ASC";
 
-  return $sql; // Return the SQL query as a string
+  return $sql; // Ensure this returns a string
 }
+
+
+
 
 // Method to count all cruds
 public function countAllCruds($conditions = array()) {

@@ -5,6 +5,26 @@
       <div class="col-md-3">
         <a href="#/crud/add" class="btn btn-primary btn-sm btn-block"><i class="fa fa-plus"></i> ADD </a>
       </div>
+      <!-- <div class="btn-group-xs btn-group">
+          <a href="/Training/cruds/printCrud" class="btn btn-primary" target="_blank" title="PRINT ALL">PRINT ALL</a>
+      </div> -->
+      <!-- 
+      <div class="btn-group-xs btn-group">
+          <a href="/Training/cruds/printCrud?search=< ?php echo isset($this->request->query['search(searchTxt)']) ? h($this->request->query['search(searchTxt)']) : ''; ?>" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+      </div> -->
+
+      <!-- <div class="btn-group-xs btn-group">
+          <a href="/Training/cruds/printCrud< ?php echo !empty($this->request->query['search']) ? '?search=' . urlencode($this->request->query['search']) : ''; ?>" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+      </div> -->
+      <div class="btn-group-xs btn-group">
+          <a href="/Training/cruds/printCrud?search={{ searchTxt }}" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+      </div>
+
+
+
+
+
+
         
       <div class="col-md-4 pull-right">
         <input type="text" class="form-control search" placeholder="SEARCH HERE" ng-model="searchTxt" ng-enter="search(searchTxt)">
@@ -22,7 +42,7 @@
               <th>NAME</th>
               <th>STATUS</th>
               <th class="w90x"></th>
-              <th class="w90x"></th>
+              <!-- <th class="w90x"></th> FOR PRINTING INDIVIDUALLY-->
             </tr>
           </thead>
           <tbody>
@@ -37,11 +57,11 @@
                       <a href="javascript:void(0)" ng-click="remove(crud)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
                   </div>
               </td>
-              <td>
+              <!-- <td>
                 <div class="btn-group-xs btn-group">
-                <a href="/Training/cruds/printCrud/{{ crud.id }}" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+                <a href="/Training/cruds/printCrud/{{ crud.id }}" class="btn btn-primary" target="_blank"title="PRINT">PRINT</a>
                 </div>
-              </td>
+              </td> FOR PRINTING INDIVIDUALLY -->
             </tr>
           </tbody>
       </table>

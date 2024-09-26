@@ -21,14 +21,15 @@
     ['pass' => ['id'], 'id' => '\d+']
 );
 
-
-// app/Config/routes.php
-// Router::connect('/api/select', array('controller' => 'crud_statuses', 'action' => 'select', 'api' => true));
-
+// Route for printing specific CRUD by ID
+// Route for printing specific CRUD by ID
 Router::connect('/crud/print/:id', 
     ['controller' => 'cruds', 'action' => 'printCrud'], 
     ['pass' => ['id'], 'id' => '[0-9]+']
 );
+
+// Route for printing search-filtered CRUDs
+Router::connect('/cruds/printCrud/*', ['controller' => 'Cruds', 'action' => 'printCrud']);
 
 
     // api resources

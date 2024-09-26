@@ -47,11 +47,71 @@
 //   }
 // });
 
-//TEST
+//WORKING SEARCH
+// app.controller('CrudController', function($scope, Crud) {
+    
+//   $scope.cruds = [];
+//   $scope.searchTxt = '';
+
+//   // Load data
+//   $scope.load = function(options) {
+//       options = options || {};
+
+//       // Call the CRUD API with the options (which may include the search term)
+//       Crud.query(options, function(e) {
+//           console.log('Options:', options); // Log options to check search term
+//           console.log('Backend response:', e); // Log response to ensure correct data
+
+//           if (e.ok) {
+//               // Update cruds with the filtered data (returned by the backend)
+//               $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+//               console.log('Cruds:', $scope.cruds); // Log the cruds array
+
+//               // Update paginator info
+//               $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 };
+
+//               // If there are results, create pages; otherwise, reset pages
+//               $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+//           } else {
+//               // Handle the case where the query was not successful
+//               console.error('Error fetching data:', e);
+//           }
+//       });
+//   };
+
+//   // Search functionality
+//   $scope.search = function() {
+//       console.log('Search term:', $scope.searchTxt);
+//       if ($scope.searchTxt.length > 0) {
+//           $scope.load({ search: $scope.searchTxt }); // Load filtered results
+//       } else {
+//           $scope.load(); // Load all items if the search box is empty
+//       }
+//   };
+
+//   // Initialize load
+//   $scope.load();
+//   $scope.remove = function(data) {
+//         bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+//           if (c) {
+//             Crud.remove({ id: data.id }, function(e) {
+//               if (e.ok) {
+//                 $.gritter.add({
+//                   title: 'Successful!',
+//                   text: e.msg,
+//                 });
+//                 $scope.load();
+//               }
+//             });
+//           }
+//         });
+//       }
+// });
 app.controller('CrudController', function($scope, Crud) {
     
   $scope.cruds = [];
   $scope.searchTxt = '';
+  $scope.printUrl = ''; // Initialize print URL
 
   // Load data
   $scope.load = function(options) {
@@ -72,6 +132,9 @@ app.controller('CrudController', function($scope, Crud) {
 
               // If there are results, create pages; otherwise, reset pages
               $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+
+              // Prepare the print URL with the current search term
+              $scope.printUrl = '/Training/cruds/printCrud?search=' + encodeURIComponent($scope.searchTxt);
           } else {
               // Handle the case where the query was not successful
               console.error('Error fetching data:', e);
@@ -89,24 +152,32 @@ app.controller('CrudController', function($scope, Crud) {
       }
   };
 
+  // Function to handle the Print button click
+  $scope.print = function() {
+      // Navigate to the print URL with the current search term
+      window.open($scope.printUrl, '_blank');
+  };
+
   // Initialize load
   $scope.load();
+
   $scope.remove = function(data) {
-        bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+      bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
           if (c) {
-            Crud.remove({ id: data.id }, function(e) {
-              if (e.ok) {
-                $.gritter.add({
-                  title: 'Successful!',
-                  text: e.msg,
-                });
-                $scope.load();
-              }
-            });
+              Crud.remove({ id: data.id }, function(e) {
+                  if (e.ok) {
+                      $.gritter.add({
+                          title: 'Successful!',
+                          text: e.msg,
+                      });
+                      $scope.load();
+                  }
+              });
           }
-        });
-      }
+      });
+  };
 });
+
 
 
 // app.controller('CrudsController', function($scope, Crud) {

@@ -230,7 +230,7 @@ $('#form').validationEngine('attach');
      
         <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
         {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
-    </button>
+        </button>
         <button type="button" class="btn btn-danger btn-sm btn-min" data-dismiss="modal">CANCEL</button>
         <button type="button" class="btn btn-primary btn-sm btn-min" ng-click="updateBeneficiary()">SAVE</button>
       </div>
