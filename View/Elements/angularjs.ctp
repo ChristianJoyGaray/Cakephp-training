@@ -4,6 +4,9 @@
 <script type="text/javascript" src="<?php echo $serverUrl ?>assets/plugins/angular/angular-resource.min.js"></script>
 <script type="text/javascript" src="<?php echo $serverUrl ?>assets/plugins/angular-loading/loading-bar.js"></script>
 <script type="text/javascript" src="<?php echo $serverUrl ?>assets/plugins/angular/angular-selectize.js"></script>
+<!-- <script type="text/javascript" src="< ?php echo $serverUrl ?>assets/plugins/angular/angular.js"></script>  -->
+<!-- added this last ^ on top -->
+
 
 <!-- angularjs app -->
 <script type="text/javascript" src="<?php echo $serverUrl ?>app/app.js?version=<?php echo time() ?>"></script>

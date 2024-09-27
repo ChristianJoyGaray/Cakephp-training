@@ -1,45 +1,56 @@
 <?php
 
-  Router::connect('/', array(
-    'controller' => 'main',
-    'action'     => 'index',
-  ));
+// Basic routes
+Router::connect('/', array(
+  'controller' => 'main',
+  'action'     => 'index',
+));
 
-  Router::connect('/login', array(
-    'controller' => 'main',
-    'action' => 'login',
-  ));
+Router::connect('/login', array(
+  'controller' => 'main',
+  'action' => 'login',
+));
 
-  Router::connect('/logout', array(
-    'controller' => 'main',
-    'action'     => 'logout'
-  ));
+Router::connect('/logout', array(
+  'controller' => 'main',
+  'action'     => 'logout'
+));
 
-  Router::connect(
-    '/beneficiary/:id',
-    ['controller' => 'Beneficiaries', 'action' => 'delete'],
-    ['pass' => ['id'], 'id' => '\d+']
+// Beneficiary delete route
+Router::connect(
+  '/beneficiary/:id',
+  ['controller' => 'Beneficiaries', 'action' => 'delete'],
+  ['pass' => ['id'], 'id' => '\d+']
 );
 
-// Route for printing specific CRUD by ID
-// Route for printing specific CRUD by ID
+// Print CRUD route
 Router::connect('/crud/print/:id', 
-    ['controller' => 'cruds', 'action' => 'printCrud'], 
-    ['pass' => ['id'], 'id' => '[0-9]+']
+  ['controller' => 'Cruds', 'action' => 'printCrud'], 
+  ['pass' => ['id'], 'id' => '[0-9]+']
 );
 
-// Route for printing search-filtered CRUDs
 Router::connect('/cruds/printCrud/*', ['controller' => 'Cruds', 'action' => 'printCrud']);
 
+// Add routes for approval and disapproval actions
+Router::connect('/api/cruds/:id/approve', // Updated route for approval
+  ['controller' => 'Cruds', 'action' => 'approve'], 
+  ['pass' => ['id'], 'id' => '\d+'] // Ensure ID is numeric
+);
 
-    // api resources
-    $resources = array(
-      'users','select',
-      'cruds','crudstatuses', 'assigns', 'names', 'suppliers', 'shipments', 'equips', 'trucks'
-    );
+Router::connect('/api/cruds/:id/disapprove', 
+  ['controller' => 'Cruds', 'action' => 'disapprove'], 
+  ['pass' => ['id'], 'id' => '[0-9]+'] // Specify the ID to be numeric
+);
 
-  Router::mapResources($resources, array('prefix' => 'api'));
-  Router::parseExtensions('json');
+// Map resources for API
+$resources = array(
+  'users', 'select', 'cruds', 'crudstatuses', 'assigns', 'names', 'suppliers', 'shipments', 'equips', 'trucks'
+);
+Router::mapResources($resources, array('prefix' => 'api'));
 
+// Parse JSON for API requests
+Router::parseExtensions('json');
+
+// Load CakePHP plugin and default routes
 CakePlugin::routes();
 require CAKE . 'Config' . DS . 'routes.php';

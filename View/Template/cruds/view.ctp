@@ -10,73 +10,83 @@
           <dt>Age:</dt>
           <dd>{{ data.Crud.age }}</dd>
 
-          <dt>Status:</dt>
+          <dt>Role:</dt>
           <dd>{{ data.CrudStatuses.name }}</dd> 
-          
 
+          <!-- <dt>Status:</dt>
+          <dd>{{ data.Crud.approve }}</dd> Consider mapping approve value to human-readable text here -->
+          
           <dt>Character:</dt>
           <dd>{{ data.Crud.character }}</dd>
 
           <dt>Birth date:</dt>
           <dd>{{ data.Crud.birthdate | date:'MM/dd/yyyy' }}</dd>
-          
         </dl>
-
-  
-
-    <div class="clearfix"></div>
-    <hr>
-
-    
-
-    <div class="row">
-      <div class="col-md-12">
-
-      <div class="col-md-12">
-        <table class="table table-bordered table-striped table-hover">
-          <thead>
-            <tr>
-              <th class="w30px text-center">#</th>
-              <th class="text-center">Beneficiary Name</th>
-              <th class="text-center">Birthdate</th>
-              <th class="text-center">Age</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr ng-repeat="beneficiary in data.Beneficiary">
-              <td class="text-center">{{ $index + 1 }}</td>
-              <td class="text-center">{{ beneficiary.name }}</td>
-              <td class="text-center">{{ beneficiary.birthdate | date:'MM/dd/yyyy' }}</td>
-              <td class="text-center">{{ beneficiary.age }}</td>
-            </tr>
-            <tr ng-if="!data.Beneficiary.length">
-              <td colspan="4" class="text-center">No Beneficiaries available.</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
 
-        <div class="btn-group btn-group-sm pull-right btn-min">
-          
+      <div class="col-md-6">
+        <hr> 
+        
+     <!-- Approval Buttons -->
+          <div ng-if="data && data.Crud">
+              <div ng-if="data.Crud.approve === null"> <!-- When approve is null -->
+                  <a class="btn btn-success btn-sm btn-block" id="approve" ng-click="approveCrud()">Approve</a><br/>
+                  <a class="btn btn-danger btn-sm btn-block" id="disapprove" ng-click="disapproveCrud()">Disapprove</a><br/>
+              </div>
+              <div ng-if="data.Crud.approve === true"> <!-- When approve is true -->
+                  <span class="badge badge-info">Status: Approved</span>
+              </div>
+              <div ng-if="data.Crud.approve === false"> <!-- When approve is false -->
+                  <span class="badge badge-danger">Status: Disapproved</span>
+              </div>
+          </div>
+          <div ng-if="!data || !data.Crud"> <!-- Fallback if data is not available -->
+              <span class="badge badge-warning">Loading...</span>
+          </div>
+          <hr>
 
-          <a href="#/crud/edit/{{ data.Crud.id }}" class="btn btn-primary btn-min"><i class="fa fa-edit"></i> EDIT</a> 
-          <button class="btn btn-danger btn-min" ng-click="remove(data.Crud)"><i class="fa fa-trash"></i> DELETE</button>
 
-        </div> 
+
+        <hr>
+      </div>
+    
+      <div class="clearfix"></div>
+      <hr>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+                <tr>
+                  <th class="w30px text-center">#</th>
+                  <th class="text-center">Beneficiary Name</th>
+                  <th class="text-center">Birthdate</th>
+                  <th class="text-center">Age</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="beneficiary in data.Beneficiary">
+                  <td class="text-center">{{ $index + 1 }}</td>
+                  <td class="text-center">{{ beneficiary.name }}</td>
+                  <td class="text-center">{{ beneficiary.birthdate | date:'MM/dd/yyyy' }}</td>
+                  <td class="text-center">{{ beneficiary.age }}</td>
+                </tr>
+                <tr ng-if="!data.Beneficiary.length">
+                  <td colspan="4" class="text-center">No Beneficiaries available.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="btn-group btn-group-sm pull-right btn-min">
+            <!-- Edit Button -->
+            <a href="#/crud/edit/{{ data.Crud.id }}" class="btn btn-primary btn-min"><i class="fa fa-edit"></i> EDIT</a> 
+            <!-- Delete Button -->
+            <button class="btn btn-danger btn-min" ng-click="remove(data.Crud)"><i class="fa fa-trash"></i> DELETE</button>
+          </div> 
+        </div>
       </div>
     </div>
-
-
-
-
   </div>
 </div>
-
-
-<style>
-  .table-wrapper{
-    width:100%;
-    height:500px;
-    overflow-y:auto;
-  }
-</style>

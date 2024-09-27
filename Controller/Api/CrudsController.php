@@ -623,6 +623,7 @@ public function printCrud() {
                 'character' => $crud['Crud']['character'],
                 'birthdate' => $crud['Crud']['birthdate'],
                 'visible' => $crud['Crud']['visible'],
+                'approve' => $crud['Crud']['approve'],
                 'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null,//status_name
             ];
         }
@@ -899,14 +900,14 @@ public function printCrud() {
     public function add() {
         // Begin transaction
         $this->Crud->getDataSource()->begin();
-    
+        
         // Retrieve CRUD data from the request
         $crud = $this->request->data['Crud'];
-    
+        
         // Save the Crud data first
         if ($this->Crud->save($crud)) {
             $crudId = $this->Crud->id; // Get the last inserted Crud ID
-    
+            
             // Calculate age based on birthdate if present
             if (!empty($crud['birthdate'])) {
                 $birthdate = $crud['birthdate'];
@@ -1049,7 +1050,7 @@ public function printCrud() {
     //         '_serialize' => 'response'
     //     ));
     // }
-    
+    //LATESTTTTTTTTTTTTTTTTTTTTTTTTTTT WORKINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
     public function view($id = null) {
         $data = $this->Crud->find('first', array(
             'contain' => array(
@@ -1085,12 +1086,206 @@ public function printCrud() {
     }
     
     
+    // public function view($id = null) {
+    //     // Fetch the data for the view
+    //     $data = $this->Crud->find('first', [
+    //         'contain' => [
+    //             'CrudStatuses' => ['name'],
+    //             'Beneficiary' => [
+    //                 'conditions' => ['Beneficiary.visible' => 1],
+    //                 'fields' => ['id', 'name', 'birthdate', 'age', 'visible']
+    //             ]
+    //         ],
+    //         'conditions' => [
+    //             'Crud.id' => $id,
+    //             'Crud.visible' => true
+    //         ]
+    //     ]);
+    
+    //     if (!$data) {
+    //         return $this->setResponse(['ok' => false, 'msg' => 'No data found for this Crud.']);
+    //     }
+    
+    //     return $this->setResponse(['ok' => true, 'msg' => 'view', 'data' => $data]);
+    // }
+    // public function approve($id = null) {
+    //     $this->request->allowMethod(['put']);
+        
+    //     // Fetch the CRUD entry by ID
+    //     $crud = $this->Crud->get($id);
+        
+    //     if (!$crud) {
+    //         return $this->response->withStatus(404)->withStringBody(json_encode([
+    //             'status' => 'error',
+    //             'message' => 'CRUD not found'
+    //         ]));
+    //     }
+    
+    //     // Get the approval status from the request
+    //     $approvalStatus = $this->request->getData('approve'); // Expecting true or false
+        
+    //     // Validate the approvalStatus is a boolean
+    //     if (!is_bool($approvalStatus)) {
+    //         return $this->response->withStatus(400)->withStringBody(json_encode([
+    //             'status' => 'error',
+    //             'message' => 'Invalid approval status'
+    //         ]));
+    //     }
+    
+    //     // Convert boolean to 1/0 for the database
+    //     $crud->approve = $approvalStatus ? 1 : 0; 
+    //     $this->log('Approval Status: ' . $crud->approve, 'debug');
+    //     if ($this->Crud->save($crud)) {
+    //         return $this->response->withStringBody(json_encode([
+    //             'ok' => true,
+    //             'msg' => 'Crud approval status updated successfully',
+    //             'data' => [
+    //                 'approve' => $crud->approve // This will now return 1 or 0
+    //             ]
+    //         ]));
+    //     } else {
+    //         return $this->response->withStatus(500)->withStringBody(json_encode([
+    //             'status' => 'error',
+    //             'message' => 'Failed to update Crud approval status'
+    //         ]));
+    //     }
+    // }
+    
+    public function approve($id = null) {
+        // Allow PUT requests only
+        $this->request->allowMethod(['put']);
+        
+        // Retrieve the data sent in the request
+        $data = $this->request->data;  // Use request->data to access the request data in CakePHP 2.x
+    
+        // Check if the approve field is present
+        $approveStatus = isset($data['approve']) ? $data['approve'] : null;
+    
+        // Find the CRUD entry by ID
+        $crud = $this->Crud->findById($id);
+        if (!$crud) {
+            // Return a JSON response with error message if the CRUD entry is not found
+            $this->autoRender = false;
+            return json_encode(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+        }
+    
+        // Update the approve status
+        $this->Crud->id = $id;
+        if ($this->Crud->saveField('approve', $approveStatus)) {
+            // Return a success response
+            $this->autoRender = false;
+            return json_encode(['ok' => true, 'msg' => 'Approval status updated successfully.', 'approve' => $approveStatus]);
+        } else {
+            // Return an error response if the save operation fails
+            $this->autoRender = false;
+            return json_encode(['ok' => false, 'msg' => 'Failed to update approval status.']);
+        }
+    }
+    
+    
+    
+ 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // public function disapprove($id = null) {
+    //     $this->request->allowMethod(['put']);
+    //     $this->Crud->id = $id;
+    
+    //     if (!$this->Crud->exists()) {
+    //         $this->set([
+    //             'status' => 'error',
+    //             'message' => 'Invalid CRUD ID',
+    //             '_serialize' => ['status', 'message'] // Serialize the response to JSON
+    //         ]);
+    //         return $this->response->withStatus(404); // Set HTTP status code
+    //     }
+    
+    //     if ($this->Crud->saveField('approve', 'DISAPPROVED')) {
+    //         $this->set([
+    //             'status' => 'success',
+    //             'message' => 'Crud disapproved successfully',
+    //             '_serialize' => ['status', 'message'] // Serialize the response to JSON
+    //         ]);
+    //         return $this->response; // Send the response
+    //     }
+    
+    //     $this->set([
+    //         'status' => 'error',
+    //         'message' => 'Failed to disapprove Crud',
+    //         '_serialize' => ['status', 'message'] // Serialize the response to JSON
+    //     ]);
+    //     return $this->response->withStatus(500); // Set HTTP status code
+    // }
+    
+    
+    
+    // private function setResponse($response) {
+    //     $this->set(compact('response'));
+    //     $this->set('_serialize', 'response');
+    // }
+    
+    
+    
+    
 
 
 
-
-
-
+    // public function  eApproval($id = null) {
+    //     // Get approval data from request
+    //     $approveData = $this->request->data['approve'];
+    
+    //     // Log the received data for debugging
+    //     $this->log('Approval Data: ' . json_encode($approveData), 'debug');
+    
+    //     // Check if the Crud ID is valid
+    //     if ($this->Crud->exists($id)) {
+    //         // Set the Crud ID
+    //         $this->Crud->id = $id;
+    
+    //         // Attempt to save the approval status
+    //         if ($this->Crud->saveField('approve', $approveData)) {
+    //             $response = ['ok' => true, 'msg' => 'Approval status updated successfully.'];
+    //         } else {
+    //             $response = ['ok' => false, 'msg' => 'Failed to update approval status.'];
+    //         }
+    //     } else {
+    //         $response = ['ok' => false, 'msg' => 'Invalid CRUD ID.'];
+    //     }
+    
+    //     $this->set(compact('response'));
+    //     $this->set('_serialize', 'response');
+    // }
+    
 
 
     // public function edit($id = null){
@@ -1802,11 +1997,81 @@ public function printCrud() {
 //     $this->set('_serialize', 'response');
 // }
 //LAST WORKING WITH GOOD EDIT NO DUPS BUT NO DELETE
+// public function edit($id = null) {
+//     // Get Crud data from request
+//     $crudData = $this->request->data['Crud']; //////////////////////////////////////////////////////
+//     $deletedBeneficiaries = $this->request->data['deletedBeneficiaries']; //////////////////////////////////////////////////////
+//     $beneficiariesData = $this->request->data['beneficiaries']; //////////////////////////////////////////////////////
+
+//     // Log the received data for debugging
+//     $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
+//     $this->log('Crud Data: ' . json_encode($crudData), 'debug');
+//     $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
+
+//     // Check if the Crud data is being saved successfully
+//     if ($this->Crud->save($crudData)) {
+//         // Handle "deletion" by setting `visible` to 0 for beneficiaries
+//         foreach ($deletedBeneficiaries as $delBeneficiary) { //////////////////////////////////////////////////////
+//             if (!empty($delBeneficiary['id'])) {
+//                 // Fetch the beneficiary by ID
+//                 $this->Beneficiary->id = $delBeneficiary['id'];
+                
+//                 // Check if beneficiary exists in the database
+//                 if ($this->Beneficiary->exists()) {
+//                     // Attempt to set `visible` to 0
+//                     if ($this->Beneficiary->saveField('visible', 0)) {
+//                         $this->log('Set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+//                     } else {
+//                         $this->log('Failed to set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+//                     }
+//                 } else {
+//                     $this->log('Beneficiary ID: ' . $delBeneficiary['id'] . ' does not exist in the database.', 'debug');
+//                 }
+//             } else {
+//                 $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
+//             }
+//         }
+
+//         // Save or update remaining beneficiaries (for editing)
+//         foreach ($beneficiariesData as $beneficiary) {    //////////////////////////////////////////////////////
+//             if (!empty($beneficiary['id'])) {
+//                 // Update existing beneficiary
+//                 $this->Beneficiary->id = $beneficiary['id'];
+//                 $this->Beneficiary->save($beneficiary);
+//             } else {
+//                 // Add new beneficiary
+//                 $this->Beneficiary->create();
+//                 $this->Beneficiary->save($beneficiary);
+//             }
+//         }
+
+//         // Respond with success
+//         $response = ['ok' => true, 'msg' => 'Updated successfully.'];
+//     } else {
+//         // Respond with failure
+//         $response = ['ok' => false, 'msg' => 'Update failed.'];
+//     }
+
+//     $this->set(compact('response'));
+//     $this->set('_serialize', 'response');
+// }
+
+//WORKING FOR REAL
 public function edit($id = null) {
-    // Get Crud data from request
-    $crudData = $this->request->data['Crud'];
-    $deletedBeneficiaries = $this->request->data['deletedBeneficiaries'];
-    $beneficiariesData = $this->request->data['beneficiaries'];
+    // Check if the request method is allowed
+    $this->request->allowMethod(['put', 'post']);
+    
+    // Find the existing Crud record by ID
+    $crud = $this->Crud->findById($id);
+    
+    if (!$crud) {
+        return $this->setResponse(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+    }
+
+    // Initialize variables with default values
+    $crudData = isset($this->request->data['Crud']) ? $this->request->data['Crud'] : [];
+    $deletedBeneficiaries = isset($this->request->data['deletedBeneficiaries']) ? $this->request->data['deletedBeneficiaries'] : [];
+    $beneficiariesData = isset($this->request->data['beneficiaries']) ? $this->request->data['beneficiaries'] : [];
 
     // Log the received data for debugging
     $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
@@ -1814,6 +2079,7 @@ public function edit($id = null) {
     $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
 
     // Check if the Crud data is being saved successfully
+    $this->Crud->id = $id; // Set the ID to the existing record
     if ($this->Crud->save($crudData)) {
         // Handle "deletion" by setting `visible` to 0 for beneficiaries
         foreach ($deletedBeneficiaries as $delBeneficiary) {
@@ -1860,6 +2126,122 @@ public function edit($id = null) {
     $this->set(compact('response'));
     $this->set('_serialize', 'response');
 }
+//part2 still working edit
+// public function edit($id = null) {
+//     // Check if the request method is allowed
+//     $this->request->allowMethod(['put', 'post']);
+    
+//     // Find the existing Crud record by ID
+//     $crud = $this->Crud->findById($id);
+    
+//     if (!$crud) {
+//         return $this->setResponse(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+//     }
+
+//     // Initialize variables with default values
+//     $crudData = isset($this->request->data['Crud']) ? $this->request->data['Crud'] : [];
+//     $deletedBeneficiaries = isset($this->request->data['deletedBeneficiaries']) ? $this->request->data['deletedBeneficiaries'] : [];
+//     $beneficiariesData = isset($this->request->data['beneficiaries']) ? $this->request->data['beneficiaries'] : [];
+
+//     // Log the received data for debugging
+//     $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
+//     $this->log('Crud Data: ' . json_encode($crudData), 'debug');
+//     $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
+
+//     // Check if the approve status is being sent in the request
+//     if (isset($this->request->data['approve'])) {
+//         $approvalStatus = $this->request->data['approve']; // Expecting true or false
+
+//         // Validate the approvalStatus is a boolean
+//         if (is_bool($approvalStatus)) {
+//             // Convert boolean to 1/0 for the database
+//             $crudData['approve'] = $approvalStatus ? 1 : 0;
+//         } else {
+//             return $this->setResponse(['ok' => false, 'msg' => 'Invalid approval status.']);
+//         }
+//     }
+
+//     // Check if the Crud data is being saved successfully
+//     $this->Crud->id = $id; // Set the ID to the existing record
+//     if ($this->Crud->save($crudData)) {
+//         // Handle "deletion" by setting `visible` to 0 for beneficiaries
+//         foreach ($deletedBeneficiaries as $delBeneficiary) {
+//             if (!empty($delBeneficiary['id'])) {
+//                 // Fetch the beneficiary by ID
+//                 $this->Beneficiary->id = $delBeneficiary['id'];
+                
+//                 // Check if beneficiary exists in the database
+//                 if ($this->Beneficiary->exists()) {
+//                     // Attempt to set `visible` to 0
+//                     if ($this->Beneficiary->saveField('visible', 0)) {
+//                         $this->log('Set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+//                     } else {
+//                         $this->log('Failed to set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+//                     }
+//                 } else {
+//                     $this->log('Beneficiary ID: ' . $delBeneficiary['id'] . ' does not exist in the database.', 'debug');
+//                 }
+//             } else {
+//                 $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
+//             }
+//         }
+
+//         // Save or update remaining beneficiaries (for editing)
+//         foreach ($beneficiariesData as $beneficiary) {
+//             if (!empty($beneficiary['id'])) {
+//                 // Update existing beneficiary
+//                 $this->Beneficiary->id = $beneficiary['id'];
+//                 $this->Beneficiary->save($beneficiary);
+//             } else {
+//                 // Add new beneficiary
+//                 $this->Beneficiary->create();
+//                 $this->Beneficiary->save($beneficiary);
+//             }
+//         }
+
+//         // Respond with success
+//         $response = ['ok' => true, 'msg' => 'Updated successfully.'];
+//     } else {
+//         // Respond with failure
+//         $response = ['ok' => false, 'msg' => 'Update failed.'];
+//     }
+
+//     $this->set(compact('response'));
+//     $this->set('_serialize', 'response');
+// }
+
+// public function edit($id = null) {
+//     $this->request->allowMethod(['put', 'post']);
+    
+//     $crud = $this->Crud->findById($id);
+    
+//     if (!$crud) {
+//         return $this->setResponse(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+//     }
+
+//     // Retrieve CRUD data
+//     $crudData = isset($this->request->data['Crud']) ? $this->request->data['Crud'] : [];
+
+//     // Handle approval status
+//     if (isset($this->request->data['approve'])) {
+//         $crudData['approve'] = $this->request->data['approve']; // Set approval status
+//     }
+
+//     // Attempt to save the CRUD data
+//     $this->Crud->id = $id;
+//     if ($this->Crud->save($crudData)) {
+//         $response = ['ok' => true, 'msg' => 'Updated successfully.'];
+//     } else {
+//         $response = [
+//             'ok' => false, 
+//             'msg' => 'Update failed.', 
+//             'errors' => $this->Crud->validationErrors // Include validation errors if any
+//         ];
+//     }
+
+//     $this->set(compact('response'));
+//     $this->set('_serialize', 'response');
+// }
 
 
 

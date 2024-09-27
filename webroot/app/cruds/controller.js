@@ -465,293 +465,122 @@ $scope.editBeneficiary = function(index, data) {
 
 
 
-app.controller('CrudViewController', function($scope, $routeParams, Crud) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.controller('CrudViewController', function($scope, $routeParams, Crud, $http) {
   $scope.id = $routeParams.id;
+  $scope.data = {}; // Initialize data to an empty object
 
-  // $('birthdate').datepicker({
-  //   format: 'mm/dd/yy',
-  //   autoclose: true
-  // });
-  // $scope.data = {};
-  // $scope.data.PermissionSelection = [];
-  // $scope.data.UserPermission = []; 
-  // load 
-
-  
+  // Load the data for the CRUD entry
   $scope.load = function() {
-    Crud.get({ id: $scope.id }, function(e) {
-      $scope.data = e.data;
-      // $scope.permissions_temp = $scope.data.PermissionSelection;
-      // $scope.compute();    
-    });
-  }
+      Crud.get({ id: $scope.id }, function(e) {
+          console.log('Loaded data:', e.data); // Log the loaded data
+          $scope.data = e.data;
+      }, function(error) {
+          console.error('Error fetching CRUD data:', error);
+          $.gritter.add({
+              title: 'Error!',
+              text: 'Failed to load CRUD data.'
+          });
+      });
+  };
+
   $scope.load();
 
-  // $scope.compute = function(){
-  //   amount = 0;
-  //   if($scope.data.UserPermission.length > 0){
-  //     $.each($scope.data.UserPermission,function(key,val){
-  //       if(val.visible != 0){
-  //         amount += parseFloat(val['amount']);
-  //       }
-  //     });
-  //   }
-  //   $scope.data.User.total = amount;
-  // }
-  // $scope.removeselected = function() {
-  //   $('.deletePermission').attr('disabled',true);
-  //   permissiondelete = [];
-  //   for (i in $scope.data.UserPermission) {
-  //     if ($scope.data.UserPermission[i].selected) {
-  //       permissiondelete.push({
-  //         user_id:       $scope.id,
-  //         permission_id: $scope.data.UserPermission[i].id
-  //       });
-  //     }
-  //   }
-  //   if (permissiondelete.length <= 0) {
-  //     $.gritter.add({
-  //       title: 'Warning!',
-  //       text: 'Please select permission to delete.',
-  //     });
-  //     $('.deletePermission').attr('disabled',false);
-  //   } else {
-  //     bootbox.confirm('Are you sure you want to delete your selected permission ?', function(c) {
-  //       if (c) {
-  //         DeleteSelected.save({ permissiondelete : permissiondelete }, function(e) {
-  //           $('.deletePermission').attr('disabled',false);
-  //           if (e.ok) {
-  //             $.gritter.add({
-  //               title: 'Successful!',
-  //               text: e.msg
-  //             });
-  //             $scope.load();
-  //           } else {
-  //             $.gritter.add({
-  //               title: 'Warning!',
-  //               text: e.msg
-  //             });
-  //           }
-  //         });
-  //       } else {
-  //         $('.deletePermission').attr('disabled',false);
-  //       }
-  //     });
-  //   }
-  // }
-  // remove 
-  $scope.remove = function(data) {
-    bootbox.confirm('Are you sure you want to remove '+ data.name +' ?', function(c) {
-      if (c) {
-        Crud.remove({ id: data.id }, function(e) {
+  // Update the approval status
+  $scope.updateApproveStatus = function(status) {
+    var endpoint = '/Training/api/cruds/' + $scope.id + '/approve'; // Updated endpoint for approval
 
-          if (e.ok) {
-
-            $.gritter.add({
-
-              title: 'Successful!',
-
-              text:  e.msg,
-
-            });
-
-            window.location = "#/cruds";
-
-          }
-
-        });
-
-      }
-
-    });
-
-  } 
-
-  // add permission
-
-  $scope.addPermission = function() {
-
-    $('.savePermission').attr('disabled',false);
-
-    $('#add-permission-modal').modal('show');
-
-  }
-
-  $scope.selectall = function() {
-
-    if ($scope.selectAll) {
-
-      bool = true;
-
-    } else {
-
-      bool = false;
-
-    }
-
-    for (i in $scope.data.PermissionSelection) {
-
-      $scope.data.PermissionSelection[i].selected = bool;
-
-    }
-
-  }
-  
-  $scope.selectalldelete = function() {
-
-    if ($scope.selectAlldelete) {
-
-      bool = true;
-
-    } else {
-
-      bool = false;
-
-    }
-
-    for (i in $scope.data.UserPermission) {
-
-      $scope.data.UserPermission[i].selected = bool;
-
-    }
-
-  }
-    
-  $scope.savePermission = function() {
-
-    $('.savePermission').attr('disabled',true);
-
-    permissions = [];
-
-    for (i in $scope.data.PermissionSelection) {
-
-      if ($scope.data.PermissionSelection[i].selected) {
-
-        permissions.push({
-
-          user_id:       $scope.id,
-
-          permission_id: $scope.data.PermissionSelection[i].id
-
-        });
-
-      }
-
-    }
-
-    if (permissions.length <= 0) {
-
-      $.gritter.add({
-
-        title: 'Warning!',
-
-        text: 'Please select permission to save.',
-
-      });
-
-      $('.savePermission').attr('disabled',false);
-
-    } else {
-
-      $('.savePermission').attr('disabled',true);
-
-      UserPermission.save({ UserPermission: permissions }, function(e) {
-
-        $('.savePermission').attr('disabled',true);
-
-        if (e.ok) {
-
-          $.gritter.add({
-
-            title: 'Successful!',
-
-            text: e.msg
-
+      // Send the approval status
+      $http.put(endpoint, { approve: status }) // Send the approval status (1 or 0)
+          .then(function(response) {
+              if (response.data.ok) {
+                  $.gritter.add({
+                      title: 'Successful!',
+                      text: 'Approval status updated successfully!'
+                  });
+                  $scope.load(); // Reload the data to reflect changes
+              } else {
+                  $.gritter.add({
+                      title: 'Error!',
+                      text: response.data.msg || 'Unknown error occurred.'
+                  });
+              }
+          })
+          .catch(function(error) {
+              $.gritter.add({
+                  title: 'Request Failed!',
+                  text: error.statusText || 'Unknown error'
+              });
           });
-
-          $scope.load();
-
-          $('#add-permission-modal').modal('hide');
-
-        } else {
-
-          $.gritter.add({
-
-            title: 'Warning!',
-
-            text: e.msg
-
-          });
-
-        }
-
-      });
-
-    }
-
-  }
-
-  // remove user
-
-  $scope.removePermission = function (permission) {
-
-    bootbox.confirm('Are you sure you want to delete "' + permission.module + '-' + permission.action + '"?', function(c) {
-
-      if (c) {
-
-        UserPermission.remove({ id:permission.id }, function(e){
-
-          if(e.ok){
-
-            $.gritter.add({ title: 'Successful!', text: e.msg });
-
-            $scope.load();
-
-          }
-
-        }); 
-
-      }
-
-    }); 
-
   };
-  
-  $scope.filterPermission = function (search) {
 
-    temp = [];
+  // Approve function
+  $scope.approveCrud = function() {
+      console.log('Approving CRUD with ID:', $scope.id);
+      var payload = { approve: 1 }; // Set payload to true (1 in DB)
+      $scope.updateApproveStatus(payload.approve); // Call the function to update status
+  };
 
-    if (search.module) {
+  // Disapprove function
+  $scope.disapproveCrud = function() {
+      console.log('Disapproving CRUD with ID:', $scope.id);
+      $scope.updateApproveStatus(0); // Send 0 for DISAPPROVED
+  };
 
-      angular.forEach($scope.permissions_temp, function(value, key) {
-
-        if (value.module == search.module) {
-
-          temp.push(value);
-
-        }
-
-      });
-
-    }else if (search.action) {
-
-      angular.forEach($scope.permissions_temp, function(value, key) {
-
-        if (value.action == search.action) {
-
-          temp.push(value);
-
-        }
-
-      });
-
-    } 
-
-    $scope.data.PermissionSelection = temp;
-
-  }
-
+  // Get approval status
+  $scope.getApproveStatus = function(approve) {
+      if (approve === 1) return 'APPROVED';
+      if (approve === 0) return 'DISAPPROVED';
+      return 'PENDING'; // Default case
+  };
 });
+
+
+
+
+
+
+
+
+
+
+//MIGHT NEED TO PUT CODE IN CRUDEDITCONTROLLER
+
+
+
 
 // app.controller('CrudEditController', function($scope, $routeParams, Crud, Select) {
 
@@ -4254,6 +4083,3 @@ $scope.editBeneficiaryVisibility = function(beneficiary) {
 //   // Initial load
 //   $scope.load();
 // });
-
-
-

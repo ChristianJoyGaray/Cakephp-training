@@ -29,6 +29,28 @@ class Crud extends AppModel {
     )
   );
   
+
+  public $validate = [
+    'approve' => [
+        'allowedValues' => [
+            'rule' => ['inList', ['PENDING', 'APPROVED', 'DISAPPROVED']],
+            'message' => 'Please provide a valid approval status',
+            'allowEmpty' => true // Allow empty for existing records
+        ]
+    ]
+];
+
+// In your Crud model
+public function initialize(array $config): void {
+  parent::initialize($config);
+  $this->setTable('cruds'); // Ensure the correct table name
+  $this->setPrimaryKey('id');
+  // Make sure the approve field is included in the fields that can be mass assigned
+  $this->addBehavior('Timestamp');
+  $this->setEntityClass('Crud');
+}
+
+
    // Example: Get all cruds using a MySQL query
 //   public function getAllCruds($conditions = array()) {
 //     $search = isset($conditions['search']) ? $conditions['search'] : '';
