@@ -107,77 +107,378 @@
 //         });
 //       }
 // });
+
+// WORKING EVERYTHING BUT I NEED TO FIX THE PRINT BUTTON FOR TABS
+// app.controller('CrudController', function($scope, Crud) {
+    
+//     $scope.cruds = [];
+//     $scope.searchTxt = '';
+//     $scope.printUrl = ''; // Initialize print URL
+//     $scope.statusFilter = ''; // Initialize status filter for tabs
+  
+//     // Load data
+//     $scope.load = function(options) {
+//         options = options || {};
+  
+//         // Apply status filter if set
+//         if ($scope.statusFilter) {
+//             options.status = $scope.statusFilter;
+//         }
+  
+//         // Call the CRUD API with the options (including the search term and status filter)
+//         Crud.query(options, function(e) {
+//             console.log('Options:', options); // Log options to check search term and status filter
+//             console.log('Backend response:', e); // Log response to ensure correct data
+  
+//             if (e.ok) {
+//                 // Update cruds with the filtered data (returned by the backend)
+//                 $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+//                 console.log('Cruds:', $scope.cruds); // Log the cruds array
+  
+//                 // Update paginator info
+//                 $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 };
+  
+//                 // If there are results, create pages; otherwise, reset pages
+//                 $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+  
+//                 // Prepare the print URL with the current search term
+//                 $scope.printUrl = '/Training/cruds/printCrud?search=' + encodeURIComponent($scope.searchTxt);
+//             } else {
+//                 // Handle the case where the query was not successful
+//                 console.error('Error fetching data:', e);
+//             }
+//         });
+//     };
+  
+//     // Search functionality
+//     $scope.search = function() {
+//         console.log('Search term:', $scope.searchTxt);
+//         if ($scope.searchTxt.length > 0) {
+//             $scope.load({ search: $scope.searchTxt }); // Load filtered results
+//         } else {
+//             $scope.load(); // Load all items if the search box is empty
+//         }
+//     };
+  
+//     // Function to handle the Print button click
+//     $scope.print = function() {
+//         // Navigate to the print URL with the current search term
+//         window.open($scope.printUrl, '_blank');
+//     };
+  
+//     // Function to handle tab clicks for filtering by status
+//     $scope.filterByStatus = function(status) {
+//         $scope.statusFilter = status; // Set the selected status filter
+//         $scope.load(); // Reload data with the selected status filter
+//     };
+  
+//     // Initialize load
+//     $scope.load();
+  
+//     $scope.remove = function(data) {
+//         bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
+//             if (c) {
+//                 Crud.remove({ id: data.id }, function(e) {
+//                     if (e.ok) {
+//                         $.gritter.add({
+//                             title: 'Successful!',
+//                             text: e.msg,
+//                         });
+//                         $scope.load();
+//                     }
+//                 });
+//             }
+//         });
+//     };
+//   });
+//WORKING
 app.controller('CrudController', function($scope, Crud) {
     
-  $scope.cruds = [];
-  $scope.searchTxt = '';
-  $scope.printUrl = ''; // Initialize print URL
+    $scope.cruds = [];
+    $scope.searchTxt = '';
+    $scope.printUrl = ''; // Initialize print URL
+    $scope.statusFilter = ''; // Initialize status filter for tabs
 
-  // Load data
-  $scope.load = function(options) {
-      options = options || {};
+    // Load data
+    $scope.load = function(options) {
+        options = options || {};
 
-      // Call the CRUD API with the options (which may include the search term)
-      Crud.query(options, function(e) {
-          console.log('Options:', options); // Log options to check search term
-          console.log('Backend response:', e); // Log response to ensure correct data
+        // Apply status filter if set
+        if ($scope.statusFilter) {
+            options.status = $scope.statusFilter; // Include status in options for the API
+        }
 
-          if (e.ok) {
-              // Update cruds with the filtered data (returned by the backend)
-              $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
-              console.log('Cruds:', $scope.cruds); // Log the cruds array
+        // Call the CRUD API with the options (including the search term and status filter)
+        Crud.query(options, function(e) {
+            console.log('Options:', options); // Log options to check search term and status filter
+            console.log('Backend response:', e); // Log response to ensure correct data
 
-              // Update paginator info
-              $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 };
+            if (e.ok) {
+                // Update cruds with the filtered data (returned by the backend)
+                $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+                console.log('Cruds:', $scope.cruds); // Log the cruds array
 
-              // If there are results, create pages; otherwise, reset pages
-              $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+                // Update paginator info
+                $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 }; // Ensure paginator structure exists
+            }
+        });
+    };
 
-              // Prepare the print URL with the current search term
-              $scope.printUrl = '/Training/cruds/printCrud?search=' + encodeURIComponent($scope.searchTxt);
-          } else {
-              // Handle the case where the query was not successful
-              console.error('Error fetching data:', e);
-          }
-      });
-  };
+    // Filter function for approval status
+    $scope.filterByApproval = function(status) {
+        $scope.statusFilter = status; // Set the selected status filter
+        $scope.load({ page: 1 }); // Reload data with the new filter
+    };
 
-  // Search functionality
-  $scope.search = function() {
-      console.log('Search term:', $scope.searchTxt);
-      if ($scope.searchTxt.length > 0) {
-          $scope.load({ search: $scope.searchTxt }); // Load filtered results
-      } else {
-          $scope.load(); // Load all items if the search box is empty
-      }
-  };
+    // Search functionality (if you want to implement)
+    $scope.search = function() {
+        $scope.load({ search: $scope.searchTxt }); // Trigger load with search term
+    };
 
-  // Function to handle the Print button click
-  $scope.print = function() {
-      // Navigate to the print URL with the current search term
-      window.open($scope.printUrl, '_blank');
-  };
-
-  // Initialize load
-  $scope.load();
-
-  $scope.remove = function(data) {
-      bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
-          if (c) {
-              Crud.remove({ id: data.id }, function(e) {
-                  if (e.ok) {
-                      $.gritter.add({
-                          title: 'Successful!',
-                          text: e.msg,
-                      });
-                      $scope.load();
-                  }
-              });
-          }
-      });
-  };
+    // Initial load
+    $scope.load();
 });
 
+
+
+
+
+// app.controller('CrudController', function($scope, Crud) {
+//     $scope.cruds = [];
+//     $scope.searchTxt = '';
+//     $scope.printUrl = ''; // Initialize print URL
+//     $scope.statusFilter = ''; // Initialize status filter for tabs
+
+//     // Load data
+//     $scope.load = function(options) {
+//         options = options || {};
+
+//         // Apply status filter if set
+//         if ($scope.statusFilter) {
+//             options.tab = $scope.statusFilter; // Pass the status filter as 'tab'
+//         }
+
+//         // Call the CRUD API with the options (including the search term and status filter)
+//         Crud.query(options, function(e) {
+//             console.log('Options:', options); // Log options to check search term and status filter
+//             console.log('Backend response:', e); // Log response to ensure correct data
+
+//             if (e.ok) {
+//                 // Update cruds with the filtered data (returned by the backend)
+//                 $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+//                 console.log('Cruds:', $scope.cruds); // Log the cruds array
+
+//                 // Update paginator info
+//                 $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 };
+
+//                 // If there are results, create pages; otherwise, reset pages
+//                 $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+
+//                 // Prepare the print URL with the current search term
+//                 $scope.printUrl = '/Training/cruds/printCrud?search=' + encodeURIComponent($scope.searchTxt);
+//             } else {
+//                 // Handle the case where the query was not successful
+//                 console.error('Error fetching data:', e);
+//             }
+//         });
+//     };
+
+//     // Search functionality
+//     $scope.search = function() {
+//         console.log('Search term:', $scope.searchTxt);
+//         if ($scope.searchTxt.length > 0) {
+//             $scope.load({ search: $scope.searchTxt }); // Load filtered results
+//         } else {
+//             $scope.load(); // Load all items if the search box is empty
+//         }
+//     };
+
+//     // Function to handle the Print button click
+//     $scope.print = function() {
+//         // Navigate to the print URL with the current search term
+//         window.open($scope.printUrl, '_blank');
+//     };
+
+//     // Function to handle tab clicks for filtering by status
+//     $scope.filterByStatus = function(status) {
+//         $scope.statusFilter = status; // Set the selected status filter
+//         $scope.load(); // Reload data with the selected status filter
+//     };
+
+//     // Initialize load
+//     $scope.load();
+
+//     $scope.remove = function(data) {
+//         bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
+//             if (c) {
+//                 Crud.remove({ id: data.id }, function(e) {
+//                     if (e.ok) {
+//                         $.gritter.add({
+//                             title: 'Successful!',
+//                             text: e.msg,
+//                         });
+//                         $scope.load();
+//                     }
+//                 });
+//             }
+//         });
+//     };
+// });
+
+
+
+
+
+
+
+
+
+
+
+// app.controller('CrudController', function($scope, Crud) {
+//     $scope.cruds = [];
+//     $scope.searchTxt = '';
+//     $scope.printUrl = ''; // Initialize print URL
+//     $scope.activeTab = 'PENDING'; // Default to PENDING tab
+
+//     // Load data
+//     $scope.load = function(options) {
+//         options = options || {};
+        
+//         // Apply approve filter based on activeTab
+//         if ($scope.activeTab === 'PENDING') {
+//             options.approve = null; // Filter for pending
+//         } else if ($scope.activeTab === 'APPROVED') {
+//             options.approve = 1; // Filter for approved
+//         } else if ($scope.activeTab === 'DISAPPROVED') {
+//             options.approve = 0; // Filter for disapproved
+//         }
+
+//         // Log options before making the API call
+//         console.log('Options before API call:', options);
+
+//         // Call the CRUD API with the options
+//         Crud.query(options, function(e) {
+//             console.log('Backend response:', e); // Log response to ensure correct data
+
+//             if (e.ok) {
+//                 // Update cruds with the filtered data
+//                 $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+//                 console.log('Cruds:', $scope.cruds); // Log the cruds array
+
+//                 // Update paginator info
+//                 $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 };
+
+//                 // If there are results, create pages; otherwise, reset pages
+//                 $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+
+//                 // Prepare the print URL with the current search term
+//                 $scope.printUrl = '/Training/cruds/printCrud?search=' + encodeURIComponent($scope.searchTxt);
+//             } else {
+//                 // Handle the case where the query was not successful
+//                 console.error('Error fetching data:', e);
+//             }
+//         });
+//     };
+
+//     // Search functionality
+//     $scope.search = function() {
+//         console.log('Search term:', $scope.searchTxt);
+//         $scope.load({ search: $scope.searchTxt }); // Load filtered results with search term
+//     };
+
+//     // Function to handle the Print button click
+//     $scope.print = function() {
+//         // Navigate to the print URL with the current search term
+//         window.open($scope.printUrl, '_blank');
+//     };
+
+//     // Set active tab for approval filter
+//     $scope.setActiveTab = function(tab) {
+//         $scope.activeTab = tab; // Set the active tab
+    
+//         let options = { search: $scope.searchTxt }; // Include current search text
+    
+//         // Set the appropriate approve filter based on the active tab
+//         if ($scope.activeTab === 'PENDING') {
+//             options.approve = null; // Filter for pending
+//         } else if ($scope.activeTab === 'APPROVED') {
+//             options.approve = 1; // Filter for approved
+//         } else if ($scope.activeTab === 'DISAPPROVED') {
+//             options.approve = 0; // Filter for disapproved
+//         }
+    
+//         $scope.load(options); // Reload data with the new filter
+//     };
+    
+
+//     // Initialize load
+//     $scope.load();
+
+//     $scope.remove = function(data) {
+//         bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
+//             if (c) {
+//                 Crud.remove({ id: data.id }, function(e) {
+//                     if (e.ok) {
+//                         $.gritter.add({
+//                             title: 'Successful!',
+//                             text: e.msg,
+//                         });
+//                         $scope.load(); // Reload after deletion
+//                     }
+//                 });
+//             }
+//         });
+//     };
+// });
+
+
+  
+
+// app.controller('CrudController', function($scope, Crud) {
+
+//     $scope.cruds = [];
+//     $scope.searchTxt = '';
+//     $scope.status = 'all'; // Default status (change this dynamically based on user selection)
+//     $scope.printUrl = ''; // Initialize print URL
+
+//     // Load data
+//     $scope.load = function(options) {
+//         options = options || {};
+
+//         Crud.query(options, function(e) {
+//             if (e.ok) {
+//                 $scope.cruds = e.data && e.data.length > 0 ? e.data : [];
+//                 $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 };
+//                 $scope.pages = $scope.paginator.pageCount > 0 ? paginator($scope.paginator, 5) : [];
+
+//                 // Prepare the print URL with both search and status filters
+//                 var statusParam = $scope.status === 'all' ? '' : '&approve=' + encodeURIComponent($scope.status);
+//                 $scope.printUrl = '/Training/cruds/printCrud?search=' + encodeURIComponent($scope.searchTxt) + statusParam;
+//             }
+//         });
+//     };
+
+//     // Search functionality
+//     $scope.search = function() {
+//         $scope.load({ search: $scope.searchTxt });
+//     };
+
+//     // Set status filter and reload the data
+//     $scope.filterByStatus = function(status) {
+//         $scope.status = status;
+//         $scope.load({ search: $scope.searchTxt, approve: status === 'all' ? null : status });
+//     };
+
+//     // Print function
+//     $scope.print = function() {
+//         window.open($scope.printUrl, '_blank');
+//     };
+
+//     // Initialize load
+//     $scope.load();
+
+// });
 
 
 // app.controller('CrudsController', function($scope, Crud) {
@@ -285,6 +586,46 @@ app.controller('CrudController', function($scope, Crud) {
 
 
 // WORKING ADD BENEFICIARY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.controller('CrudAddController', function($scope, Crud, Select) {
   // Attach validation engine to the form
   $('#form').validationEngine('attach');
@@ -566,6 +907,29 @@ app.controller('CrudViewController', function($scope, $routeParams, Crud, $http)
       if (approve === 0) return 'DISAPPROVED';
       return 'PENDING'; // Default case
   };
+
+  $scope.isEditDisabled = function() {
+    return $scope.data.approve === true || $scope.data.approve === false;
+};
+
+
+$scope.remove = function(data) {
+        bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+          if (c) {
+            Crud.remove({ id: data.id }, function(e) {
+              if (e.ok) {
+                $.gritter.add({
+                  title: 'Successful!',
+                  text: e.msg,
+                });
+                window.location = '#/cruds';
+                $scope.load();
+              }
+            });
+          }
+        });
+      }
+
 });
 
 

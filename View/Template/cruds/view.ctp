@@ -34,10 +34,10 @@
                   <a class="btn btn-danger btn-sm btn-block" id="disapprove" ng-click="disapproveCrud()">Disapprove</a><br/>
               </div>
               <div ng-if="data.Crud.approve === true"> <!-- When approve is true -->
-                  <span class="badge badge-info">Status: Approved</span>
+                  <span class="badge badge-info">Status: APPROVED</span>
               </div>
               <div ng-if="data.Crud.approve === false"> <!-- When approve is false -->
-                  <span class="badge badge-danger">Status: Disapproved</span>
+                  <span class="badge badge-danger">Status: DISAPPROVED</span>
               </div>
           </div>
           <div ng-if="!data || !data.Crud"> <!-- Fallback if data is not available -->
@@ -81,9 +81,9 @@
 
           <div class="btn-group btn-group-sm pull-right btn-min">
             <!-- Edit Button -->
-            <a href="#/crud/edit/{{ data.Crud.id }}" class="btn btn-primary btn-min"><i class="fa fa-edit"></i> EDIT</a> 
+            <a href="#/crud/edit/{{ data.Crud.id }}" class="btn btn-primary btn-min" ng-disabled="data.Crud.approve === true || data.Crud.approve === false"><i class="fa fa-edit"></i> EDIT</a> 
             <!-- Delete Button -->
-            <button class="btn btn-danger btn-min" ng-click="remove(data.Crud)"><i class="fa fa-trash"></i> DELETE</button>
+            <button class="btn btn-danger btn-min" ng-click="remove(data.Crud)" ng-disabled="data.Crud.approve === true || data.Crud.approve === false"><i class="fa fa-trash"></i> DELETE</button>
           </div> 
         </div>
       </div>

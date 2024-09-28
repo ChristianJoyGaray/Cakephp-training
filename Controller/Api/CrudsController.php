@@ -191,7 +191,7 @@ public function printCrud() {
         $pdf->Ln(10);
         $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : 'N/A'));
+        $pdf->Cell(40, 10, 'Role: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : 'N/A'));
         $pdf->Ln(20); // Add space between CRUD entries
     }
 
@@ -589,6 +589,67 @@ public function printCrud() {
         $this->loadModel('Crud'); // Load the Cruds model explicitly
     }
 
+
+
+    //WORKING LATEST
+    // public function index() {
+    //     $page = isset($this->request->query['page']) ? (int)$this->request->query['page'] : 1;
+        
+    //     // Base conditions to fetch only visible cruds
+    //     $conditions = ['Crud.visible' => 1];
+    
+    //     // Check if there is a search term
+    //     if (!empty($this->request->query['search'])) {
+    //         $search = $this->request->query['search'];
+    //         $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Add the search condition
+    //     }
+    
+    //     // Log the final conditions before pagination
+    //     $this->log('Final Search Conditions: ' . print_r($conditions, true), 'debug');
+    
+    //     // Fetch cruds with the conditions
+    //     $cruds = $this->Crud->find('all', [
+    //         'conditions' => $conditions,
+    //         'limit' => 25,
+    //         'page' => $page,
+    //         'contain' => ['CrudStatuses'], // Ensure this relationship is defined correctly
+    //         'order' => ['Crud.id' => 'ASC']
+    //     ]);
+    
+    //     // Prepare response data
+    //     $responseCruds = [];
+    //     foreach ($cruds as $crud) {
+    //         $responseCruds[] = [
+    //             'id' => $crud['Crud']['id'],
+    //             'name' => $crud['Crud']['name'],
+    //             'age' => $crud['Crud']['age'],
+    //             'character' => $crud['Crud']['character'],
+    //             'birthdate' => $crud['Crud']['birthdate'],
+    //             'visible' => $crud['Crud']['visible'],
+    //             'approve' => $crud['Crud']['approve'],
+    //             'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null,//status_name
+    //         ];
+    //     }
+    
+    //     // Prepare the response with pagination information
+    //     $response = [
+    //         'ok' => true,
+    //         'msg' => 'index',
+    //         'data' => $responseCruds,
+    //         'paginator' => [
+    //             'page' => $page,
+    //             'limit' => 25,
+    //             'total' => $this->Crud->find('count', ['conditions' => $conditions]),
+    //         ],
+    //     ];
+    
+    //     $this->set([
+    //         'response' => $response,
+    //         '_serialize' => 'response',
+    //     ]);
+    // }
+
+    //TEST
     public function index() {
         $page = isset($this->request->query['page']) ? (int)$this->request->query['page'] : 1;
         
@@ -600,6 +661,21 @@ public function printCrud() {
             $search = $this->request->query['search'];
             $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Add the search condition
         }
+    
+        // Check for approval status filtering
+        // if (!empty($this->request->query['status'])) {
+        //     $conditions['approve'] = $this->request->query['status'];
+        // }
+        if (!empty($this->request->query['status'])) {
+            if ($this->request->query['status'] === 'PENDING') {
+                $conditions['Crud.approve'] = null; // Handle NULL for pending
+            } elseif ($this->request->query['status'] === 'APPROVED') {
+                $conditions['Crud.approve'] = 1; // Handle approved
+            } elseif ($this->request->query['status'] === 'DISAPPROVED') {
+                $conditions['Crud.approve'] = 0; // Handle disapproved
+            }
+        }
+        
     
         // Log the final conditions before pagination
         $this->log('Final Search Conditions: ' . print_r($conditions, true), 'debug');
@@ -645,6 +721,8 @@ public function printCrud() {
             '_serialize' => 'response',
         ]);
     }
+    
+    
     
     
     
@@ -2057,76 +2135,6 @@ public function printCrud() {
 // }
 
 //WORKING FOR REAL
-public function edit($id = null) {
-    // Check if the request method is allowed
-    $this->request->allowMethod(['put', 'post']);
-    
-    // Find the existing Crud record by ID
-    $crud = $this->Crud->findById($id);
-    
-    if (!$crud) {
-        return $this->setResponse(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
-    }
-
-    // Initialize variables with default values
-    $crudData = isset($this->request->data['Crud']) ? $this->request->data['Crud'] : [];
-    $deletedBeneficiaries = isset($this->request->data['deletedBeneficiaries']) ? $this->request->data['deletedBeneficiaries'] : [];
-    $beneficiariesData = isset($this->request->data['beneficiaries']) ? $this->request->data['beneficiaries'] : [];
-
-    // Log the received data for debugging
-    $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
-    $this->log('Crud Data: ' . json_encode($crudData), 'debug');
-    $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
-
-    // Check if the Crud data is being saved successfully
-    $this->Crud->id = $id; // Set the ID to the existing record
-    if ($this->Crud->save($crudData)) {
-        // Handle "deletion" by setting `visible` to 0 for beneficiaries
-        foreach ($deletedBeneficiaries as $delBeneficiary) {
-            if (!empty($delBeneficiary['id'])) {
-                // Fetch the beneficiary by ID
-                $this->Beneficiary->id = $delBeneficiary['id'];
-                
-                // Check if beneficiary exists in the database
-                if ($this->Beneficiary->exists()) {
-                    // Attempt to set `visible` to 0
-                    if ($this->Beneficiary->saveField('visible', 0)) {
-                        $this->log('Set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
-                    } else {
-                        $this->log('Failed to set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
-                    }
-                } else {
-                    $this->log('Beneficiary ID: ' . $delBeneficiary['id'] . ' does not exist in the database.', 'debug');
-                }
-            } else {
-                $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
-            }
-        }
-
-        // Save or update remaining beneficiaries (for editing)
-        foreach ($beneficiariesData as $beneficiary) {
-            if (!empty($beneficiary['id'])) {
-                // Update existing beneficiary
-                $this->Beneficiary->id = $beneficiary['id'];
-                $this->Beneficiary->save($beneficiary);
-            } else {
-                // Add new beneficiary
-                $this->Beneficiary->create();
-                $this->Beneficiary->save($beneficiary);
-            }
-        }
-
-        // Respond with success
-        $response = ['ok' => true, 'msg' => 'Updated successfully.'];
-    } else {
-        // Respond with failure
-        $response = ['ok' => false, 'msg' => 'Update failed.'];
-    }
-
-    $this->set(compact('response'));
-    $this->set('_serialize', 'response');
-}
-//part2 still working edit
 // public function edit($id = null) {
 //     // Check if the request method is allowed
 //     $this->request->allowMethod(['put', 'post']);
@@ -2147,19 +2155,6 @@ public function edit($id = null) {
 //     $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
 //     $this->log('Crud Data: ' . json_encode($crudData), 'debug');
 //     $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
-
-//     // Check if the approve status is being sent in the request
-//     if (isset($this->request->data['approve'])) {
-//         $approvalStatus = $this->request->data['approve']; // Expecting true or false
-
-//         // Validate the approvalStatus is a boolean
-//         if (is_bool($approvalStatus)) {
-//             // Convert boolean to 1/0 for the database
-//             $crudData['approve'] = $approvalStatus ? 1 : 0;
-//         } else {
-//             return $this->setResponse(['ok' => false, 'msg' => 'Invalid approval status.']);
-//         }
-//     }
 
 //     // Check if the Crud data is being saved successfully
 //     $this->Crud->id = $id; // Set the ID to the existing record
@@ -2209,6 +2204,89 @@ public function edit($id = null) {
 //     $this->set(compact('response'));
 //     $this->set('_serialize', 'response');
 // }
+//part2 still working edit
+public function edit($id = null) {
+    // Check if the request method is allowed
+    $this->request->allowMethod(['put', 'post']);
+    
+    // Find the existing Crud record by ID
+    $crud = $this->Crud->findById($id);
+    
+    if (!$crud) {
+        return $this->setResponse(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+    }
+
+    // Initialize variables with default values
+    $crudData = isset($this->request->data['Crud']) ? $this->request->data['Crud'] : [];
+    $deletedBeneficiaries = isset($this->request->data['deletedBeneficiaries']) ? $this->request->data['deletedBeneficiaries'] : [];
+    $beneficiariesData = isset($this->request->data['beneficiaries']) ? $this->request->data['beneficiaries'] : [];
+
+    // Log the received data for debugging
+    $this->log('Deleted Beneficiaries: ' . json_encode($deletedBeneficiaries), 'debug');
+    $this->log('Crud Data: ' . json_encode($crudData), 'debug');
+    $this->log('Beneficiaries Data: ' . json_encode($beneficiariesData), 'debug');
+
+    // Check if the approve status is being sent in the request
+    if (isset($this->request->data['approve'])) {
+        $approvalStatus = $this->request->data['approve']; // Expecting true or false
+
+        // Validate the approvalStatus is a boolean
+        if (is_bool($approvalStatus)) {
+            // Convert boolean to 1/0 for the database
+            $crudData['approve'] = $approvalStatus ? 1 : 0;
+        } else {
+            return $this->setResponse(['ok' => false, 'msg' => 'Invalid approval status.']);
+        }
+    }
+
+    // Check if the Crud data is being saved successfully
+    $this->Crud->id = $id; // Set the ID to the existing record
+    if ($this->Crud->save($crudData)) {
+        // Handle "deletion" by setting `visible` to 0 for beneficiaries
+        foreach ($deletedBeneficiaries as $delBeneficiary) {
+            if (!empty($delBeneficiary['id'])) {
+                // Fetch the beneficiary by ID
+                $this->Beneficiary->id = $delBeneficiary['id'];
+                
+                // Check if beneficiary exists in the database
+                if ($this->Beneficiary->exists()) {
+                    // Attempt to set `visible` to 0
+                    if ($this->Beneficiary->saveField('visible', 0)) {
+                        $this->log('Set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+                    } else {
+                        $this->log('Failed to set visible=0 for beneficiary ID: ' . $delBeneficiary['id'], 'debug');
+                    }
+                } else {
+                    $this->log('Beneficiary ID: ' . $delBeneficiary['id'] . ' does not exist in the database.', 'debug');
+                }
+            } else {
+                $this->log('Invalid beneficiary data: ' . json_encode($delBeneficiary), 'debug');
+            }
+        }
+
+        // Save or update remaining beneficiaries (for editing)
+        foreach ($beneficiariesData as $beneficiary) {
+            if (!empty($beneficiary['id'])) {
+                // Update existing beneficiary
+                $this->Beneficiary->id = $beneficiary['id'];
+                $this->Beneficiary->save($beneficiary);
+            } else {
+                // Add new beneficiary
+                $this->Beneficiary->create();
+                $this->Beneficiary->save($beneficiary);
+            }
+        }
+
+        // Respond with success
+        $response = ['ok' => true, 'msg' => 'Updated successfully.'];
+    } else {
+        // Respond with failure
+        $response = ['ok' => false, 'msg' => 'Update failed.'];
+    }
+
+    $this->set(compact('response'));
+    $this->set('_serialize', 'response');
+}
 
 // public function edit($id = null) {
 //     $this->request->allowMethod(['put', 'post']);

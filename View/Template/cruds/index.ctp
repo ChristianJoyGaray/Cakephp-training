@@ -5,10 +5,7 @@
       <div class="col-md-3">
         <a href="#/crud/add" class="btn btn-primary btn-sm btn-block"><i class="fa fa-plus"></i> ADD </a>
       </div>
-      <div class="btn-group-xs btn-group">
-        <a href="/Training/cruds/printCrud?search={{ searchTxt }}" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
-      </div>
-
+      
       <div class="col-md-4 pull-right">
         <input type="text" class="form-control search" placeholder="SEARCH HERE" ng-model="searchTxt" ng-enter="search(searchTxt)">
         <sup style="font-size:10px;color:gray">Press Enter to search</sup>
@@ -16,6 +13,45 @@
 
       <div class="clearfix"></div><hr>
 
+      <!-- <div class="nav nav-tabs">
+          <button ng-click="filterByApproval('PENDING')">Pending</button>
+          <button ng-click="filterByApproval('APPROVED')">Approved</button>
+          <button ng-click="filterByApproval('DISAPPROVED')">Disapproved</button>
+          <button ng-click="filterByApproval('')">All</button>
+      </div> -->
+
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link"  ng-click="filterByApproval('PENDING')">
+            Pending
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" ng-click="filterByApproval('APPROVED')">
+            Approved
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link"  ng-click="filterByApproval('DISAPPROVED')">
+            Disapproved
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" ng-click="filterByApproval('')">
+            All
+          </a>
+        </li>
+      </ul>
+
+      <style>
+        .nav-link:hover{
+          cursor: pointer;
+        }
+      </style>
+
+
+
+      <!-- Table of CRUDs -->
       <div class="col-md-12">
         <table class="table table-bordered center">
           <thead>
@@ -27,24 +63,28 @@
               <th class="w90x"></th>
             </tr>
           </thead>
-
           <tbody>
             <tr ng-repeat="crud in cruds">
               <td class="text-center">{{ (paginator.page - 1) * paginator.limit + $index + 1 }}</td>
               <td>{{ crud.name }}</td>
-              <td>{{ crud.approve === true ? 'Approved' : (crud.approve === false ? 'Disapproved' : 'Pending') }}</td>
+              <!-- <td>{{ crud.approve }}</td> -->
+              <td>{{ crud.approve === true ? 'APPROVED' : (crud.approve === false ? 'DISAPPROVED' : 'PENDING') }}</td>
               <td>{{ crud.crudStatus }}</td>
               <td>
                 <div class="btn-group-xs btn-group">
                   <a href="#/crud/view/{{ crud.id }}" class="btn btn-success" title="VIEW"><i class="fa fa-eye"></i></a>
-                  <a href="#/crud/edit/{{ crud.id }}" class="btn btn-primary" title="EDIT"><i class="fa fa-edit"></i></a>
-                  <a href="javascript:void(0)" ng-click="remove(crud)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a>
+                  <a href="#/crud/edit/{{ crud.id }}" class="btn btn-primary" title="EDIT" ng-disabled="crud.approve === true || crud.approve === false"><i class="fa fa-edit"></i></a>
+                  <a href="javascript:void(0)" ng-click="remove(crud)" class="btn btn-danger" title="DELETE" ng-disabled="crud.approve === true || crud.approve === false"><i class="fa fa-trash"></i></a>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+
+    <div class="btn-group-xs btn-group pull-left">
+      <a href="/Training/cruds/printCrud?search={{ searchTxt }}" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
     </div>
 
     <ul class="pagination pull-right">
@@ -61,7 +101,7 @@
         <a href="javascript:void(0)" ng-click="load({ page: paginator.page + 1, search: searchTxt })">&raquo;</a>
       </li>
       <li class="pagination-page">
-        <a href="javascript:void(0)" ng-click="load({ page: paginator.pageCount, search: searchTxt })"><sub>&raquo;&raquo;</sub> </a>
+        <a href="javascript:void(0)" ng-click="load({ page: paginator.pageCount, search: searchTxt })"><sub>&raquo;&raquo;</sub></a>
       </li>
     </ul>
 
