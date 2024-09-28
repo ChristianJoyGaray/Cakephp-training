@@ -144,34 +144,99 @@ public function query($sql, $params = []) {
 //     return $this->response;
 // }
 //WORKING PRINT FOR SEARCH
+// public function printCrud() {
+//     // Get the search term from the query if present
+//     $search = isset($this->request->query['search']) ? $this->request->query['search'] : null;
+
+//     // Prepare conditions for fetching the cruds
+//     $conditions = [];
+//     if (!empty($search)) {
+//         $conditions['search'] = $search; // Set search condition
+//     }
+
+//     // Log the conditions to verify what's being applied
+//     $this->log('Conditions for print: ' . print_r($conditions, true), 'debug');
+
+//     // Fetch the SQL query string using the model method
+//     $sql = $this->Crud->getAllCrudsWithStatuses($conditions); // Get the SQL string
+
+//     // Log the generated SQL for debugging
+//     $this->log('Generated SQL for print: ' . $sql, 'debug');
+
+//     // Execute the SQL query
+//     $cruds = $this->Crud->query($sql); // Execute the query
+
+//     // Log the number of cruds fetched
+//     $this->log('Number of CRUDs fetched for print: ' . count($cruds), 'debug');
+
+//     if (empty($cruds)) {
+//         throw new NotFoundException(__('No CRUDs found'));
+//     }
+
+//     // Initialize FPDF
+//     $pdf = new FPDF();
+//     $pdf->AddPage();
+//     $pdf->SetFont('Arial', 'B', 16);
+//     $pdf->Cell(40, 10, 'CRUD Details');
+//     $pdf->Ln(10); // Line break
+
+//     // Output CRUD data for each crud
+//     $pdf->SetFont('Arial', '', 12);
+//     foreach ($cruds as $crud) {
+//         $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Role: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : 'N/A'));
+//         $pdf->Ln(20); // Add space between CRUD entries
+//     }
+
+//     // Set response type and headers for inline display
+//     $this->response->type('application/pdf');
+//     $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Change to 'inline'
+
+//     // Output the PDF
+//     $pdf->Output('I', 'CRUD_Details.pdf'); // Use 'I' to send the file inline to the browser
+//     return $this->response;
+// }
+
 public function printCrud() {
-    // Get the search term from the query if present
-    $search = isset($this->request->query['search']) ? $this->request->query['search'] : null;
+    $this->loadModel('Cruds');  // Ensure Cruds model is loaded
+    
+    $searchQuery = $this->request->query('search');
+    $statusQuery = $this->request->query('status'); // Get status filter from the request
 
-    // Prepare conditions for fetching the cruds
+    // Search logic
     $conditions = [];
-    if (!empty($search)) {
-        $conditions['search'] = $search; // Set search condition
+    
+    // Check if there is a search term
+    if (!empty($searchQuery)) {
+        $conditions['Cruds.name LIKE'] = '%' . $searchQuery . '%';  // Adjust the condition as per your search logic
     }
 
-    // Log the conditions to verify what's being applied
-    $this->log('Conditions for print: ' . print_r($conditions, true), 'debug');
-
-    // Fetch the SQL query string using the model method
-    $sql = $this->Crud->getAllCrudsWithStatuses($conditions); // Get the SQL string
-
-    // Log the generated SQL for debugging
-    $this->log('Generated SQL for print: ' . $sql, 'debug');
-
-    // Execute the SQL query
-    $cruds = $this->Crud->query($sql); // Execute the query
-
-    // Log the number of cruds fetched
-    $this->log('Number of CRUDs fetched for print: ' . count($cruds), 'debug');
-
-    if (empty($cruds)) {
-        throw new NotFoundException(__('No CRUDs found'));
+    // Check for approval status filtering
+    if (!empty($statusQuery)) {
+        if ($statusQuery === 'PENDING') {
+            $conditions['Cruds.approve'] = null; // Handle NULL for pending
+        } elseif ($statusQuery === 'APPROVED') {
+            $conditions['Cruds.approve'] = 1; // Handle approved
+        } elseif ($statusQuery === 'DISAPPROVED') {
+            $conditions['Cruds.approve'] = 0; // Handle disapproved
+        }
     }
+
+    // Retrieve the filtered results
+    $filteredCruds = $this->Cruds->find('all', [
+        'conditions' => $conditions,
+        'contain' => ['CrudStatuses'],  // Include related CrudStatuses
+    ]);
+
+    // Pass data to the view for FPDF printing
+    $this->set('cruds', $filteredCruds);
 
     // Initialize FPDF
     $pdf = new FPDF();
@@ -182,27 +247,26 @@ public function printCrud() {
 
     // Output CRUD data for each crud
     $pdf->SetFont('Arial', '', 12);
-    foreach ($cruds as $crud) {
-        $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+    foreach ($filteredCruds as $crud) {
+        $pdf->Cell(40, 10, 'Name: ' . $crud['Cruds']['name']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+        $pdf->Cell(40, 10, 'Age: ' . $crud['Cruds']['age']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+        $pdf->Cell(40, 10, 'Character: ' . $crud['Cruds']['character']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+        $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Cruds']['birthdate']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Role: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['status_name'] : 'N/A'));
+        $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : 'N/A'));
         $pdf->Ln(20); // Add space between CRUD entries
     }
 
-    // Set response type and headers for inline display
-    $this->response->type('application/pdf');
-    $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Change to 'inline'
-
     // Output the PDF
-    $pdf->Output('I', 'CRUD_Details.pdf'); // Use 'I' to send the file inline to the browser
+    $this->response->type('application/pdf');
+    $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Display inline
+    $pdf->Output('I', 'CRUD_Details.pdf'); // Use 'I' for inline display
     return $this->response;
 }
+
 
 
 

@@ -13,6 +13,15 @@
               </div>
             </div>
 
+                  
+            <div class="col-md-12">
+              <div class="form-group">
+                <label> Email <i class="required">*</i></label>
+                <input type="text" class="form-control" ng-model="data.Crud.email" data-validation-engine="validate[required]">
+              </div>
+            </div>
+
+
             <div class="col-md-4">
             <div class="form-group">
               <label> BIRTHDATE <i class="required">*</i></label>

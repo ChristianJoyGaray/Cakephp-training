@@ -84,7 +84,10 @@
     </div>
 
     <div class="btn-group-xs btn-group pull-left">
-      <a href="/Training/cruds/printCrud?search={{ searchTxt }}" class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+      <a     href="/Training/cruds/printCrud?search={{ searchTxt || '' }}&status={{ statusFilter || '' }}" 
+      class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
+   
+
     </div>
 
     <ul class="pagination pull-right">
