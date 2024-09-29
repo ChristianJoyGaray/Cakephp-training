@@ -294,94 +294,111 @@ app.controller('CrudController', function($scope, Crud) {
 
     // Initial load
     $scope.load();
-});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.controller('CrudAddController', function($scope, Crud, Select) {
-  // Attach validation engine to the form
-  $('#form').validationEngine('attach');
-
-  // Initialize data
-  $scope.data = {
-      Crud: {},
-      beneficiaries: []
-  };
-
-  // Fetch crud status
-  Select.get({ code: 'crud-status' }, function(e) {
-      $scope.status = e.data; // Store statuses in the scope
-  });
-
-  // Function to save Crud and Beneficiaries
-  $scope.save = function() {
-      var valid = $("#form").validationEngine('validate');
-
-      if (valid) {
-          // Include beneficiaries data with Crud data
-          $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
-          console.log($scope.data);
-
-          Crud.save($scope.data, function(e) {
-              if (e.ok) {
-                  $.gritter.add({
-                      title: 'Successful!',
-                      text: e.msg,
-                  });
-                  window.location = '#/cruds'; // Redirect after success
-              } else {
-                  $.gritter.add({
-                      title: 'Warning!',
-                      text: e.msg,
-                  });
-              }
+    $scope.remove = function(data) {
+                bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
+                    if (c) {
+                        Crud.remove({ id: data.id }, function(e) {
+                            if (e.ok) {
+                                $.gritter.add({
+                                    title: 'Successful!',
+                                    text: e.msg,
+                                });
+                                $scope.load();
+                            }
+                        });
+                    }
+                });
+            };
           });
-      }
-  };
 
-  // Function to add a beneficiary
-  $scope.addBeneficiary = function() {
-      // Reset the beneficiary data for a new entry
-      $scope.newBeneficiary = {};
-      $('#add-beneficiary-modal').modal('show');
-  };
 
-  // Save new beneficiary
-  $scope.saveBeneficiary = function(beneficiaryData) {
-      if (beneficiaryData.birthdate) {
-          // Calculate age based on birthdate
-          const bdayDate = new Date(beneficiaryData.birthdate);
-          const today = new Date();
-          beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
-          const monthDiff = today.getMonth() - bdayDate.getMonth();
-          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
-              beneficiaryData.age--;
-          }
-      }
 
-      $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
-      $('#add-beneficiary-modal').modal('hide');
-      $.gritter.add({
-          title: 'Beneficiary Added!',
-          text: 'The beneficiary has been added successfully.',
-      });
-  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// app.controller('CrudAddController', function($scope, Crud, Select) {
+//   // Attach validation engine to the form
+//   $('#form').validationEngine('attach');
+
+//   // Initialize data
+//   $scope.data = {
+//       Crud: {},
+//       beneficiaries: []
+//   };
+
+//   // Fetch crud status
+//   Select.get({ code: 'crud-status' }, function(e) {
+//       $scope.status = e.data; // Store statuses in the scope
+//   });
+
+//   // Function to save Crud and Beneficiaries
+//   $scope.save = function() {
+//       var valid = $("#form").validationEngine('validate');
+
+//       if (valid) {
+//           // Include beneficiaries data with Crud data
+//           $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
+//           console.log($scope.data);
+
+//           Crud.save($scope.data, function(e) {
+//               if (e.ok) {
+//                   $.gritter.add({
+//                       title: 'Successful!',
+//                       text: e.msg,
+//                   });
+//                   window.location = '#/cruds'; // Redirect after success
+//               } else {
+//                   $.gritter.add({
+//                       title: 'Warning!',
+//                       text: e.msg,
+//                   });
+//               }
+//           });
+//       }
+//   };
+
+//   // Function to add a beneficiary
+//   $scope.addBeneficiary = function() {
+//       // Reset the beneficiary data for a new entry
+//       $scope.newBeneficiary = {};
+//       $('#add-beneficiary-modal').modal('show');
+//   };
+
+//   // Save new beneficiary
+//   $scope.saveBeneficiary = function(beneficiaryData) {
+//       if (beneficiaryData.birthdate) {
+//           // Calculate age based on birthdate
+//           const bdayDate = new Date(beneficiaryData.birthdate);
+//           const today = new Date();
+//           beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
+//           const monthDiff = today.getMonth() - bdayDate.getMonth();
+//           if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
+//               beneficiaryData.age--;
+//           }
+//       }
+
+//       $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
+//       $('#add-beneficiary-modal').modal('hide');
+//       $.gritter.add({
+//           title: 'Beneficiary Added!',
+//           text: 'The beneficiary has been added successfully.',
+//       });
+//   };
 
   
-});
+// });
 
 
 app.controller('CrudAddController', function($scope, Crud, Select) {
@@ -399,12 +416,29 @@ app.controller('CrudAddController', function($scope, Crud, Select) {
       $scope.status = e.data; // Store statuses in the scope
   });
 
+
+  
+  function validateEmail(email) {
+    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+}
+
   // Function to save Crud and Beneficiaries
   $scope.save = function() {
       var valid = $("#form").validationEngine('validate');
 
       if (valid) {
           // Include beneficiaries data with Crud data
+
+          if (!validateEmail($scope.data.Crud.email)) {
+            $.gritter.add({
+                title: 'Warning!',
+                text: 'Please enter a valid email address',
+            });
+            
+            return;
+        }
+
           $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
           console.log($scope.data);
 
@@ -424,6 +458,7 @@ app.controller('CrudAddController', function($scope, Crud, Select) {
           });
       }
   };
+
 
   // Function to add a beneficiary
   $scope.addBeneficiary = function() {
@@ -524,102 +559,199 @@ $scope.editBeneficiary = function(index, data) {
 
 
 
+//WORKING
+
+// app.controller('CrudViewController', function($scope, $routeParams, Crud, $http) {
+//   $scope.id = $routeParams.id;
+//   $scope.data = {}; // Initialize data to an empty object
+
+//   // Load the data for the CRUD entry
+//   $scope.load = function() {
+//       Crud.get({ id: $scope.id }, function(e) {
+//           console.log('Loaded data:', e.data); // Log the loaded data
+//           $scope.data = e.data;
+//       }, function(error) {
+//           console.error('Error fetching CRUD data:', error);
+//           $.gritter.add({
+//               title: 'Error!',
+//               text: 'Failed to load CRUD data.'
+//           });
+//       });
+//   };
+
+//   $scope.load();
+
+//   // Update the approval status
+//   $scope.updateApproveStatus = function(status) {
+//     var endpoint = '/Training/api/cruds/' + $scope.id + '/approve'; // Updated endpoint for approval
+
+//       // Send the approval status
+//       $http.put(endpoint, { approve: status }) // Send the approval status (1 or 0)
+//           .then(function(response) {
+//               if (response.data.ok) {
+//                   $.gritter.add({
+//                       title: 'Successful!',
+//                       text: 'Approval status updated successfully!'
+//                   });
+//                   $scope.load(); // Reload the data to reflect changes
+//               } else {
+//                   $.gritter.add({
+//                       title: 'Error!',
+//                       text: response.data.msg || 'Unknown error occurred.'
+//                   });
+//               }
+//           })
+//           .catch(function(error) {
+//               $.gritter.add({
+//                   title: 'Request Failed!',
+//                   text: error.statusText || 'Unknown error'
+//               });
+//           });
+//   };
+
+//   // Approve function
+//   $scope.approveCrud = function() {
+//       console.log('Approving CRUD with ID:', $scope.id);
+//       var payload = { approve: 1 }; // Set payload to true (1 in DB)
+//       $scope.updateApproveStatus(payload.approve); // Call the function to update status
+//   };
+
+//   // Disapprove function
+//   $scope.disapproveCrud = function() {
+//       console.log('Disapproving CRUD with ID:', $scope.id);
+//       $scope.updateApproveStatus(0); // Send 0 for DISAPPROVED
+//   };
+
+//   // Get approval status
+//   $scope.getApproveStatus = function(approve) {
+//       if (approve === 1) return 'APPROVED';
+//       if (approve === 0) return 'DISAPPROVED';
+//       return 'PENDING'; // Default case
+//   };
+
+//   $scope.isEditDisabled = function() {
+//     return $scope.data.approve === true || $scope.data.approve === false;
+// };
+
+
+// $scope.remove = function(data) {
+//         bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+//           if (c) {
+//             Crud.remove({ id: data.id }, function(e) {
+//               if (e.ok) {
+//                 $.gritter.add({
+//                   title: 'Successful!',
+//                   text: e.msg,
+//                 });
+//                 window.location = '#/cruds';
+//                 $scope.load();
+//               }
+//             });
+//           }
+//         });
+//       }
+
+// });
+
+
 
 app.controller('CrudViewController', function($scope, $routeParams, Crud, $http) {
-  $scope.id = $routeParams.id;
-  $scope.data = {}; // Initialize data to an empty object
-
-  // Load the data for the CRUD entry
-  $scope.load = function() {
-      Crud.get({ id: $scope.id }, function(e) {
-          console.log('Loaded data:', e.data); // Log the loaded data
-          $scope.data = e.data;
-      }, function(error) {
-          console.error('Error fetching CRUD data:', error);
-          $.gritter.add({
-              title: 'Error!',
-              text: 'Failed to load CRUD data.'
-          });
-      });
-  };
-
-  $scope.load();
-
-  // Update the approval status
-  $scope.updateApproveStatus = function(status) {
-    var endpoint = '/Training/api/cruds/' + $scope.id + '/approve'; // Updated endpoint for approval
-
-      // Send the approval status
-      $http.put(endpoint, { approve: status }) // Send the approval status (1 or 0)
-          .then(function(response) {
-              if (response.data.ok) {
-                  $.gritter.add({
-                      title: 'Successful!',
-                      text: 'Approval status updated successfully!'
-                  });
-                  $scope.load(); // Reload the data to reflect changes
-              } else {
-                  $.gritter.add({
-                      title: 'Error!',
-                      text: response.data.msg || 'Unknown error occurred.'
-                  });
-              }
-          })
-          .catch(function(error) {
-              $.gritter.add({
-                  title: 'Request Failed!',
-                  text: error.statusText || 'Unknown error'
-              });
-          });
-  };
-
-  // Approve function
-  $scope.approveCrud = function() {
-      console.log('Approving CRUD with ID:', $scope.id);
-      var payload = { approve: 1 }; // Set payload to true (1 in DB)
-      $scope.updateApproveStatus(payload.approve); // Call the function to update status
-  };
-
-  // Disapprove function
-  $scope.disapproveCrud = function() {
-      console.log('Disapproving CRUD with ID:', $scope.id);
-      $scope.updateApproveStatus(0); // Send 0 for DISAPPROVED
-  };
-
-  // Get approval status
-  $scope.getApproveStatus = function(approve) {
-      if (approve === 1) return 'APPROVED';
-      if (approve === 0) return 'DISAPPROVED';
-      return 'PENDING'; // Default case
-  };
-
-  $scope.isEditDisabled = function() {
-    return $scope.data.approve === true || $scope.data.approve === false;
-};
-
-
-$scope.remove = function(data) {
-        bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
-          if (c) {
-            Crud.remove({ id: data.id }, function(e) {
-              if (e.ok) {
-                $.gritter.add({
-                  title: 'Successful!',
-                  text: e.msg,
-                });
-                window.location = '#/cruds';
-                $scope.load();
-              }
+    $scope.id = $routeParams.id;
+    $scope.data = {}; // Initialize data to an empty object
+  
+    // Load the data for the CRUD entry
+    $scope.load = function() {
+        Crud.get({ id: $scope.id }, function(e) {
+            console.log('Loaded data:', e.data); // Log the loaded data
+            $scope.data = e.data;
+        }, function(error) {
+            console.error('Error fetching CRUD data:', error);
+            $.gritter.add({
+                title: 'Error!',
+                text: 'Failed to load CRUD data.'
             });
-          }
         });
-      }
-
-});
-
-
-
-
+    };
+  
+    $scope.load();
+  
+    // Update the approval status
+    $scope.updateApproveStatus = function(status) {
+      var endpoint = '/Training/api/cruds/' + $scope.id + '/approve'; // Updated endpoint for approval
+  
+        // Send the approval status
+        $http.put(endpoint, { approve: status }) // Send the approval status (1 or 0)
+            .then(function(response) {
+                if (response.data.ok) {
+                    $.gritter.add({
+                        title: 'Successful!',
+                        text: 'Approval status updated successfully!'
+                    });
+                    $scope.load(); // Reload the data to reflect changes
+                    // Redirect or reload window to cruds if needed
+                    window.location = '#/cruds'; // Redirect after successful approval
+                } else {
+                    $.gritter.add({
+                        title: 'Error!',
+                        text: response.data.msg || 'Unknown error occurred.'
+                    });
+                     
+                }
+            })
+            .catch(function(error) {
+                $.gritter.add({
+                    title: 'Successful!',
+                    text: 'Approval status updated successfully!'//error.statusText || 'Unknown error'
+                });
+                $scope.load();
+                window.location = '#/cruds';
+            });
+    };
+  
+    // Approve function
+    $scope.approveCrud = function() {
+        console.log('Approving CRUD with ID:', $scope.id);
+        var payload = { approve: 1 }; // Set payload to true (1 in DB)
+        $scope.updateApproveStatus(payload.approve); // Call the function to update status
+      };
+    
+      // Disapprove function
+      $scope.disapproveCrud = function() {
+        console.log('Disapproving CRUD with ID:', $scope.id);
+        $scope.updateApproveStatus(0); // Send 0 for DISAPPROVED
+      };
+  
+    // Get approval status
+    $scope.getApproveStatus = function(approve) {
+        if (approve === 1) return 'APPROVED';
+        if (approve === 0) return 'DISAPPROVED';
+        return 'PENDING'; // Default case
+    };
+  
+    $scope.isEditDisabled = function() {
+      return $scope.data.approve === true || $scope.data.approve === false;
+    };
+  
+    // Remove function (delete CRUD)
+    $scope.remove = function(data) {
+        bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
+            if (c) {
+                Crud.remove({ id: data.id }, function(e) {
+                    if (e.ok) {
+                        $.gritter.add({
+                            title: 'Successful!',
+                            text: e.msg,
+                        });
+                        window.location = '#/cruds';
+                        $scope.load();
+                    }
+                });
+            }
+        });
+    };
+  
+  });
+  
 
 
 

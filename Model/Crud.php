@@ -19,14 +19,24 @@ class Crud extends AppModel {
   );
 
   public $validate = [
-      'approve' => [
-          'allowedValues' => [
-              'rule' => ['inList', ['PENDING', 'APPROVED', 'DISAPPROVED']],
-              'message' => 'Please provide a valid approval status',
-              'allowEmpty' => true // Allow empty for existing records
-          ]
-      ]
-  ];
+    'approve' => [
+        'allowedValues' => [
+            'rule' => ['inList', ['PENDING', 'APPROVED', 'DISAPPROVED']],
+            'message' => 'Please provide a valid approval status',
+            'allowEmpty' => true
+        ]
+    ],
+    'email' => [
+        'required' => [
+            'rule' => 'notBlank',
+            'message' => 'Email is required'
+        ],
+        'validFormat' => [
+            'rule' => 'email',
+            'message' => 'Please enter a valid email address'
+        ]
+    ]
+];
 
   public function initialize(array $config): void {
       parent::initialize($config);

@@ -7,6 +7,9 @@
           <dt>Name:</dt>
           <dd class="uppercase">{{ data.Crud.name }}</dd>
 
+          <dt>Email:</dt>
+          <dd>{{ data.Crud.email }}</dd>
+
           <dt>Age:</dt>
           <dd>{{ data.Crud.age }}</dd>
 

@@ -1,6 +1,7 @@
 <?php
 App::uses('HttpSocket', 'Network/Http');
 App::import('Vendor', 'FPDF', array('file' => 'FPDF/fpdf.php'));
+App::uses('CakeEmail', 'Network/Email');
 
 class CrudsController extends AppController {
 
@@ -1039,81 +1040,164 @@ public function printCrud() {
     // }
     
     //WORKS WITH BIRTHDATE
-    public function add() {
-        // Begin transaction
-        $this->Crud->getDataSource()->begin();
+    // public function add() {
+    //     // Begin transaction
+    //     $this->Crud->getDataSource()->begin();
         
-        // Retrieve CRUD data from the request
-        $crud = $this->request->data['Crud'];
+    //     // Retrieve CRUD data from the request
+    //     $crud = $this->request->data['Crud'];
         
-        // Save the Crud data first
-        if ($this->Crud->save($crud)) {
-            $crudId = $this->Crud->id; // Get the last inserted Crud ID
+    //     // Save the Crud data first
+    //     if ($this->Crud->save($crud)) {
+    //         $crudId = $this->Crud->id; // Get the last inserted Crud ID
             
-            // Calculate age based on birthdate if present
-            if (!empty($crud['birthdate'])) {
-                $birthdate = $crud['birthdate'];
-                // Calculate age
-                $bdayDate = new DateTime($birthdate);
-                $today = new DateTime();
-                $age = $today->diff($bdayDate)->y;
+    //         // Calculate age based on birthdate if present
+    //         if (!empty($crud['birthdate'])) {
+    //             $birthdate = $crud['birthdate'];
+    //             // Calculate age
+    //             $bdayDate = new DateTime($birthdate);
+    //             $today = new DateTime();
+    //             $age = $today->diff($bdayDate)->y;
     
-                // Add age to request data
-                $crud['age'] = $age;
-                // Optionally, save the age back to the Crud if needed
-                $this->Crud->id = $crudId; // Set the ID to update the existing record
-                $this->Crud->saveField('age', $age); // Save the age back to the database
+    //             // Add age to request data
+    //             $crud['age'] = $age;
+    //             // Optionally, save the age back to the Crud if needed
+    //             $this->Crud->id = $crudId; // Set the ID to update the existing record
+    //             $this->Crud->saveField('age', $age); // Save the age back to the database
+    //         }
+    
+    //         // Prepare beneficiaries data
+    //         if (!empty($this->request->data['beneficiaries'])) {
+    //             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+    //                 $beneficiary['cruds_id'] = $crudId; // Set the foreign key
+    //             }
+    
+    //             // Save beneficiaries
+    //             if ($this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+    //                 // Commit transaction on success
+    //                 $this->Crud->getDataSource()->commit();
+    //                 $response = array(
+    //                     'ok' => true,
+    //                     'msg' => 'Crud and Beneficiaries saved successfully',
+    //                     'data' => $crud,
+    //                 );
+    //             } else {
+    //                 // Rollback transaction on failure
+    //                 $this->Crud->getDataSource()->rollback();
+    //                 $response = array(
+    //                     'ok' => false,
+    //                     'msg' => 'Could not save Beneficiaries',
+    //                 );
+    //             }
+    //         } else {
+    //             // No beneficiaries to save, just commit Crud
+    //             $this->Crud->getDataSource()->commit();
+    //             $response = array(
+    //                 'ok' => true,
+    //                 'msg' => 'Crud saved successfully, no beneficiaries to save.',
+    //                 'data' => $crud,
+    //             );
+    //         }
+    //     } else {
+    //         // Rollback if Crud saving fails
+    //         $this->Crud->getDataSource()->rollback();
+    //         $response = array(
+    //             'ok' => false,
+    //             'msg' => 'Could not save Crud',
+    //         );
+    //     }
+    
+    //     // Send the response
+    //     $this->set(array(
+    //         'response' => $response,
+    //         '_serialize' => 'response'
+    //     ));
+    // }
+    
+ 
+
+public function add() {
+    // Begin transaction
+    $this->Crud->getDataSource()->begin();
+
+    // Retrieve CRUD data from the request
+    $crud = $this->request->data['Crud'];
+
+    // Save the Crud data first
+    if ($this->Crud->save($crud)) {
+        $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+        // Calculate age based on birthdate if present
+        if (!empty($crud['birthdate'])) {
+            $birthdate = $crud['birthdate'];
+            $bdayDate = new DateTime($birthdate);
+            $today = new DateTime();
+            $age = $today->diff($bdayDate)->y;
+
+            // Save the age back to the Crud if needed
+            $this->Crud->id = $crudId; 
+            $this->Crud->saveField('age', $age);
+        }
+
+        // Save beneficiaries if present
+        if (!empty($this->request->data['beneficiaries'])) {
+            foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+                $beneficiary['cruds_id'] = $crudId;
             }
-    
-            // Prepare beneficiaries data
-            if (!empty($this->request->data['beneficiaries'])) {
-                foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
-                    $beneficiary['cruds_id'] = $crudId; // Set the foreign key
-                }
-    
-                // Save beneficiaries
-                if ($this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
-                    // Commit transaction on success
-                    $this->Crud->getDataSource()->commit();
-                    $response = array(
-                        'ok' => true,
-                        'msg' => 'Crud and Beneficiaries saved successfully',
-                        'data' => $crud,
-                    );
-                } else {
-                    // Rollback transaction on failure
-                    $this->Crud->getDataSource()->rollback();
-                    $response = array(
+
+            if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+                $this->Crud->getDataSource()->rollback();
+                $this->set(array(
+                    'response' => array(
                         'ok' => false,
-                        'msg' => 'Could not save Beneficiaries',
-                    );
-                }
-            } else {
-                // No beneficiaries to save, just commit Crud
-                $this->Crud->getDataSource()->commit();
-                $response = array(
-                    'ok' => true,
-                    'msg' => 'Crud saved successfully, no beneficiaries to save.',
-                    'data' => $crud,
-                );
+                        'msg' => 'Could not save Beneficiaries'
+                    ),
+                    '_serialize' => 'response'
+                ));
+                return;
             }
-        } else {
-            // Rollback if Crud saving fails
-            $this->Crud->getDataSource()->rollback();
-            $response = array(
+        }
+
+        // Commit the transaction
+        $this->Crud->getDataSource()->commit();
+
+        // Send Email Notification to the User
+        try {
+            if (!empty($crud['email'])) {
+                $email = new CakeEmail('default'); 
+                $email->to($crud['email'])
+                    ->subject('Notification: Your CRUD Record was Added')
+                    ->emailFormat('html')
+                    ->template('crud_notification', 'default') 
+                    ->viewVars(array('crud' => $crud))
+                    ->send();
+            }
+        } catch (Exception $e) {
+            // Log error and notify the front-end if needed
+            $this->log('Error sending email: ' . $e->getMessage(), 'error');
+        }
+        // Return success response
+        $this->set(array(
+            'response' => array(
+                'ok' => true,
+                'msg' => 'Crud and Beneficiaries saved successfully',
+                'data' => $crud,
+            ),
+            '_serialize' => 'response'
+        ));
+    } else {
+        // Rollback if Crud saving fails
+        $this->Crud->getDataSource()->rollback();
+        $this->set(array(
+            'response' => array(
                 'ok' => false,
                 'msg' => 'Could not save Crud',
-            );
-        }
-    
-        // Send the response
-        $this->set(array(
-            'response' => $response,
+            ),
             '_serialize' => 'response'
         ));
     }
-    
-    
+}
+
     
     
     
@@ -1292,37 +1376,133 @@ public function printCrud() {
     //         ]));
     //     }
     // }
+    //GOOD
+    // public function approve($id = null) {
+    //     // Allow PUT requests only
+    //     $this->request->allowMethod(['put']);
+        
+    //     // Retrieve the data sent in the request
+    //     $data = $this->request->data;  // Use request->data to access the request data in CakePHP 2.x
+    
+    //     // Check if the approve field is present
+    //     $approveStatus = isset($data['approve']) ? $data['approve'] : null;
+    
+    //     // Find the CRUD entry by ID
+    //     $crud = $this->Crud->findById($id);
+    //     if (!$crud) {
+    //         // Return a JSON response with error message if the CRUD entry is not found
+    //         $this->autoRender = false;
+    //         return json_encode(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+    //     }
+    
+    //     // Update the approve status
+    //     $this->Crud->id = $id;
+    //     if ($this->Crud->saveField('approve', $approveStatus)) {
+    //         // Return a success response
+    //         $this->autoRender = false;
+    //         return json_encode(['ok' => true, 'msg' => 'Approval status updated successfully.', 'approve' => $approveStatus]);
+    //     } else {
+    //         // Return an error response if the save operation fails
+    //         $this->autoRender = false;
+    //         return json_encode(['ok' => false, 'msg' => 'Failed to update approval status.']);
+    //     }
+    // }
     
     public function approve($id = null) {
         // Allow PUT requests only
         $this->request->allowMethod(['put']);
         
         // Retrieve the data sent in the request
-        $data = $this->request->data;  // Use request->data to access the request data in CakePHP 2.x
-    
+        $data = $this->request->data;
+        
         // Check if the approve field is present
-        $approveStatus = isset($data['approve']) ? $data['approve'] : null;
+        if (!isset($data['approve'])) {
+            $this->autoRender = false;
+            return json_encode(['ok' => false, 'msg' => 'Missing approval status.']);
+        }
+    
+        $approveStatus = $data['approve'];
+    
+        // Validate the CRUD entry ID
+        if (!$id || !$this->Crud->exists($id)) {
+            $this->autoRender = false;
+            return json_encode(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+        }
     
         // Find the CRUD entry by ID
         $crud = $this->Crud->findById($id);
         if (!$crud) {
-            // Return a JSON response with error message if the CRUD entry is not found
             $this->autoRender = false;
-            return json_encode(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
+            return json_encode(['ok' => false, 'msg' => 'CRUD entry not found.']);
         }
     
         // Update the approve status
         $this->Crud->id = $id;
         if ($this->Crud->saveField('approve', $approveStatus)) {
-            // Return a success response
+            // Log the approval change
+            $this->log('Approval status for CRUD ID ' . $id . ' updated to ' . $approveStatus, 'info');
+            
+            // Send email notification if an email is present
+            if (!empty($crud['Crud']['email'])) {
+                $this->log('Sending approval email to ' . $crud['Crud']['email'], 'debug');
+                if (!$this->sendApprovalEmail($crud, $approveStatus)) {
+                    $this->log('Failed to send approval email to ' . $crud['Crud']['email'], 'error');
+                }
+            } else {
+                $this->log('No email found for CRUD ID ' . $id, 'warning');
+            }
+    
+            // Return success response
             $this->autoRender = false;
             return json_encode(['ok' => true, 'msg' => 'Approval status updated successfully.', 'approve' => $approveStatus]);
         } else {
-            // Return an error response if the save operation fails
+            // Log failure and return error response
+            $this->log('Failed to update approval status for CRUD ID ' . $id, 'error');
             $this->autoRender = false;
             return json_encode(['ok' => false, 'msg' => 'Failed to update approval status.']);
         }
     }
+    
+    
+
+    public function sendApprovalEmail($crud, $approveStatus) {
+        // Create an email object
+        $email = new CakeEmail('default');  // Assuming you have a default email config
+    
+        // Set the recipient email address
+        if (empty($crud['Crud']['email'])) {
+            $this->log('Email address is missing for CRUD ID ' . $crud['Crud']['id'], 'error');
+            return false;
+        }
+    
+        try {
+            $email->to($crud['Crud']['email']);
+            $email->subject('Approval Status Updated');
+            $email->from(['christianjoygaray123@gmail.com' => 'CRUD WEBSITE']);
+            
+            // Use the 'approval_notification' template for the email
+            $email->template('approval_notification');  // Template name without .ctp
+            $email->emailFormat('html');
+            
+            // Pass data to the email template
+            $email->viewVars([
+                'crud' => $crud,
+                'approveStatus' => $approveStatus
+            ]);
+            
+            // Send the email
+            if ($email->send()) {
+                $this->log('Approval email sent to ' . $crud['Crud']['email'], 'info');
+                return true;
+            }
+        } catch (Exception $e) {
+            $this->log('Error sending approval email: ' . $e->getMessage(), 'error');
+        }
+    
+        return false;
+    }
+    
+    
     
     
     
