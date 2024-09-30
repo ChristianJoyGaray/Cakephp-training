@@ -13,7 +13,7 @@
               </div>
             </div>
 
-                  
+
             <div class="col-md-12">
               <div class="form-group">
                 <label> Email <i class="required">*</i></label>
@@ -25,7 +25,7 @@
             <div class="col-md-4">
             <div class="form-group">
               <label> BIRTHDATE <i class="required">*</i></label>
-              <input id="bday" type="date" name="Crud[birthdate]" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]">
+              <input id="bday" name="Crud[birthdate]" type="text" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]">
             </div>
           </div>
     
@@ -53,7 +53,7 @@
               </div>
             </div>
 
-          
+
             <div class="clearfix"></div>
 
 
@@ -66,6 +66,18 @@
         </div>
         
         <div class="clearfix"></div>
+
+        <form enctype="multipart/form-data" method="post" action="<?php echo $this->Html->url(['action' => 'add']); ?>">
+            <!-- Other input fields for CRUD and beneficiaries -->
+            
+            <div class="form-group">
+                <label for="pdf_upload">Upload PDF:</label>
+                <input type="file" name="pdf_upload" id="pdf_upload" accept=".pdf" class="form-control">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+          
 
 
 
@@ -164,16 +176,19 @@ $('#form').validationEngine('attach');
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Beneficiary Birthdate <i class="required">*</i></label>
-                        <input id="bday2" type="date" class="form-control" ng-model="newBeneficiary.birthdate" ng-required="true">
+                        <!-- <label for="beneficiary-birthdate">Beneficiary Birthdate <i class="required">*</i></label>
+                        <input  id="beneficiary-birthdate" type="text" class="datepicker" ng-model="newBeneficiary.birthdate" ng-required="true"> -->
+                        <label for="beneficiary-birthdate">Birthdate:</label>
+                        <input type="text" id="beneficiary-birthdate" class="form-control datepicker" ng-model="newBeneficiary.birthdate">
                     </div>
                 </div>
 
-                <!-- Remove this section if age is calculated from birthdate -->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Beneficiary Age <i class="required">*</i></label>
-                        <input id="age2" type="number" class="form-control" ng-model="newBeneficiary.age" ng-required="true">
+                        <!-- <label for="beneficiary-age">Beneficiary Age <i class="required">*</i></label>
+                        <input id="beneficiary-age" type="number" class="form-control" ng-model="newBeneficiary.age" ng-required="true"> -->
+                        <label for="beneficiary-age">Age:</label>
+                        <input type="text"  class="form-control" id="beneficiary-age" ng-model="newBeneficiary.age">
                     </div>
                 </div>
 

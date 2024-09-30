@@ -21,27 +21,28 @@
       </div> -->
 
       <ul class="nav nav-tabs">
-        <li class="nav-item">
-          <a class="nav-link"  ng-click="filterByApproval('PENDING')">
+    <li class="nav-item" ng-class="{ active: activeApprovalStatus === 'PENDING' }">
+        <a class="nav-link" ng-click="filterByApproval('PENDING')">
             Pending
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" ng-click="filterByApproval('APPROVED')">
+        </a>
+    </li>
+    <li class="nav-item" ng-class="{ active: activeApprovalStatus === 'APPROVED' }">
+        <a class="nav-link" ng-click="filterByApproval('APPROVED')">
             Approved
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link"  ng-click="filterByApproval('DISAPPROVED')">
+        </a>
+    </li>
+    <li class="nav-item" ng-class="{ active: activeApprovalStatus === 'DISAPPROVED' }">
+        <a class="nav-link" ng-click="filterByApproval('DISAPPROVED')">
             Disapproved
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" ng-click="filterByApproval('')">
+        </a>
+    </li>
+    <li class="nav-item" ng-class="{ active: activeApprovalStatus === '' }">
+        <a class="nav-link" ng-click="filterByApproval('')">
             All
-          </a>
-        </li>
-      </ul>
+        </a>
+    </li>
+</ul>
+
 
       <style>
         .nav-link:hover{

@@ -243,17 +243,154 @@
 // });
 
 
+//test but working
+// app.controller('CrudController', function($scope, Crud) {
 
+//     $scope.cruds = [];
+//     $scope.searchTxt = '';
+//     $scope.printUrl = ''; // Initialize print URL
+//     $scope.statusFilter = ''; // Initialize status filter for tabs
+
+//     // Load data with both search term and status filter
+//     $scope.load = function(options) {
+//         options = options || {};
+
+//         // Include search term if provided
+//         if ($scope.searchTxt) {
+//             options.search = $scope.searchTxt; // Pass the search term
+//         }
+
+//         // Apply status filter if set
+//         if ($scope.statusFilter) {
+//             options.status = $scope.statusFilter; // Pass the status filter
+//         }
+
+//         // Call the CRUD API with the options (including the search term and status filter)
+//         Crud.query(options, function(e) {
+//             console.log('Options:', options); // Log options to check search term and status filter
+//             console.log('Backend response:', e); // Log response to ensure correct data
+
+//             if (e.ok) {
+//                 // Update cruds with the filtered data (returned by the backend)
+//                 $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+//                 console.log('Cruds:', $scope.cruds); // Log the cruds array
+
+//                 // Update paginator info
+//                 $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 }; // Ensure paginator structure exists
+//             }
+//         });
+//     };
+
+//     // Filter function for approval status
+//     $scope.filterByApproval = function(status) {
+//         $scope.statusFilter = status; // Set the selected status filter
+//         $scope.load(); // Reload data with the status filter and search term
+//     };
+
+//     // Search functionality
+//     $scope.search = function() {
+//         $scope.load(); // Trigger load with search term and status filter
+//     };
+
+//     // Initial load
+//     $scope.load();
+
+//     $scope.remove = function(data) {
+//                 bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
+//                     if (c) {
+//                         Crud.remove({ id: data.id }, function(e) {
+//                             if (e.ok) {
+//                                 $.gritter.add({
+//                                     title: 'Successful!',
+//                                     text: e.msg,
+//                                 });
+//                                 $scope.load();
+//                             }
+//                         });
+//                     }
+//                 });
+//             };
+//           });
+//WORKING LATEST
+// app.controller('CrudController', function($scope, Crud) {
+
+//     $scope.cruds = [];
+//     $scope.searchTxt = '';
+//     $scope.statusFilter = ''; // Initialize status filter for tabs
+//     $scope.paginator = { page: 1, limit: 25, total: 0, pageCount: 1 }; // Initialize paginator object
+
+//     // Load data with both search term and status filter
+//     $scope.load = function(options) {
+//         options = options || {};
+//         options.page = $scope.paginator.page; // Include current page in the options
+
+//         // Include search term if provided
+//         if ($scope.searchTxt) {
+//             options.search = $scope.searchTxt; // Pass the search term
+//         }
+
+//         // Apply status filter if set
+//         if ($scope.statusFilter) {
+//             options.status = $scope.statusFilter; // Pass the status filter
+//         }
+
+//         // Call the CRUD API with the options (including the search term and status filter)
+//         Crud.query(options, function(e) {
+//             console.log('Options:', options); // Log options to check search term and status filter
+//             console.log('Backend response:', e); // Log response to ensure correct data
+
+//             if (e.ok) {
+//                 // Update cruds with the filtered data (returned by the backend)
+//                 $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
+
+//                 // Update paginator info
+//                 $scope.paginator = e.paginator || { page: 1, limit: 25, total: 0, pageCount: 1 };
+//             }
+//         });
+//     };
+
+//     // Filter function for approval status
+//     $scope.filterByApproval = function(status) {
+//         $scope.statusFilter = status; // Set the selected status filter
+//         $scope.paginator.page = 1; // Reset to first page when filter changes
+//         $scope.load(); // Reload data with the status filter and search term
+//     };
+
+//     // Search functionality
+//     $scope.search = function() {
+//         $scope.paginator.page = 1; // Reset to first page when searching
+//         $scope.load(); // Trigger load with search term and status filter
+//     };
+
+//     // Pagination controls
+//     $scope.nextPage = function() {
+//         if ($scope.paginator.page < $scope.paginator.pageCount) {
+//             $scope.paginator.page++;
+//             $scope.load();
+//         }
+//     };
+
+//     $scope.prevPage = function() {
+//         if ($scope.paginator.page > 1) {
+//             $scope.paginator.page--;
+//             $scope.load();
+//         }
+//     };
+
+//     // Initial load
+//     $scope.load();
+// });
 app.controller('CrudController', function($scope, Crud) {
-
     $scope.cruds = [];
     $scope.searchTxt = '';
-    $scope.printUrl = ''; // Initialize print URL
     $scope.statusFilter = ''; // Initialize status filter for tabs
+    $scope.activeApprovalStatus = ''; // Track the active approval status
+    $scope.paginator = { page: 1, limit: 25, total: 0, pageCount: 1 }; // Initialize paginator object
 
     // Load data with both search term and status filter
     $scope.load = function(options) {
         options = options || {};
+        options.page = $scope.paginator.page; // Include current page in the options
 
         // Include search term if provided
         if ($scope.searchTxt) {
@@ -273,10 +410,9 @@ app.controller('CrudController', function($scope, Crud) {
             if (e.ok) {
                 // Update cruds with the filtered data (returned by the backend)
                 $scope.cruds = e.data && e.data.length > 0 ? e.data : []; // Use filtered results
-                console.log('Cruds:', $scope.cruds); // Log the cruds array
 
                 // Update paginator info
-                $scope.paginator = e.paginator || { page: 1, current: 0, count: 0, pageCount: 0 }; // Ensure paginator structure exists
+                $scope.paginator = e.paginator || { page: 1, limit: 25, total: 0, pageCount: 1 };
             }
         });
     };
@@ -284,34 +420,35 @@ app.controller('CrudController', function($scope, Crud) {
     // Filter function for approval status
     $scope.filterByApproval = function(status) {
         $scope.statusFilter = status; // Set the selected status filter
+        $scope.activeApprovalStatus = status; // Update the active tab status
+        $scope.paginator.page = 1; // Reset to first page when filter changes
         $scope.load(); // Reload data with the status filter and search term
     };
 
     // Search functionality
     $scope.search = function() {
+        $scope.paginator.page = 1; // Reset to first page when searching
         $scope.load(); // Trigger load with search term and status filter
+    };
+
+    // Pagination controls
+    $scope.nextPage = function() {
+        if ($scope.paginator.page < $scope.paginator.pageCount) {
+            $scope.paginator.page++;
+            $scope.load();
+        }
+    };
+
+    $scope.prevPage = function() {
+        if ($scope.paginator.page > 1) {
+            $scope.paginator.page--;
+            $scope.load();
+        }
     };
 
     // Initial load
     $scope.load();
-
-    $scope.remove = function(data) {
-                bootbox.confirm('Are you sure you want to delete ' + data.name + ' ?', function(c) {
-                    if (c) {
-                        Crud.remove({ id: data.id }, function(e) {
-                            if (e.ok) {
-                                $.gritter.add({
-                                    title: 'Successful!',
-                                    text: e.msg,
-                                });
-                                $scope.load();
-                            }
-                        });
-                    }
-                });
-            };
-          });
-
+});
 
 
 
@@ -400,259 +537,617 @@ app.controller('CrudController', function($scope, Crud) {
   
 // });
 
+//test
+// app.controller('CrudAddController', function($scope, Crud, Select) {
+//   // Attach validation engine to the form
+//   $('#form').validationEngine('attach');
+//   $('.datepicker').datepicker({
 
-app.controller('CrudAddController', function($scope, Crud, Select) {
-  // Attach validation engine to the form
-  $('#form').validationEngine('attach');
+//     format:    'mm/dd/yyyy',
 
-  // Initialize data
-  $scope.data = {
-      Crud: {},
-      beneficiaries: []
-  };
+//     autoclose: true,
 
-  // Fetch crud status
-  Select.get({ code: 'crud-status' }, function(e) {
-      $scope.status = e.data; // Store statuses in the scope
-  });
+//     todayHighlight: true,
+
+//   });
+
+//   // Initialize data
+//   $scope.data = {
+//       Crud: {},
+//       beneficiaries: []
+//   };
+
+//   // Fetch crud status
+//   Select.get({ code: 'crud-status' }, function(e) {
+//       $scope.status = e.data; // Store statuses in the scope
+//   });
 
 
   
-  function validateEmail(email) {
-    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-}
+//   function validateEmail(email) {
+//     var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     return re.test(String(email).toLowerCase());
+// }
 
-  // Function to save Crud and Beneficiaries
-  $scope.save = function() {
-      var valid = $("#form").validationEngine('validate');
+//   // Function to save Crud and Beneficiaries
+//   $scope.save = function() {
+//       var valid = $("#form").validationEngine('validate');
 
-      if (valid) {
-          // Include beneficiaries data with Crud data
+//       if (valid) {
+//           // Include beneficiaries data with Crud data
 
-          if (!validateEmail($scope.data.Crud.email)) {
-            $.gritter.add({
-                title: 'Warning!',
-                text: 'Please enter a valid email address',
-            });
+//           if (!validateEmail($scope.data.Crud.email)) {
+//             $.gritter.add({
+//                 title: 'Warning!',
+//                 text: 'Please enter a valid email address',
+//             });
             
-            return;
-        }
+//             return;
+//         }
 
-          $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
-          console.log($scope.data);
+//           $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
+//           console.log($scope.data);
 
-          Crud.save($scope.data, function(e) {
-              if (e.ok) {
-                  $.gritter.add({
-                      title: 'Successful!',
-                      text: e.msg,
-                  });
-                  window.location = '#/cruds'; // Redirect after success
-              } else {
-                  $.gritter.add({
-                      title: 'Warning!',
-                      text: e.msg,
-                  });
-              }
-          });
-      }
-  };
-
-
-  // Function to add a beneficiary
-  $scope.addBeneficiary = function() {
-      // Reset the beneficiary data for a new entry
-      $scope.newBeneficiary = {};
-      $('#add-beneficiary-modal').modal('show');
-  };
-
-  // Save new beneficiary
-  $scope.saveBeneficiary = function(beneficiaryData) {
-      if (beneficiaryData.birthdate) {
-          // Calculate age based on birthdate
-          const bdayDate = new Date(beneficiaryData.birthdate);
-          const today = new Date();
-          beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
-          const monthDiff = today.getMonth() - bdayDate.getMonth();
-          if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
-              beneficiaryData.age--;
-          }
-      }
-
-      $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
-      $('#add-beneficiary-modal').modal('hide');
-      $.gritter.add({
-          title: 'Beneficiary Added!',
-          text: 'The beneficiary has been added successfully.',
-      });
-  };
-
-  // Edit beneficiary
-  // Edit beneficiary
-$scope.editBeneficiary = function(index, data) {
-  $scope.editingIndex = index; // Set index for updating
-  $scope.newBeneficiary = angular.copy(data); // Use copy to avoid direct changes
-  $('#edit-beneficiary-modal').modal('show'); // Open the modal
-};
-
-
-  // Update beneficiary
-  $scope.updateBeneficiary = function(data, index) {
-      var valid = $('#edit_beneficiary').validationEngine('validate');
-
-      if (valid) {
-          data.amount = number_format(data.amount, 2, '.', ''); 
-          $scope.data.beneficiaries[index] = data; // Update the beneficiary
-          $.gritter.add({
-              title: 'Beneficiary Updated!',
-              text: 'The beneficiary has been updated successfully.',
-          });
-          $('#edit-beneficiary-modal').modal('hide');  
-      }
-  };
-
-  // Remove beneficiary
-  $scope.removeBeneficiary = function(index) {
-      $scope.data.beneficiaries.splice(index, 1);
-      $.gritter.add({
-          title: 'Beneficiary Removed!',
-          text: 'The beneficiary has been removed successfully.',
-      });
-  };
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//WORKING
-
-// app.controller('CrudViewController', function($scope, $routeParams, Crud, $http) {
-//   $scope.id = $routeParams.id;
-//   $scope.data = {}; // Initialize data to an empty object
-
-//   // Load the data for the CRUD entry
-//   $scope.load = function() {
-//       Crud.get({ id: $scope.id }, function(e) {
-//           console.log('Loaded data:', e.data); // Log the loaded data
-//           $scope.data = e.data;
-//       }, function(error) {
-//           console.error('Error fetching CRUD data:', error);
-//           $.gritter.add({
-//               title: 'Error!',
-//               text: 'Failed to load CRUD data.'
+//           Crud.save($scope.data, function(e) {
+//               if (e.ok) {
+//                   $.gritter.add({
+//                       title: 'Successful!',
+//                       text: e.msg,
+//                   });
+//                   window.location = '#/cruds'; // Redirect after success
+//               } else {
+//                   $.gritter.add({
+//                       title: 'Warning!',
+//                       text: e.msg,
+//                   });
+//               }
 //           });
+//       }
+//   };
+
+
+//   // Function to add a beneficiary
+//   $scope.addBeneficiary = function() {
+//       // Reset the beneficiary data for a new entry
+//       $scope.newBeneficiary = {};
+//       $('#add-beneficiary-modal').modal('show');
+//   };
+
+//   // Save new beneficiary
+//   $scope.saveBeneficiary = function(beneficiaryData) {
+//       if (beneficiaryData.birthdate) {
+//           // Calculate age based on birthdate
+//           const bdayDate = new Date(beneficiaryData.birthdate);
+//           const today = new Date();
+//           beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
+//           const monthDiff = today.getMonth() - bdayDate.getMonth();
+//           if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
+//               beneficiaryData.age--;
+//           }
+//       }
+
+//       $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
+//       $('#add-beneficiary-modal').modal('hide');
+//       $.gritter.add({
+//           title: 'Beneficiary Added!',
+//           text: 'The beneficiary has been added successfully.',
 //       });
 //   };
 
-//   $scope.load();
-
-//   // Update the approval status
-//   $scope.updateApproveStatus = function(status) {
-//     var endpoint = '/Training/api/cruds/' + $scope.id + '/approve'; // Updated endpoint for approval
-
-//       // Send the approval status
-//       $http.put(endpoint, { approve: status }) // Send the approval status (1 or 0)
-//           .then(function(response) {
-//               if (response.data.ok) {
-//                   $.gritter.add({
-//                       title: 'Successful!',
-//                       text: 'Approval status updated successfully!'
-//                   });
-//                   $scope.load(); // Reload the data to reflect changes
-//               } else {
-//                   $.gritter.add({
-//                       title: 'Error!',
-//                       text: response.data.msg || 'Unknown error occurred.'
-//                   });
-//               }
-//           })
-//           .catch(function(error) {
-//               $.gritter.add({
-//                   title: 'Request Failed!',
-//                   text: error.statusText || 'Unknown error'
-//               });
-//           });
-//   };
-
-//   // Approve function
-//   $scope.approveCrud = function() {
-//       console.log('Approving CRUD with ID:', $scope.id);
-//       var payload = { approve: 1 }; // Set payload to true (1 in DB)
-//       $scope.updateApproveStatus(payload.approve); // Call the function to update status
-//   };
-
-//   // Disapprove function
-//   $scope.disapproveCrud = function() {
-//       console.log('Disapproving CRUD with ID:', $scope.id);
-//       $scope.updateApproveStatus(0); // Send 0 for DISAPPROVED
-//   };
-
-//   // Get approval status
-//   $scope.getApproveStatus = function(approve) {
-//       if (approve === 1) return 'APPROVED';
-//       if (approve === 0) return 'DISAPPROVED';
-//       return 'PENDING'; // Default case
-//   };
-
-//   $scope.isEditDisabled = function() {
-//     return $scope.data.approve === true || $scope.data.approve === false;
+//   // Edit beneficiary
+//   // Edit beneficiary
+// $scope.editBeneficiary = function(index, data) {
+//   $scope.editingIndex = index; // Set index for updating
+//   $scope.newBeneficiary = angular.copy(data); // Use copy to avoid direct changes
+//   $('#edit-beneficiary-modal').modal('show'); // Open the modal
 // };
 
 
-// $scope.remove = function(data) {
-//         bootbox.confirm('Are you sure you want to delete ' + data.name +' ?', function(c) {
-//           if (c) {
-//             Crud.remove({ id: data.id }, function(e) {
-//               if (e.ok) {
-//                 $.gritter.add({
-//                   title: 'Successful!',
-//                   text: e.msg,
-//                 });
-//                 window.location = '#/cruds';
-//                 $scope.load();
-//               }
-//             });
-//           }
-//         });
-//       }
+//   // Update beneficiary
+//   $scope.updateBeneficiary = function(data, index) {
+//       var valid = $('#edit_beneficiary').validationEngine('validate');
 
+//       if (valid) {
+//           data.amount = number_format(data.amount, 2, '.', ''); 
+//           $scope.data.beneficiaries[index] = data; // Update the beneficiary
+//           $.gritter.add({
+//               title: 'Beneficiary Updated!',
+//               text: 'The beneficiary has been updated successfully.',
+//           });
+//           $('#edit-beneficiary-modal').modal('hide');  
+//       }
+//   };
+
+//   // Remove beneficiary
+//   $scope.removeBeneficiary = function(index) {
+//       $scope.data.beneficiaries.splice(index, 1);
+//       $.gritter.add({
+//           title: 'Beneficiary Removed!',
+//           text: 'The beneficiary has been removed successfully.',
+//       });
+//   };
 // });
 
+// app.controller('CrudAddController', function($scope, Crud, Select) {
+//     // Attach validation engine to the form
+//     $('#form').validationEngine('attach');
+  
+//     // Initialize jQuery datepicker
+//     $('.datepicker').datepicker({
+//         format: 'mm/dd/yyyy',
+//         autoclose: true,
+//         todayHighlight: true,
+//         onSelect: function(dateText) {
+//             // Call the function to calculate age whenever a new date is selected
+//             $scope.$apply(function() {
+//                 $scope.calculateAge();
+//             });
+//         }
+//     });
+
+//     // Initialize data
+//     $scope.data = {
+//         Crud: {},
+//         beneficiaries: []
+//     };
+
+//     // Fetch crud status
+//     Select.get({ code: 'crud-status' }, function(e) {
+//         $scope.status = e.data; // Store statuses in the scope
+//     });
+
+//     // Function to calculate age based on birthdate
+//     $scope.calculateAge = function() {
+//         if ($scope.data.Crud.birthdate) {
+//             const birthdate = new Date($scope.data.Crud.birthdate);
+//             const today = new Date();
+//             let age = today.getFullYear() - birthdate.getFullYear();
+//             const monthDiff = today.getMonth() - birthdate.getMonth();
+//             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+//                 age--;
+//             }
+//             $scope.data.Crud.age = age;
+//         }
+//     };
+
+//     // Attach change event for manual input in datepicker
+//     $('#bday').on('change', function() {
+//         $scope.$apply(function() {
+//             $scope.calculateAge();
+//         });
+//     });
+
+//     // Save Crud and Beneficiaries
+//     $scope.save = function() {
+//         var valid = $("#form").validationEngine('validate');
+//         if (valid) {
+//             if (!validateEmail($scope.data.Crud.email)) {
+//                 $.gritter.add({
+//                     title: 'Warning!',
+//                     text: 'Please enter a valid email address',
+//                 });
+//                 return;
+//             }
+
+//             $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
+//             Crud.save($scope.data, function(e) {
+//                 if (e.ok) {
+//                     $.gritter.add({
+//                         title: 'Successful!',
+//                         text: e.msg,
+//                     });
+//                     window.location = '#/cruds'; // Redirect after success
+//                 } else {
+//                     $.gritter.add({
+//                         title: 'Warning!',
+//                         text: e.msg,
+//                     });
+//                 }
+//             });
+//         }
+//     };
+
+//     // Function to add a beneficiary
+//     $scope.addBeneficiary = function() {
+//         $scope.newBeneficiary = {};
+//         $('#add-beneficiary-modal').modal('show');
+//     };
+
+//     // Save new beneficiary
+//     $scope.saveBeneficiary = function(beneficiaryData) {
+//         if (beneficiaryData.birthdate) {
+//             const bdayDate = new Date(beneficiaryData.birthdate);
+//             const today = new Date();
+//             beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
+//             const monthDiff = today.getMonth() - bdayDate.getMonth();
+//             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
+//                 beneficiaryData.age--;
+//             }
+//         }
+
+//         $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
+//         $('#add-beneficiary-modal').modal('hide');
+//         $.gritter.add({
+//             title: 'Beneficiary Added!',
+//             text: 'The beneficiary has been added successfully.',
+//         });
+//     };
+// });
+
+
+// app.controller('CrudAddController', function($scope, Crud, Select) {
+//     // Attach validation engine to the form
+//     $('#form').validationEngine('attach');
+
+//     // Initialize jQuery datepicker
+//     $('.datepicker').datepicker({
+//         format: 'mm/dd/yyyy',
+//         autoclose: true,
+//         todayHighlight: true,
+//         // Trigger the age calculation on date select
+//         onSelect: function(dateText) {
+//             $scope.$apply(function() {
+//                 $scope.calculateAge();
+//             });
+//         }
+//     });
+
+//     // Initialize data
+//     $scope.data = {
+//         Crud: {},
+//         beneficiaries: []
+//     };
+
+//     // Fetch crud status
+//     Select.get({ code: 'crud-status' }, function(e) {
+//         $scope.status = e.data; // Store statuses in the scope
+//     });
+
+//     // Function to calculate age based on birthdate
+//     $scope.calculateAge = function() {
+//         if ($scope.data.Crud.birthdate) {
+//             const birthdate = new Date($scope.data.Crud.birthdate);
+//             const today = new Date();
+//             let age = today.getFullYear() - birthdate.getFullYear();
+//             const monthDiff = today.getMonth() - birthdate.getMonth();
+//             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+//                 age--;
+//             }
+//             $scope.data.Crud.age = age;
+//         }
+//     };
+
+//     // Attach change event for manual input in datepicker
+//     $('#bday').on('change', function() {
+//         $scope.$apply(function() {
+//             $scope.calculateAge();
+//         });
+//     });
+
+//     // Validate email function
+//     function validateEmail(email) {
+//         var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//         return re.test(String(email).toLowerCase());
+//     }
+
+//     // Function to save Crud and Beneficiaries
+//     $scope.save = function() {
+//         var valid = $("#form").validationEngine('validate');
+//         if (valid) {
+//             if (!validateEmail($scope.data.Crud.email)) {
+//                 $.gritter.add({
+//                     title: 'Warning!',
+//                     text: 'Please enter a valid email address',
+//                 });
+//                 return;
+//             }
+
+//             $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
+//             Crud.save($scope.data, function(e) {
+//                 if (e.ok) {
+//                     $.gritter.add({
+//                         title: 'Successful!',
+//                         text: e.msg,
+//                     });
+//                     window.location = '#/cruds'; // Redirect after success
+//                 } else {
+//                     $.gritter.add({
+//                         title: 'Warning!',
+//                         text: e.msg,
+//                     });
+//                 }
+//             });
+//         }
+//     };
+
+//     // Function to add a beneficiary
+//     $scope.addBeneficiary = function() {
+//         $scope.newBeneficiary = {}; // Reset the beneficiary data for a new entry
+//         $('#add-beneficiary-modal').modal('show');
+//     };
+
+//     // Save new beneficiary
+//     $scope.saveBeneficiary = function(beneficiaryData) {
+//         if (beneficiaryData.birthdate) {
+//             const bdayDate = new Date(beneficiaryData.birthdate);
+//             const today = new Date();
+//             beneficiaryData.age = today.getFullYear() - bdayDate.getFullYear();
+//             const monthDiff = today.getMonth() - bdayDate.getMonth();
+//             if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
+//                 beneficiaryData.age--;
+//             }
+//         }
+
+//         $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
+//         $('#add-beneficiary-modal').modal('hide');
+//         $.gritter.add({
+//             title: 'Beneficiary Added!',
+//             text: 'The beneficiary has been added successfully.',
+//         });
+//     };
+
+//     // Edit beneficiary
+//     $scope.editBeneficiary = function(index, data) {
+//         $scope.editingIndex = index; // Set index for updating
+//         $scope.newBeneficiary = angular.copy(data); // Use copy to avoid direct changes
+//         $('#edit-beneficiary-modal').modal('show'); // Open the modal
+//     };
+
+//     // Update beneficiary
+//     $scope.updateBeneficiary = function(data, index) {
+//         var valid = $('#edit_beneficiary').validationEngine('validate');
+  
+//         if (valid) {
+//             if (data.birthdate) {
+//                 // Recalculate age if the birthdate has been edited
+//                 const bdayDate = new Date(data.birthdate);
+//                 const today = new Date();
+//                 data.age = today.getFullYear() - bdayDate.getFullYear();
+//                 const monthDiff = today.getMonth() - bdayDate.getMonth();
+//                 if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
+//                     data.age--;
+//                 }
+//             }
+    
+//             $scope.data.beneficiaries[index] = data; // Update the beneficiary
+//             $.gritter.add({
+//                 title: 'Beneficiary Updated!',
+//                 text: 'The beneficiary has been updated successfully.',
+//             });
+//             $('#edit-beneficiary-modal').modal('hide');
+//         }
+//     };
+
+//     // Remove beneficiary
+//     $scope.removeBeneficiary = function(index) {
+//         $scope.data.beneficiaries.splice(index, 1);
+//         $.gritter.add({
+//             title: 'Beneficiary Removed!',
+//             text: 'The beneficiary has been removed successfully.',
+//         });
+//     };
+// });
+
+app.controller('CrudAddController', function($scope, Crud, Select) {
+    // Attach validation engine to the form
+    $('#form').validationEngine('attach');
+
+    
+    // Initialize data
+    $scope.data = {
+        Crud: {},
+        beneficiaries: []
+    };
+
+    // Initialize jQuery datepicker
+   // Initialize jQuery datepicker for beneficiaries
+   $('.datepicker').datepicker({
+    format: 'mm/dd/yyyy',
+    autoclose: true,
+    todayHighlight: true,
+    // Call calculateBeneficiaryAge when date is selected
+    onSelect: function(dateText) {
+        $scope.$apply(function() {
+            $scope.calculateBeneficiaryAge();
+        });
+    }
+});
+
+    // Function to open the beneficiary modal
+    $scope.addBeneficiary = function() {
+        $scope.newBeneficiary = {}; // Reset the beneficiary data
+        $('#add-beneficiary-modal').modal('show'); // Open the modal
+    };
+
+    $scope.calculateBeneficiaryAge = function() {
+        if ($scope.newBeneficiary.birthdate) {
+            const birthdate = new Date($scope.newBeneficiary.birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthdate.getFullYear();
+            const monthDiff = today.getMonth() - birthdate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+                age--;
+            }
+            $scope.newBeneficiary.age = age; // Set the calculated age
+        }
+    };
+
+    $('#beneficiary-birthdate').on('change', function() {
+        $scope.$apply(function() {
+            $scope.calculateBeneficiaryAge();
+        });
+    });
+
+
+
+    // Fetch crud status
+    Select.get({ code: 'crud-status' }, function(e) {
+        $scope.status = e.data; // Store statuses in the scope
+    });
+
+    // Function to calculate age based on birthdate
+    $scope.calculateAge = function() {
+        if ($scope.data.Crud.birthdate) {
+            const birthdate = new Date($scope.data.Crud.birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthdate.getFullYear();
+            const monthDiff = today.getMonth() - birthdate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+                age--;
+            }
+            $scope.data.Crud.age = age;
+        }
+    };
+
+    // Attach change event for manual input in datepicker
+    $('#bday').on('change', function() {
+        $scope.$apply(function() {
+            $scope.calculateAge();
+        });
+    });
+
+    // Validate email function
+    function validateEmail(email) {
+        var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    // Function to save Crud and Beneficiaries
+    $scope.save = function() {
+        var valid = $("#form").validationEngine('validate');
+        if (valid) {
+            if (!validateEmail($scope.data.Crud.email)) {
+                $.gritter.add({
+                    title: 'Warning!',
+                    text: 'Please enter a valid email address',
+                });
+                return;
+            }
+
+            $scope.data.Crud.beneficiaries = $scope.data.beneficiaries;
+            Crud.save($scope.data, function(e) {
+                if (e.ok) {
+                    $.gritter.add({
+                        title: 'Successful!',
+                        text: e.msg,
+                    });
+                    window.location = '#/cruds'; // Redirect after success
+                } else {
+                    $.gritter.add({
+                        title: 'Warning!',
+                        text: e.msg,
+                    });
+                }
+            });
+        }
+    };
+
+    // Function to add a beneficiary
+    // Function to add a beneficiary
+    // $scope.addBeneficiary = function() {
+    //     $scope.newBeneficiary = {}; // Reset the beneficiary data for a new entry
+    //     $('#add-beneficiary-modal').modal('show'); // Open the modal
+    // };
+
+    // Initialize the datepicker and calculate age when selected
+    $('#add-beneficiary-modal').on('shown.bs.modal', function () {
+        $('#beneficiary-birthdate').datepicker({
+            format: 'mm/dd/yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            onSelect: function(dateText) {
+                $scope.$apply(function() {
+                    $scope.calculateBeneficiaryAge(); // Calculate age
+                });
+            }
+        });
+    });
+
+    // // Function to calculate age based on beneficiary's birthdate
+    // $scope.calculateBeneficiaryAge = function() {
+    //     if ($scope.newBeneficiary.birthdate) {
+    //         const birthdate = new Date($scope.newBeneficiary.birthdate);
+    //         const today = new Date();
+    //         let age = today.getFullYear() - birthdate.getFullYear();
+    //         const monthDiff = today.getMonth() - birthdate.getMonth();
+    //         if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+    //             age--;
+    //         }
+    //         $scope.newBeneficiary.age = age; // Set the calculated age
+    //     }
+    // };
+
+    // $('#add-beneficiary-modal').on('hide.bs.modal', function () {
+    //     $scope.newBeneficiary = {}; // Reset the beneficiary data
+    //     $scope.$apply(); // Update the scope
+    // });
+
+
+    // Save new beneficiary
+    $scope.saveBeneficiary = function(beneficiaryData) {
+        if (beneficiaryData.birthdate) {
+            $scope.calculateBeneficiaryAge(); // Ensure age is calculated before adding
+        }
+        $scope.data.beneficiaries.push(beneficiaryData); // Add the new beneficiary to the array
+        $('#add-beneficiary-modal').modal('hide');
+        $.gritter.add({
+            title: 'Beneficiary Added!',
+            text: 'The beneficiary has been added successfully.',
+        });
+    };
+
+    $('#add-beneficiary-modal').on('hidden.bs.modal', function () {
+        $scope.newBeneficiary = {}; // Reset the beneficiary data
+        $scope.$apply(); // Update the scope
+    });
+
+
+    // Edit beneficiary
+    $scope.editBeneficiary = function(index) {
+        $scope.editingIndex = index; // Set the current editing index
+        $scope.newBeneficiary = angular.copy($scope.data.beneficiaries[index]); // Make a copy
+        $('#edit-beneficiary-modal').modal('show'); // Show edit modal
+    };
+
+    // Update beneficiary
+    $scope.updateBeneficiary = function() {
+        var valid = $('#edit_beneficiary').validationEngine('validate');
+
+        if (valid) {
+            const index = $scope.editingIndex;
+            const data = $scope.newBeneficiary;
+
+            if (data.birthdate) {
+                const bdayDate = new Date(data.birthdate);
+                const today = new Date();
+                data.age = today.getFullYear() - bdayDate.getFullYear();
+                const monthDiff = today.getMonth() - bdayDate.getMonth();
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < bdayDate.getDate())) {
+                    data.age--;
+                }
+            }
+
+            $scope.data.beneficiaries[index] = data; // Update the beneficiary
+            $.gritter.add({
+                title: 'Beneficiary Updated!',
+                text: 'The beneficiary has been updated successfully.',
+            });
+            $('#edit-beneficiary-modal').modal('hide');
+        }
+    };
+
+    // Remove beneficiary
+    $scope.removeBeneficiary = function(index) {
+        $scope.data.beneficiaries.splice(index, 1); // Remove by index
+        $.gritter.add({
+            title: 'Beneficiary Removed!',
+            text: 'The beneficiary has been removed successfully.',
+        });
+    };
+});
+
+
+  
 
 
 app.controller('CrudViewController', function($scope, $routeParams, Crud, $http) {

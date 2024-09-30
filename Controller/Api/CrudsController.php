@@ -325,17 +325,106 @@ public function query($sql, $params = []) {
 //     $pdf->Output('I', 'CRUD_Details.pdf');
 //     return $this->response;
 // }
-//test combined test1 and test2
+//test combined test1 and test2 working
+// public function printCrud($id = null) {
+//     // Ensure Cruds model is loaded
+//     $this->loadModel('Crud');
+
+//     // Check if an ID is provided for individual CRUD
+//     if ($id) {
+//         // Fetch a single CRUD record by ID
+//         $cruds = $this->Crud->find('first', [
+//             'conditions' => ['Crud.id' => $id],
+//             'contain' => ['CrudStatuses']
+//         ]);
+
+//         if (empty($cruds)) {
+//             throw new NotFoundException(__('CRUD not found'));
+//         }
+//         // Convert to an array to maintain consistency when processing multiple records
+//         $cruds = [$cruds];
+//     } else {
+//         // If no ID, handle multiple CRUDs based on search and status filters
+//         $searchQuery = $this->request->query('search');
+//         $statusQuery = $this->request->query('status');
+
+//         // Prepare conditions for filtering cruds
+//         $conditions = [];
+        
+//         // Add search condition if provided
+//         if (!empty($searchQuery)) {
+//             $conditions['Crud.name LIKE'] = '%' . $searchQuery . '%';
+//         }
+
+//         // Add approval status condition if provided
+//         if (!empty($statusQuery)) {
+//             if ($statusQuery === 'PENDING') {
+//                 $conditions['Crud.approve'] = null; // Handle pending approval (NULL)
+//             } elseif ($statusQuery === 'APPROVED') {
+//                 $conditions['Crud.approve'] = 1; // Handle approved status
+//             } elseif ($statusQuery === 'DISAPPROVED') {
+//                 $conditions['Crud.approve'] = 0; // Handle disapproved status
+//             }
+//         }
+
+//         // Retrieve filtered CRUDs with statuses using the conditions
+//         $cruds = $this->Crud->find('all', [
+//             'conditions' => $conditions,
+//             'contain' => ['CrudStatuses'],  // Ensure CrudStatuses is contained
+//         ]);
+
+//         if (empty($cruds)) {
+//             throw new NotFoundException(__('No CRUDs found'));
+//         }
+//     }
+
+//     // Initialize FPDF for output
+//     $pdf = new FPDF();
+//     $pdf->AddPage();
+//     $pdf->SetFont('Arial', 'B', 16);
+//     $pdf->Cell(40, 10, 'CRUD Details');
+//     $pdf->Ln(10); // Line break
+
+//     // Set regular font for outputting CRUD data
+//     $pdf->SetFont('Arial', '', 12);
+
+//     // Output each CRUD's data
+//     foreach ($cruds as $crud) {
+//         $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Email: ' . $crud['Crud']['email']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']['name']) ? $crud['CrudStatuses']['name'] : 'N/A'));
+//         $pdf->Ln(20); // Line break between CRUD entries
+//     }
+
+//     // Set response headers for inline display
+//     $this->response->type('application/pdf');
+//     $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Display PDF inline
+
+//     // Output the PDF
+//     $pdf->Output('I', 'CRUD_Details.pdf');
+    
+//     return $this->response;
+// }
+
+
 public function printCrud($id = null) {
     // Ensure Cruds model is loaded
     $this->loadModel('Crud');
 
     // Check if an ID is provided for individual CRUD
     if ($id) {
-        // Fetch a single CRUD record by ID
+        // Fetch a single CRUD record by ID along with its beneficiaries
         $cruds = $this->Crud->find('first', [
             'conditions' => ['Crud.id' => $id],
-            'contain' => ['CrudStatuses']
+            'contain' => ['CrudStatuses', 'Beneficiary'] // Include beneficiaries
         ]);
 
         if (empty($cruds)) {
@@ -367,10 +456,10 @@ public function printCrud($id = null) {
             }
         }
 
-        // Retrieve filtered CRUDs with statuses using the conditions
+        // Retrieve filtered CRUDs with statuses and beneficiaries using the conditions
         $cruds = $this->Crud->find('all', [
             'conditions' => $conditions,
-            'contain' => ['CrudStatuses'],  // Ensure CrudStatuses is contained
+            'contain' => ['CrudStatuses', 'Beneficiary'],  // Ensure CrudStatuses and Beneficiaries are contained
         ]);
 
         if (empty($cruds)) {
@@ -400,8 +489,33 @@ public function printCrud($id = null) {
         $pdf->Ln(10);
         $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']['name']) ? $crud['CrudStatuses']['name'] : 'N/A'));
-        $pdf->Ln(20); // Line break between CRUD entries
+        $pdf->Cell(40, 10, 'Role: ' . (!empty($crud['CrudStatuses']['name']) ? $crud['CrudStatuses']['status_name'] : 'N/A'));
+        $pdf->Ln(10); // Line break between CRUD entries
+        $pdf->Cell(40, 10, 'Status: ' . $crud['Crud']['approve']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Created: ' . $crud['Crud']['created']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Modified: ' . $crud['Crud']['modified']);
+        $pdf->Ln(20);
+        
+
+        // Print beneficiaries associated with the CRUD
+        if (!empty($crud['Beneficiary'])) {
+            $pdf->Cell(40, 10, 'Beneficiary:');
+            $pdf->Ln(10); // Line break
+            foreach ($crud['Beneficiary'] as $beneficiary) {
+                $pdf->Cell(40, 10, 'Name: ' . $beneficiary['name']);
+                $pdf->Ln(10);
+                $pdf->Cell(40, 10, 'Birthdate: ' . $beneficiary['birthdate']);
+                $pdf->Ln(10);
+                $pdf->Cell(40, 10, 'Age: ' . $beneficiary['age']);
+                $pdf->Ln(10);
+                $pdf->Cell(40, 10, '-----'); // Separator for beneficiaries
+                $pdf->Ln(5); // Line break between beneficiaries
+            }
+        }
+        
+        $pdf->Ln(20); // Additional space between CRUD entries
     }
 
     // Set response headers for inline display
@@ -413,8 +527,6 @@ public function printCrud($id = null) {
     
     return $this->response;
 }
-
-
 
 
 
@@ -889,6 +1001,8 @@ public function printCrud($id = null) {
     
         // Log the final conditions before pagination
         $this->log('Final Search Conditions: ' . print_r($conditions, true), 'debug');
+
+         // paginate data
     
         // Fetch cruds with the conditions
         $cruds = $this->Crud->find('all', [
@@ -932,6 +1046,83 @@ public function printCrud($id = null) {
         ]);
     }
     
+    // public function index() {
+    //     $page = isset($this->request->query['page']) ? (int)$this->request->query['page'] : 1;
+    
+    //     // Base conditions to fetch only visible cruds
+    //     $conditions = ['Crud.visible' => 1];
+    
+    //     // Check if there is a search term
+    //     if (!empty($this->request->query['search'])) {
+    //         $search = $this->request->query['search'];
+    //         $conditions['Crud.name LIKE'] = '%' . $search . '%'; // Add the search condition
+    //     }
+    
+    //     // Check for approval status filtering
+    //     if (!empty($this->request->query['status'])) {
+    //         if ($this->request->query['status'] === 'PENDING') {
+    //             $conditions['Crud.approve'] = null; // Handle NULL for pending
+    //         } elseif ($this->request->query['status'] === 'APPROVED') {
+    //             $conditions['Crud.approve'] = 1; // Handle approved
+    //         } elseif ($this->request->query['status'] === 'DISAPPROVED') {
+    //             $conditions['Crud.approve'] = 0; // Handle disapproved
+    //         }
+    //     }
+    
+    //     // Log the final conditions before pagination
+    //     $this->log('Final Search Conditions: ' . print_r($conditions, true), 'debug');
+    
+    //     // Set pagination limit
+    //     $limit = 25;
+    
+    //     // Fetch paginated cruds
+    //     $cruds = $this->Crud->find('all', [
+    //         'conditions' => $conditions,
+    //         'limit' => $limit,
+    //         'page' => $page,
+    //         'contain' => ['CrudStatuses'], // Ensure this relationship is defined correctly
+    //         'order' => ['Crud.id' => 'ASC']
+    //     ]);
+    
+    //     // Count the total records for pagination
+    //     $total = $this->Crud->find('count', ['conditions' => $conditions]);
+    
+    //     // Prepare response data
+    //     $responseCruds = [];
+    //     foreach ($cruds as $crud) {
+    //         $responseCruds[] = [
+    //             'id' => $crud['Crud']['id'],
+    //             'name' => $crud['Crud']['name'],
+    //             'age' => $crud['Crud']['age'],
+    //             'character' => $crud['Crud']['character'],
+    //             'birthdate' => $crud['Crud']['birthdate'],
+    //             'visible' => $crud['Crud']['visible'],
+    //             'approve' => $crud['Crud']['approve'],
+    //             'crudStatus' => !empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : null, //status_name
+    //         ];
+    //     }
+    
+    //     // Calculate total pages
+    //     $totalPages = ceil($total / $limit);
+    
+    //     // Prepare the response with pagination information
+    //     $response = [
+    //         'ok' => true,
+    //         'msg' => 'index',
+    //         'data' => $responseCruds,
+    //         'paginator' => [
+    //             'page' => $page,
+    //             'limit' => $limit,
+    //             'total' => $total,
+    //             'pageCount' => $totalPages
+    //         ],
+    //     ];
+    
+    //     $this->set([
+    //         'response' => $response,
+    //         '_serialize' => 'response',
+    //     ]);
+    // }
     
     
     
@@ -1260,6 +1451,282 @@ public function printCrud($id = null) {
     // }
     
  
+// test
+// public function add() {
+//     // Begin transaction
+//     $this->Crud->getDataSource()->begin();
+
+//     // Retrieve CRUD data from the request
+//     $crud = $this->request->data['Crud'];
+
+//     // Save the Crud data first
+//     if ($this->Crud->save($crud)) {
+//         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//         // Calculate age based on birthdate if present
+//         if (!empty($crud['birthdate'])) {
+//             $birthdate = $crud['birthdate'];
+//             $bdayDate = new DateTime($birthdate);
+//             $today = new DateTime();
+//             $age = $today->diff($bdayDate)->y;
+
+//             // Save the age back to the Crud if needed
+//             $this->Crud->id = $crudId; 
+//             $this->Crud->saveField('age', $age);
+//         }
+
+//         // Save beneficiaries if present
+//         if (!empty($this->request->data['beneficiaries'])) {
+//             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+//                 $beneficiary['cruds_id'] = $crudId;
+//             }
+
+//             if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'Could not save Beneficiaries'
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         }
+
+//         // Commit the transaction
+//         $this->Crud->getDataSource()->commit();
+
+//         // Send Email Notification to the User
+//         try {
+//             if (!empty($crud['email'])) {
+//                 $email = new CakeEmail('default'); 
+//                 $email->to($crud['email'])
+//                     ->subject('Notification: Your CRUD Record was Added')
+//                     ->emailFormat('html')
+//                     ->template('crud_notification', 'default') 
+//                     ->viewVars(array('crud' => $crud))
+//                     ->send();
+//             }
+//         } catch (Exception $e) {
+//             // Log error and notify the front-end if needed
+//             $this->log('Error sending email: ' . $e->getMessage(), 'error');
+//         }
+//         // Return success response
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => true,
+//                 'msg' => 'Crud and Beneficiaries saved successfully',
+//                 'data' => $crud,
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     } else {
+//         // Rollback if Crud saving fails
+//         $this->Crud->getDataSource()->rollback();
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Could not save Crud',
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+
+// public function add() {
+//     // Begin transaction
+//     $this->Crud->getDataSource()->begin();
+
+//     // Retrieve CRUD data from the request
+//     $crud = $this->request->data['Crud'];
+
+//     // Save the Crud data first
+//     if ($this->Crud->save($crud)) {
+//         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//         // Process birthdate if present
+//         if (!empty($crud['birthdate'])) {
+//             // Ensure the date is formatted correctly
+//             $birthdate = $crud['birthdate'];
+//             // Convert the date format if necessary (e.g., from 'mm/dd/yyyy' to 'yyyy-mm-dd')
+//             $formattedDate = DateTime::createFromFormat('m/d/Y', $birthdate);
+//             if ($formattedDate) {
+//                 $crud['birthdate'] = $formattedDate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//             }
+
+//             // Calculate age based on the formatted birthdate
+//             $today = new DateTime();
+//             $age = $today->diff($formattedDate)->y;
+
+//             // Save the age back to the Crud if needed
+//             $this->Crud->id = $crudId; 
+//             $this->Crud->saveField('age', $age);
+//         }
+
+//         // Save beneficiaries if present
+//         if (!empty($this->request->data['beneficiaries'])) {
+//             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+//                 // Ensure the birthdate for beneficiaries is formatted correctly if it exists
+//                 if (!empty($beneficiary['birthdate'])) {
+//                     $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+//                     if ($beneficiaryBirthdate) {
+//                         $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                     }
+//                 }
+//                 $beneficiary['cruds_id'] = $crudId;
+//             }
+
+//             if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'Could not save Beneficiaries'
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         }
+
+//         // Commit the transaction
+//         $this->Crud->getDataSource()->commit();
+
+//         // Send Email Notification to the User
+//         try {
+//             if (!empty($crud['email'])) {
+//                 $email = new CakeEmail('default'); 
+//                 $email->to($crud['email'])
+//                     ->subject('Notification: Your CRUD Record was Added')
+//                     ->emailFormat('html')
+//                     ->template('crud_notification', 'default') 
+//                     ->viewVars(array('crud' => $crud))
+//                     ->send();
+//             }
+//         } catch (Exception $e) {
+//             // Log error and notify the front-end if needed
+//             $this->log('Error sending email: ' . $e->getMessage(), 'error');
+//         }
+        
+//         // Return success response
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => true,
+//                 'msg' => 'Crud and Beneficiaries saved successfully',
+//                 'data' => $crud,
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     } else {
+//         // Rollback if Crud saving fails
+//         $this->Crud->getDataSource()->rollback();
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Could not save Crud',
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+
+//working with bdays
+// public function add() {
+//     // Begin transaction
+//     $this->Crud->getDataSource()->begin();
+
+//     // Retrieve CRUD data from the request
+//     $crud = $this->request->data['Crud'];
+
+//     // Process birthdate if present
+//     if (!empty($crud['birthdate'])) {
+//         // Ensure the date is formatted correctly
+//         $birthdate = $crud['birthdate'];
+//         // Convert the date format if necessary (e.g., from 'mm/dd/yyyy' to 'yyyy-mm-dd')
+//         $formattedDate = DateTime::createFromFormat('m/d/Y', $birthdate);
+//         if ($formattedDate) {
+//             $crud['birthdate'] = $formattedDate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+
+//             // Calculate age based on the formatted birthdate
+//             $today = new DateTime();
+//             $age = $today->diff($formattedDate)->y;
+
+//             // Save the age back to the Crud
+//             $crud['age'] = $age;
+//         }
+//     }
+
+//     // Save the Crud data first
+//     if ($this->Crud->save($crud)) {
+//         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//         // Save beneficiaries if present
+//         if (!empty($this->request->data['beneficiaries'])) {
+//             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+//                 // Ensure the birthdate for beneficiaries is formatted correctly if it exists
+//                 if (!empty($beneficiary['birthdate'])) {
+//                     $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+//                     if ($beneficiaryBirthdate) {
+//                         $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                     }
+//                 }
+//                 $beneficiary['cruds_id'] = $crudId;
+//             }
+
+//             if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'Could not save Beneficiaries'
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         }
+
+//         // Commit the transaction
+//         $this->Crud->getDataSource()->commit();
+
+//         // Send Email Notification to the User
+//         try {
+//             if (!empty($crud['email'])) {
+//                 $email = new CakeEmail('default'); 
+//                 $email->to($crud['email'])
+//                     ->subject('Notification: Your CRUD Record was Added')
+//                     ->emailFormat('html')
+//                     ->template('crud_notification', 'default') 
+//                     ->viewVars(array('crud' => $crud))
+//                     ->send();
+//             }
+//         } catch (Exception $e) {
+//             // Log error and notify the front-end if needed
+//             $this->log('Error sending email: ' . $e->getMessage(), 'error');
+//         }
+        
+//         // Return success response
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => true,
+//                 'msg' => 'Crud and Beneficiaries saved successfully',
+//                 'data' => $crud,
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     } else {
+//         // Rollback if Crud saving fails
+//         $this->Crud->getDataSource()->rollback();
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Could not save Crud',
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
 
 public function add() {
     // Begin transaction
@@ -1268,9 +1735,39 @@ public function add() {
     // Retrieve CRUD data from the request
     $crud = $this->request->data['Crud'];
 
+    // Handle file upload
+    $pdfUpload = $this->request->data['pdf_upload'];
+    $pdfFilePath = null;
+
+    if (!empty($pdfUpload['name'])) {
+        // Define the upload path (make sure the directory is writable)
+        $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS; // Adjust the path as necessary
+        $pdfFileName = time() . '_' . basename($pdfUpload['name']);
+        $pdfFilePath = 'files/uploads/' . $pdfFileName; // Save path to store in the database
+        
+        // Move the uploaded file to the specified path
+        if (!move_uploaded_file($pdfUpload['tmp_name'], $uploadPath . $pdfFileName)) {
+            $this->Crud->getDataSource()->rollback();
+            $this->set(array(
+                'response' => array(
+                    'ok' => false,
+                    'msg' => 'File upload failed',
+                ),
+                '_serialize' => 'response'
+            ));
+            return;
+        }
+    }
+
     // Save the Crud data first
     if ($this->Crud->save($crud)) {
         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+        // Store the PDF file path in the Crud record
+        if ($pdfFilePath) {
+            $this->Crud->id = $crudId;
+            $this->Crud->saveField('pdf_path', $pdfFilePath); // Assuming you have a pdf_path column in your Crud table
+        }
 
         // Calculate age based on birthdate if present
         if (!empty($crud['birthdate'])) {
@@ -1321,6 +1818,7 @@ public function add() {
             // Log error and notify the front-end if needed
             $this->log('Error sending email: ' . $e->getMessage(), 'error');
         }
+        
         // Return success response
         $this->set(array(
             'response' => array(
@@ -1343,7 +1841,6 @@ public function add() {
     }
 }
 
-    
     
     
     
