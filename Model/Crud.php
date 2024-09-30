@@ -5,7 +5,7 @@ class Crud extends AppModel {
 
   public $belongsTo = array(
       'CrudStatuses' => array(  
-          'className' => 'CrudStatus',
+          'className' => 'CrudStatuses',
           'foreignKey' => 'crudStatusId' 
       )
   );

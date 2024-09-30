@@ -48,7 +48,10 @@
           </div>
           <hr>
 
-
+        
+    <div class="btn-group-xs btn-group pull-left">
+    <a href="/Training/cruds/printCrud/{{ data.Crud.id }}" class="btn btn-primary" target="_blank" title="PRINT" ng-disabled="data.Crud.approve === null || data.Crud.approve === false">PRINT</a>
+    </div>
 
         <hr>
       </div>

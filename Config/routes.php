@@ -29,6 +29,8 @@ Router::connect('/crud/print/:id',
   ['pass' => ['id'], 'id' => '[0-9]+']
 );
 
+
+
 Router::connect('/cruds/printCrud/*', ['controller' => 'Cruds', 'action' => 'printCrud']);
 
 // Add routes for approval and disapproval actions

@@ -1,4 +1,7 @@
 <?php
+
+
+//I DONT THINK THIS WORKS!
 class BeneficiaryController extends AppController {
 
     public function beforeFilter(){

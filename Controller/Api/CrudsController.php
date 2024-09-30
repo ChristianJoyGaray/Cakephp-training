@@ -205,69 +205,214 @@ public function query($sql, $params = []) {
 //     return $this->response;
 // }
 
-public function printCrud() {
-    $this->loadModel('Cruds');  // Ensure Cruds model is loaded
+//test1
+// public function printCrud() {
+//     // Ensure Cruds model is loaded
+//     $this->loadModel('Crud');
     
-    $searchQuery = $this->request->query('search');
-    $statusQuery = $this->request->query('status'); // Get status filter from the request
+//     // Get search and status filters from the request
+//     $searchQuery = $this->request->query('search');
+//     $statusQuery = $this->request->query('status');
 
-    // Search logic
-    $conditions = [];
+//     // Prepare conditions for filtering cruds
+//     $conditions = [];
     
-    // Check if there is a search term
-    if (!empty($searchQuery)) {
-        $conditions['Cruds.name LIKE'] = '%' . $searchQuery . '%';  // Adjust the condition as per your search logic
-    }
+//     // Add search condition if provided
+//     if (!empty($searchQuery)) {
+//         $conditions['Crud.name LIKE'] = '%' . $searchQuery . '%';
+//     }
 
-    // Check for approval status filtering
-    if (!empty($statusQuery)) {
-        if ($statusQuery === 'PENDING') {
-            $conditions['Cruds.approve'] = null; // Handle NULL for pending
-        } elseif ($statusQuery === 'APPROVED') {
-            $conditions['Cruds.approve'] = 1; // Handle approved
-        } elseif ($statusQuery === 'DISAPPROVED') {
-            $conditions['Cruds.approve'] = 0; // Handle disapproved
+//     // Add approval status condition if provided
+//     if (!empty($statusQuery)) {
+//         if ($statusQuery === 'PENDING') {
+//             $conditions['Crud.approve'] = null; // Handle pending approval (NULL)
+//         } elseif ($statusQuery === 'APPROVED') {
+//             $conditions['Crud.approve'] = 1; // Handle approved status
+//         } elseif ($statusQuery === 'DISAPPROVED') {
+//             $conditions['Crud.approve'] = 0; // Handle disapproved status
+//         }
+//     }
+
+//     // Retrieve filtered CRUDs with statuses using the conditions
+//     $cruds = $this->Crud->find('all', [
+//         'conditions' => $conditions,
+//         'contain' => ['CrudStatuses'],  // Ensure CrudStatuses is contained
+//     ]);
+
+//     // Check if any cruds were fetched
+//     if (empty($cruds)) {
+//         throw new NotFoundException(__('No CRUDs found'));
+//     }
+
+//     // Initialize FPDF for output
+//     $pdf = new FPDF();
+//     $pdf->AddPage();
+//     $pdf->SetFont('Arial', 'B', 16);
+//     $pdf->Cell(40, 10, 'CRUD Details');
+//     $pdf->Ln(10); // Line break
+
+//     // Set regular font for outputting CRUD data
+//     $pdf->SetFont('Arial', '', 12);
+
+//     // Output each CRUD's data
+//     foreach ($cruds as $crud) {
+//         $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Email: ' . $crud['Crud']['email']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+//         $pdf->Ln(10);
+//         $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : 'N/A'));
+//         $pdf->Ln(20); // Line break between CRUD entries
+//     }
+
+//     // Set response headers for inline display
+//     $this->response->type('application/pdf');
+//     $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Display PDF inline
+
+//     // Output the PDF
+//     $pdf->Output('I', 'CRUD_Details.pdf');
+    
+//     return $this->response;
+// }
+//test2
+// public function printCrud($id = null) {
+//     if (!$id) {
+//         throw new NotFoundException(__('Invalid CRUD'));
+//     }
+
+//     $this->loadModel('Crud');
+    
+//     // Fetch CRUD data by ID along with its status
+//     $crud = $this->Crud->find('first', [
+//         'conditions' => ['Crud.id' => $id],
+//         'contain' => ['CrudStatuses']
+//     ]);
+
+//     if (empty($crud)) {
+//         throw new NotFoundException(__('CRUD not found'));
+//     }
+
+//     // Initialize FPDF
+//     $pdf = new FPDF();
+//     $pdf->AddPage();
+//     $pdf->SetFont('Arial', 'B', 16);
+//     $pdf->Cell(40, 10, 'CRUD Details');
+//     $pdf->Ln(10); // Line break
+
+//     // Output CRUD data
+//     $pdf->SetFont('Arial', '', 12);
+//     $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
+//     $pdf->Ln(10);
+//     $pdf->Cell(40, 10, 'Email: ' . $crud['Crud']['email']);
+//     $pdf->Ln(10);
+//     $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
+//     $pdf->Ln(10);
+//     $pdf->Cell(40, 10, 'Role: ' . (!empty($crud['CrudStatuses']['name']) ? $crud['CrudStatuses']['name'] : 'N/A'));
+//     $pdf->Ln(10);
+//     $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
+//     $pdf->Ln(10);
+//     $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+//     $pdf->Ln(20); // Add space between CRUD entries
+
+//     // Output the PDF
+//     $this->response->type('application/pdf');
+//     $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"');
+//     $pdf->Output('I', 'CRUD_Details.pdf');
+//     return $this->response;
+// }
+//test combined test1 and test2
+public function printCrud($id = null) {
+    // Ensure Cruds model is loaded
+    $this->loadModel('Crud');
+
+    // Check if an ID is provided for individual CRUD
+    if ($id) {
+        // Fetch a single CRUD record by ID
+        $cruds = $this->Crud->find('first', [
+            'conditions' => ['Crud.id' => $id],
+            'contain' => ['CrudStatuses']
+        ]);
+
+        if (empty($cruds)) {
+            throw new NotFoundException(__('CRUD not found'));
+        }
+        // Convert to an array to maintain consistency when processing multiple records
+        $cruds = [$cruds];
+    } else {
+        // If no ID, handle multiple CRUDs based on search and status filters
+        $searchQuery = $this->request->query('search');
+        $statusQuery = $this->request->query('status');
+
+        // Prepare conditions for filtering cruds
+        $conditions = [];
+        
+        // Add search condition if provided
+        if (!empty($searchQuery)) {
+            $conditions['Crud.name LIKE'] = '%' . $searchQuery . '%';
+        }
+
+        // Add approval status condition if provided
+        if (!empty($statusQuery)) {
+            if ($statusQuery === 'PENDING') {
+                $conditions['Crud.approve'] = null; // Handle pending approval (NULL)
+            } elseif ($statusQuery === 'APPROVED') {
+                $conditions['Crud.approve'] = 1; // Handle approved status
+            } elseif ($statusQuery === 'DISAPPROVED') {
+                $conditions['Crud.approve'] = 0; // Handle disapproved status
+            }
+        }
+
+        // Retrieve filtered CRUDs with statuses using the conditions
+        $cruds = $this->Crud->find('all', [
+            'conditions' => $conditions,
+            'contain' => ['CrudStatuses'],  // Ensure CrudStatuses is contained
+        ]);
+
+        if (empty($cruds)) {
+            throw new NotFoundException(__('No CRUDs found'));
         }
     }
 
-    // Retrieve the filtered results
-    $filteredCruds = $this->Cruds->find('all', [
-        'conditions' => $conditions,
-        'contain' => ['CrudStatuses'],  // Include related CrudStatuses
-    ]);
-
-    // Pass data to the view for FPDF printing
-    $this->set('cruds', $filteredCruds);
-
-    // Initialize FPDF
+    // Initialize FPDF for output
     $pdf = new FPDF();
     $pdf->AddPage();
     $pdf->SetFont('Arial', 'B', 16);
     $pdf->Cell(40, 10, 'CRUD Details');
     $pdf->Ln(10); // Line break
 
-    // Output CRUD data for each crud
+    // Set regular font for outputting CRUD data
     $pdf->SetFont('Arial', '', 12);
-    foreach ($filteredCruds as $crud) {
-        $pdf->Cell(40, 10, 'Name: ' . $crud['Cruds']['name']);
+
+    // Output each CRUD's data
+    foreach ($cruds as $crud) {
+        $pdf->Cell(40, 10, 'Name: ' . $crud['Crud']['name']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Age: ' . $crud['Cruds']['age']);
+        $pdf->Cell(40, 10, 'Email: ' . $crud['Crud']['email']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Character: ' . $crud['Cruds']['character']);
+        $pdf->Cell(40, 10, 'Age: ' . $crud['Crud']['age']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Cruds']['birthdate']);
+        $pdf->Cell(40, 10, 'Character: ' . $crud['Crud']['character']);
         $pdf->Ln(10);
-        $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']) ? $crud['CrudStatuses']['name'] : 'N/A'));
-        $pdf->Ln(20); // Add space between CRUD entries
+        $pdf->Cell(40, 10, 'Birthdate: ' . $crud['Crud']['birthdate']);
+        $pdf->Ln(10);
+        $pdf->Cell(40, 10, 'Status: ' . (!empty($crud['CrudStatuses']['name']) ? $crud['CrudStatuses']['name'] : 'N/A'));
+        $pdf->Ln(20); // Line break between CRUD entries
     }
 
-    // Output the PDF
+    // Set response headers for inline display
     $this->response->type('application/pdf');
-    $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Display inline
-    $pdf->Output('I', 'CRUD_Details.pdf'); // Use 'I' for inline display
+    $this->response->header('Content-Disposition', 'inline; filename="CRUD_Details.pdf"'); // Display PDF inline
+
+    // Output the PDF
+    $pdf->Output('I', 'CRUD_Details.pdf');
+    
     return $this->response;
 }
-
 
 
 
