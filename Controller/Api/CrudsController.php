@@ -1631,7 +1631,7 @@ public function printCrud($id = null) {
 //     }
 // }
 
-//working with bdays
+//working with bdays WORKING!!!!
 // public function add() {
 //     // Begin transaction
 //     $this->Crud->getDataSource()->begin();
@@ -1728,120 +1728,785 @@ public function printCrud($id = null) {
 //     }
 // }
 
+//working but test again
+// public function add() {
+//     // Begin transaction
+//     $this->Crud->getDataSource()->begin();
+
+//     // Retrieve CRUD data from the request
+//     $crud = $this->request->data['Crud'];
+
+//     // Handle file upload
+//     $pdfUpload = $this->request->data['pdf_upload'];
+//     $pdfFilePath = null;
+
+//     if (!empty($pdfUpload['name'])) {
+//         // Define the upload path (make sure the directory is writable)
+//         $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS; // Adjust the path as necessary
+//         $pdfFileName = time() . '_' . basename($pdfUpload['name']);
+//         $pdfFilePath = 'files/uploads/' . $pdfFileName; // Save path to store in the database
+        
+//         // Move the uploaded file to the specified path
+//         if (!move_uploaded_file($pdfUpload['tmp_name'], $uploadPath . $pdfFileName)) {
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'File upload failed',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//             return;
+//         }
+//     }
+
+//     // Save the Crud data first
+//     if ($this->Crud->save($crud)) {
+//         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//         // Store the PDF file path in the Crud record
+//         if ($pdfFilePath) {
+//             $this->Crud->id = $crudId;
+//             $this->Crud->saveField('pdf_path', $pdfFilePath); // Assuming you have a pdf_path column in your Crud table
+//         }
+
+//         // Calculate age based on birthdate if present
+//         if (!empty($crud['birthdate'])) {
+//             $birthdate = $crud['birthdate'];
+//             $bdayDate = new DateTime($birthdate);
+//             $today = new DateTime();
+//             $age = $today->diff($bdayDate)->y;
+
+//             // Save the age back to the Crud if needed
+//             $this->Crud->id = $crudId; 
+//             $this->Crud->saveField('age', $age);
+//         }
+
+//         // Save beneficiaries if present
+//         if (!empty($this->request->data['beneficiaries'])) {
+//             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+//                 $beneficiary['cruds_id'] = $crudId;
+//             }
+
+//             if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'Could not save Beneficiaries'
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         }
+
+//         // Commit the transaction
+//         $this->Crud->getDataSource()->commit();
+
+//         // Send Email Notification to the User
+//         try {
+//             if (!empty($crud['email'])) {
+//                 $email = new CakeEmail('default'); 
+//                 $email->to($crud['email'])
+//                     ->subject('Notification: Your CRUD Record was Added')
+//                     ->emailFormat('html')
+//                     ->template('crud_notification', 'default') 
+//                     ->viewVars(array('crud' => $crud))
+//                     ->send();
+//             }
+//         } catch (Exception $e) {
+//             // Log error and notify the front-end if needed
+//             $this->log('Error sending email: ' . $e->getMessage(), 'error');
+//         }
+        
+//         // Return success response
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => true,
+//                 'msg' => 'Crud and Beneficiaries saved successfully',
+//                 'data' => $crud,
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     } else {
+//         // Rollback if Crud saving fails
+//         $this->Crud->getDataSource()->rollback();
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Could not save Crud',
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+
+// public function add() {
+//     // Begin transaction
+//     $this->Crud->getDataSource()->begin();
+
+//     // Retrieve CRUD data from the request
+//     $crud = $this->request->data['Crud'];
+
+//     // Handle file upload
+//     $fileUpload = $this->request->data['file_upload'];
+//     $allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png'];
+//     $filePath = null;
+
+//     if (!empty($fileUpload['name'])) {
+//         if (in_array($fileUpload['type'], $allowedTypes)) {
+//             // Define the upload path (make sure the directory is writable)
+//             $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS;
+//             $fileName = time() . '_' . basename($fileUpload['name']);
+//             $filePath = 'files/uploads/' . $fileName; // Save path to store in the database
+
+//             // Move the uploaded file to the specified path
+//             if (!move_uploaded_file($fileUpload['tmp_name'], $uploadPath . $fileName)) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'File upload failed',
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         } else {
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'Invalid file type. Allowed types are PDF, Word documents, and images.',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//             return;
+//         }
+//     }
+
+//     // Save the Crud data
+//     if ($this->Crud->save($crud)) {
+//         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//         // Store the file path in the Crud record
+//         if ($filePath) {
+//             $this->Crud->id = $crudId;
+//             $this->Crud->saveField('file_path', $filePath); // Assuming you have a file_path column in your Crud table
+//         }
+
+//         // Save beneficiaries if present
+//         if (!empty($this->request->data['beneficiaries'])) {
+//             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+//                 $beneficiary['cruds_id'] = $crudId;
+//             }
+
+//             if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'Could not save Beneficiaries'
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         }
+
+//         // Commit the transaction
+//         $this->Crud->getDataSource()->commit();
+
+//         // Return success response
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => true,
+//                 'msg' => 'Crud and Beneficiaries saved successfully',
+//                 'data' => $crud,
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     } else {
+//         // Rollback if Crud saving fails
+//         $this->Crud->getDataSource()->rollback();
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Could not save Crud',
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+
+// public function add() {
+//     // Begin transaction
+//     $this->Crud->getDataSource()->begin();
+//     \Cake\Log\Log::debug($this->request->data); // Log incoming request data
+
+//     // Retrieve CRUD data from the request
+//     $crud = $this->request->data['Crud']; // Corrected to use data property
+
+//     // Handle file upload
+//     if (!empty($_FILES['file']['name'])) {
+//         $file = $_FILES['file'];
+
+//         // Check for upload errors
+//         if ($file['error'] !== UPLOAD_ERR_OK) {
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'File upload error: ' . $file['error'],
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//             return;
+//         }
+
+//         // Specify the directory to save the uploaded file
+//         $uploadDir = WWW_ROOT . 'files/uploads/';  // Ensure this directory exists and is writable
+//         if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'Upload directory does not exist or is not writable.',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//             return;
+//         }
+
+//         // Attempt to move the uploaded file
+//         $uploadFile = $uploadDir . basename($file['name']);
+//         if (move_uploaded_file($file['tmp_name'], $uploadFile)) {
+//             $crud['file_name'] = $file['name']; // Save the file name
+//         } else {
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'File upload failed.',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//             return;
+//         }
+//     }
+
+//     // Process birthdate if present
+//     if (!empty($crud['birthdate'])) {
+//         $birthdate = $crud['birthdate'];
+//         $formattedDate = DateTime::createFromFormat('m/d/Y', $birthdate);
+//         if ($formattedDate) {
+//             $crud['birthdate'] = $formattedDate->format('Y-m-d');
+//             $today = new DateTime();
+//             $age = $today->diff($formattedDate)->y;
+//             $crud['age'] = $age; // Save age
+//         } else {
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'Invalid birthdate format.',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//             return;
+//         }
+//     }
+
+//     // Save CRUD data
+//     if ($this->Crud->save($crud)) {
+//         $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//         // Save beneficiaries if present
+//         if (!empty($this->request->data['beneficiaries'])) {
+//             foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
+//                 if (!empty($beneficiary['birthdate'])) {
+//                     $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+//                     if ($beneficiaryBirthdate) {
+//                         $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d');
+//                     } else {
+//                         $this->Crud->getDataSource()->rollback();
+//                         $this->set(array(
+//                             'response' => array(
+//                                 'ok' => false,
+//                                 'msg' => 'Invalid beneficiary birthdate format.',
+//                             ),
+//                             '_serialize' => 'response'
+//                         ));
+//                         return;
+//                     }
+//                 }
+//                 $beneficiary['cruds_id'] = $crudId; // Set foreign key relation
+//             }
+
+//             if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
+//                 $this->Crud->getDataSource()->rollback();
+//                 $this->set(array(
+//                     'response' => array(
+//                         'ok' => false,
+//                         'msg' => 'Could not save Beneficiaries',
+//                     ),
+//                     '_serialize' => 'response'
+//                 ));
+//                 return;
+//             }
+//         }
+
+//         // Commit the transaction
+//         $this->Crud->getDataSource()->commit();
+
+//         // Send Email Notification to the User
+//         try {
+//             if (!empty($crud['email'])) {
+//                 $email = new CakeEmail('default'); 
+//                 $email->to($crud['email'])
+//                     ->subject('Notification: Your CRUD Record was Added')
+//                     ->emailFormat('html')
+//                     ->template('crud_notification', 'default') 
+//                     ->viewVars(array('crud' => $crud))
+//                     ->send();
+//             }
+//         } catch (Exception $e) {
+//             $this->log('Error sending email: ' . $e->getMessage(), 'error');
+//         }
+
+//         // Return success response
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => true,
+//                 'msg' => 'Crud and Beneficiaries saved successfully',
+//                 'data' => $crud,
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     } else {
+//         $this->Crud->getDataSource()->rollback();
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Could not save Crud',
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+
+// public function add() {
+//     // Log incoming request data
+//     $this->log($this->request->data, 'debug');
+
+//         // Check if 'data' and 'file' exist
+//         if (isset($this->request->data['data']) && isset($this->request->data['file'])) {
+//             $crud = json_decode($this->request->data['data'], true); // Decode the JSON data
+//             $file = $this->request->data['file']; // Retrieve file data
+
+//         // Process birthdate if present
+//         if (!empty($crud['birthdate'])) {
+//             $birthdate = $crud['birthdate'];
+//             $formattedDate = DateTime::createFromFormat('m/d/Y', $birthdate);
+//             if ($formattedDate) {
+//                 $crud['birthdate'] = $formattedDate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                 $today = new DateTime();
+//                 $age = $today->diff($formattedDate)->y;
+//                 $crud['age'] = $age;
+//             }
+//         }
+
+//         // Save the Crud data first
+//         if ($this->Crud->save($crud)) {
+//             $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//             // Handle file upload
+//             if (!empty($file['name'])) {
+//                 $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS;
+//                 $fileName = uniqid() . '_' . basename($file['name']); // Create a unique file name
+//                 $fullUploadPath = $uploadPath . $fileName;
+
+//                 // Move the uploaded file to the destination
+//                 if (move_uploaded_file($file['tmp_name'], $fullUploadPath)) {
+//                     // Save the file name in the CRUD record
+//                     $crud['file'] = $fileName; // Assuming 'file' is a column in your Crud table
+//                     $this->Crud->saveField('file', $fileName);
+//                 } else {
+//                     $this->Crud->getDataSource()->rollback();
+//                     $this->set(array(
+//                         'response' => array(
+//                             'ok' => false,
+//                             'msg' => 'File upload failed'
+//                         ),
+//                         '_serialize' => 'response'
+//                     ));
+//                     return;
+//                 }
+//             }
+
+//             // Save beneficiaries if present
+//             if (!empty($crud['beneficiaries'])) {
+//                 foreach ($crud['beneficiaries'] as &$beneficiary) {
+//                     if (!empty($beneficiary['birthdate'])) {
+//                         $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+//                         if ($beneficiaryBirthdate) {
+//                             $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                         }
+//                     }
+//                     $beneficiary['cruds_id'] = $crudId;
+//                 }
+
+//                 if (!$this->Beneficiary->saveMany($crud['beneficiaries'])) {
+//                     $this->Crud->getDataSource()->rollback();
+//                     $this->set(array(
+//                         'response' => array(
+//                             'ok' => false,
+//                             'msg' => 'Could not save Beneficiaries'
+//                         ),
+//                         '_serialize' => 'response'
+//                     ));
+//                     return;
+//                 }
+//             }
+
+//             // Commit the transaction
+//             $this->Crud->getDataSource()->commit();
+
+//             // Return success response
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => true,
+//                     'msg' => 'Crud and Beneficiaries saved successfully',
+//                     'data' => $crud,
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//         } else {
+//             // Rollback if Crud saving fails
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'Could not save Crud',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//         }
+//     } else {
+//         // Handle missing data/file
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Missing data or file in the request'
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+//with debugs
+// public function add() {
+//     // Log incoming request data
+//     $this->log($this->request->data, 'debug');
+
+//     // Check if 'data' and 'file' exist
+//     if (isset($this->request->data['data']) && isset($this->request->data['file'])) {
+//         // Decode the JSON data
+//         $crud = json_decode($this->request->data['data'], true); 
+//         // Log the decoded CRUD data
+//         $this->log($crud, 'debug');
+
+//         // Retrieve file data
+//         $file = $this->request->data['file'];
+//         // Log file data
+//         $this->log($file, 'debug');
+
+//         // Process birthdate if present
+//         if (!empty($crud['birthdate'])) {
+//             $birthdate = $crud['birthdate'];
+//             $formattedDate = DateTime::createFromFormat('m/d/Y', $birthdate);
+//             if ($formattedDate) {
+//                 $crud['birthdate'] = $formattedDate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                 $today = new DateTime();
+//                 $age = $today->diff($formattedDate)->y;
+//                 $crud['age'] = $age;
+//             }
+//         }
+
+//         // Save the Crud data first
+//         if ($this->Crud->save($crud)) {
+//             $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//             // Handle file upload
+//             if (!empty($file['name'])) {
+//                 $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS;
+//                 $fileName = uniqid() . '_' . basename($file['name']); // Create a unique file name
+//                 $fullUploadPath = $uploadPath . $fileName;
+
+//                 // Move the uploaded file to the destination
+//                 if (move_uploaded_file($file['tmp_name'], $fullUploadPath)) {
+//                     // Save the file name in the CRUD record
+//                     $crud['file'] = $fileName; // Assuming 'file' is a column in your Crud table
+//                     $this->Crud->saveField('file', $fileName);
+//                 } else {
+//                     $this->Crud->getDataSource()->rollback();
+//                     $this->set(array(
+//                         'response' => array(
+//                             'ok' => false,
+//                             'msg' => 'File upload failed'
+//                         ),
+//                         '_serialize' => 'response'
+//                     ));
+//                     return;
+//                 }
+//             }
+
+//             // Save beneficiaries if present
+//             if (!empty($crud['beneficiaries'])) {
+//                 foreach ($crud['beneficiaries'] as &$beneficiary) {
+//                     if (!empty($beneficiary['birthdate'])) {
+//                         $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+//                         if ($beneficiaryBirthdate) {
+//                             $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                         }
+//                     }
+//                     $beneficiary['cruds_id'] = $crudId;
+//                 }
+
+//                 if (!$this->Beneficiary->saveMany($crud['beneficiaries'])) {
+//                     $this->Crud->getDataSource()->rollback();
+//                     $this->set(array(
+//                         'response' => array(
+//                             'ok' => false,
+//                             'msg' => 'Could not save Beneficiaries'
+//                         ),
+//                         '_serialize' => 'response'
+//                     ));
+//                     return;
+//                 }
+//             }
+
+//             // Commit the transaction
+//             $this->Crud->getDataSource()->commit();
+
+//             // Return success response
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => true,
+//                     'msg' => 'Crud and Beneficiaries saved successfully',
+//                     'data' => $crud,
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//         } else {
+//             // Rollback if Crud saving fails
+//             $this->Crud->getDataSource()->rollback();
+//             $this->set(array(
+//                 'response' => array(
+//                     'ok' => false,
+//                     'msg' => 'Could not save Crud',
+//                 ),
+//                 '_serialize' => 'response'
+//             ));
+//         }
+//     } else {
+//         // Handle missing data/file
+//         $this->set(array(
+//             'response' => array(
+//                 'ok' => false,
+//                 'msg' => 'Missing data or file in the request'
+//             ),
+//             '_serialize' => 'response'
+//         ));
+//     }
+// }
+//working for data
+// public function add() {
+//     // Start transaction
+//     $this->Crud->getDataSource()->begin();
+    
+//     // Log incoming request data
+//     $this->log($this->request->data, 'debug');
+
+//     // Check if 'data' and 'file' exist
+//     if (isset($this->request->data['data']) && isset($this->request->data['file'])) {
+//         // Decode the JSON data
+//         $crud = json_decode($this->request->data['data'], true); 
+//         // Log the decoded CRUD data
+//         $this->log($crud, 'debug');
+
+//         // Retrieve file data
+//         $file = $this->request->data['file'];
+//         // Log file data
+//         $this->log($file, 'debug');
+
+//         // Process birthdate if present
+//         if (!empty($crud['birthdate'])) {
+//             $birthdate = $crud['birthdate'];
+//             $formattedDate = DateTime::createFromFormat('m/d/Y', $birthdate);
+//             if ($formattedDate) {
+//                 $crud['birthdate'] = $formattedDate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                 $today = new DateTime();
+//                 $age = $today->diff($formattedDate)->y;
+//                 $crud['age'] = $age;
+//             }
+//         }
+
+//         // Save the Crud data first
+//         if ($this->Crud->save($crud)) {
+//             $crudId = $this->Crud->id; // Get the last inserted Crud ID
+
+//             // Handle file upload
+//             if (!empty($file['name'])) {
+//                 $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS;
+//                 $fileName = uniqid() . '_' . basename($file['name']); // Create a unique file name
+//                 $fullUploadPath = $uploadPath . $fileName;
+
+//                 // Move the uploaded file to the destination
+//                 if (move_uploaded_file($file['tmp_name'], $fullUploadPath)) {
+//                     // Save the file name in the CRUD record
+//                     $crud['file'] = $fileName; // Assuming 'file' is a column in your Crud table
+//                     $this->Crud->saveField('file', $fileName);
+//                 } else {
+//                     $this->Crud->getDataSource()->rollback();
+//                     return $this->setResponse('File upload failed');
+//                 }
+//             }
+
+//             // Save beneficiaries if present
+//             if (!empty($crud['beneficiaries'])) {
+//                 foreach ($crud['beneficiaries'] as &$beneficiary) {
+//                     if (!empty($beneficiary['birthdate'])) {
+//                         $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+//                         if ($beneficiaryBirthdate) {
+//                             $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d'); // Save in 'yyyy-mm-dd' format
+//                         }
+//                     }
+//                     unset($beneficiary['$$hashKey']);
+//                     $beneficiary['cruds_id'] = $crudId; // Associate beneficiary with the CRUD ID
+//                 }
+
+//                 // Use saveMany instead of save to handle multiple beneficiaries
+//                 if (!$this->Beneficiary->saveMany($crud['beneficiaries'])) {
+//                     $this->Crud->getDataSource()->rollback();
+//                     return $this->setResponse('Could not save Beneficiaries');
+//                 }
+//             }
+
+//             // Commit the transaction
+//             $this->Crud->getDataSource()->commit();
+
+//             // Return success response
+//             return $this->setResponse('Crud and Beneficiaries saved successfully', $crud);
+//         } else {
+//             // Rollback if Crud saving fails
+//             $this->Crud->getDataSource()->rollback();
+//             return $this->setResponse('Could not save Crud');
+//         }
+//     } else {
+//         // Handle missing data/file
+//         return $this->setResponse('Missing data or file in the request');
+//     }
+// }
 public function add() {
-    // Begin transaction
+    // Start transaction
     $this->Crud->getDataSource()->begin();
+    
+    // Log incoming request data
+    $this->log($this->request->data, 'debug');
 
-    // Retrieve CRUD data from the request
-    $crud = $this->request->data['Crud'];
+    // Check if the file and data are in the request
+    if (!empty($_FILES['file']) && !empty($_POST['data'])) {
+        // Handle the uploaded file
+        $file = $_FILES['file'];
+        $data = json_decode($_POST['data'], true);
 
-    // Handle file upload
-    $pdfUpload = $this->request->data['pdf_upload'];
-    $pdfFilePath = null;
+        // Validate data is not empty
+        if (!$data) {
+            return $this->setResponse('Invalid JSON data');
+        }
 
-    if (!empty($pdfUpload['name'])) {
-        // Define the upload path (make sure the directory is writable)
-        $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS; // Adjust the path as necessary
-        $pdfFileName = time() . '_' . basename($pdfUpload['name']);
-        $pdfFilePath = 'files/uploads/' . $pdfFileName; // Save path to store in the database
-        
-        // Move the uploaded file to the specified path
-        if (!move_uploaded_file($pdfUpload['tmp_name'], $uploadPath . $pdfFileName)) {
+        // Process birthdate
+        if (!empty($data['birthdate'])) {
+            $formattedDate = DateTime::createFromFormat('m/d/Y', $data['birthdate']);
+            if ($formattedDate) {
+                $data['birthdate'] = $formattedDate->format('Y-m-d');
+                $today = new DateTime();
+                $data['age'] = $today->diff($formattedDate)->y;
+            }
+        }
+
+        // Save the Crud data
+        if ($this->Crud->save($data)) {
+            $crudId = $this->Crud->id;
+
+            // Handle file upload
+            if (!empty($file['name'])) {
+                $allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+                if (in_array($file['type'], $allowedTypes) && $file['size'] <= 2000000) {
+                    $uploadPath = WWW_ROOT . 'files' . DS . 'uploads' . DS;
+                    $fileName = uniqid() . '_' . basename($file['name']);
+                    $fullUploadPath = $uploadPath . $fileName;
+
+                    // Move the uploaded file to the destination
+                    if (move_uploaded_file($file['tmp_name'], $fullUploadPath)) {
+                        // Save the file name in the Crud record
+                        $this->Crud->saveField('file', $fileName);
+                    } else {
+                        $this->Crud->getDataSource()->rollback();
+                        return $this->setResponse('File upload failed');
+                    }
+                } else {
+                    $this->Crud->getDataSource()->rollback();
+                    return $this->setResponse('Invalid file type or size exceeded');
+                }
+            }
+
+            // Save beneficiaries if present
+            if (!empty($data['beneficiaries'])) {
+                foreach ($data['beneficiaries'] as &$beneficiary) {
+                    if (!empty($beneficiary['birthdate'])) {
+                        $beneficiaryBirthdate = DateTime::createFromFormat('m/d/Y', $beneficiary['birthdate']);
+                        if ($beneficiaryBirthdate) {
+                            $beneficiary['birthdate'] = $beneficiaryBirthdate->format('Y-m-d');
+                        }
+                    }
+                    unset($beneficiary['$$hashKey']);
+                    $beneficiary['cruds_id'] = $crudId;
+                }
+
+                // Save multiple beneficiaries
+                if (!$this->Beneficiary->saveMany($data['beneficiaries'])) {
+                    $this->Crud->getDataSource()->rollback();
+                    return $this->setResponse('Could not save Beneficiaries');
+                }
+            }
+
+            // Commit the transaction
+            $this->Crud->getDataSource()->commit();
+            return $this->setResponse('Crud and Beneficiaries saved successfully', $data);
+        } else {
             $this->Crud->getDataSource()->rollback();
-            $this->set(array(
-                'response' => array(
-                    'ok' => false,
-                    'msg' => 'File upload failed',
-                ),
-                '_serialize' => 'response'
-            ));
-            return;
+            return $this->setResponse('Could not save Crud');
         }
-    }
-
-    // Save the Crud data first
-    if ($this->Crud->save($crud)) {
-        $crudId = $this->Crud->id; // Get the last inserted Crud ID
-
-        // Store the PDF file path in the Crud record
-        if ($pdfFilePath) {
-            $this->Crud->id = $crudId;
-            $this->Crud->saveField('pdf_path', $pdfFilePath); // Assuming you have a pdf_path column in your Crud table
-        }
-
-        // Calculate age based on birthdate if present
-        if (!empty($crud['birthdate'])) {
-            $birthdate = $crud['birthdate'];
-            $bdayDate = new DateTime($birthdate);
-            $today = new DateTime();
-            $age = $today->diff($bdayDate)->y;
-
-            // Save the age back to the Crud if needed
-            $this->Crud->id = $crudId; 
-            $this->Crud->saveField('age', $age);
-        }
-
-        // Save beneficiaries if present
-        if (!empty($this->request->data['beneficiaries'])) {
-            foreach ($this->request->data['beneficiaries'] as &$beneficiary) {
-                $beneficiary['cruds_id'] = $crudId;
-            }
-
-            if (!$this->Beneficiary->saveMany($this->request->data['beneficiaries'])) {
-                $this->Crud->getDataSource()->rollback();
-                $this->set(array(
-                    'response' => array(
-                        'ok' => false,
-                        'msg' => 'Could not save Beneficiaries'
-                    ),
-                    '_serialize' => 'response'
-                ));
-                return;
-            }
-        }
-
-        // Commit the transaction
-        $this->Crud->getDataSource()->commit();
-
-        // Send Email Notification to the User
-        try {
-            if (!empty($crud['email'])) {
-                $email = new CakeEmail('default'); 
-                $email->to($crud['email'])
-                    ->subject('Notification: Your CRUD Record was Added')
-                    ->emailFormat('html')
-                    ->template('crud_notification', 'default') 
-                    ->viewVars(array('crud' => $crud))
-                    ->send();
-            }
-        } catch (Exception $e) {
-            // Log error and notify the front-end if needed
-            $this->log('Error sending email: ' . $e->getMessage(), 'error');
-        }
-        
-        // Return success response
-        $this->set(array(
-            'response' => array(
-                'ok' => true,
-                'msg' => 'Crud and Beneficiaries saved successfully',
-                'data' => $crud,
-            ),
-            '_serialize' => 'response'
-        ));
     } else {
-        // Rollback if Crud saving fails
-        $this->Crud->getDataSource()->rollback();
-        $this->set(array(
-            'response' => array(
-                'ok' => false,
-                'msg' => 'Could not save Crud',
-            ),
-            '_serialize' => 'response'
-        ));
+        return $this->setResponse('Missing data or file in the request');
     }
 }
 
-    
+private function setResponse($message, $data = null) {
+    $this->set(array(
+        'response' => array(
+            'ok' => !is_null($data),
+            'msg' => $message,
+            'data' => $data,
+        ),
+        '_serialize' => 'response'
+    ));
+}
+
+
+
     
     
 

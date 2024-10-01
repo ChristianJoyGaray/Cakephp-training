@@ -24,6 +24,20 @@
 
           <dt>Birth date:</dt>
           <dd>{{ data.Crud.birthdate | date:'MM/dd/yyyy' }}</dd>
+
+
+          <dt>Uploaded File:</dt>
+          <dd>
+            <div ng-if="data.Crud.file">
+              <a href="/Training/files/uploads/{{ data.Crud.file }}" target="_blank">{{ data.Crud.file }}</a>
+            </div>
+            <div ng-if="!data.Crud.file">
+              <span>No file uploaded</span>
+            </div>
+          </dd>
+
+
+
         </dl>
       </div>
 

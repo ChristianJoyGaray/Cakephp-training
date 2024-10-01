@@ -1,3 +1,28 @@
+// app.factory("Crud", function($resource, $q) {
+//   $resource(api + "cruds/:id", { id: '@id', search: '@search' }, {
+//       query: { method: 'GET', isArray: false },
+//       update: { method: 'PUT' },
+//       search: { method: 'GET' },
+//       save: { method: 'POST' }
+//   });
+
+//   // return {
+//   //     query: function(params) {
+//   //         return crudResource.query(params).$promise;
+//   //     },
+//   //     update: function(data) {
+//   //         return crudResource.update(data).$promise;
+//   //     },
+//   //     search: function(params) {
+//   //         return crudResource.search(params).$promise;
+//   //     },
+//   //     save: function(data) {
+//   //         return crudResource.save(data).$promise; // Ensure it returns the promise
+//   //     }
+//   // };
+// });
+
+
 app.factory("Crud", function($resource) {
   return $resource( api + "cruds/:id", { id: '@id', search: '@search' }, {
     query: { method: 'GET', isArray: false },
@@ -5,6 +30,8 @@ app.factory("Crud", function($resource) {
     search: { method: 'GET' },
   });
 });
+
+
 
 app.factory("Beneficiary", function($resource) {
   return $resource(api + "beneficiary/:id", { id: '@id', search: '@search' }, {
