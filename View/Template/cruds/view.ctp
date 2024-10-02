@@ -25,21 +25,13 @@
           <dt>Birth date:</dt>
           <dd>{{ data.Crud.birthdate | date:'MM/dd/yyyy' }}</dd>
 
-
-          <dt>Uploaded File:</dt>
-          <dd>
-            <div ng-if="data.Crud.file">
-              <a href="/Training/files/uploads/{{ data.Crud.file }}" target="_blank">{{ data.Crud.file }}</a>
-            </div>
-            <div ng-if="!data.Crud.file">
-              <span>No file uploaded</span>
-            </div>
-          </dd>
-
+  
 
 
         </dl>
       </div>
+
+      
 
       <div class="col-md-6">
         <hr> 
@@ -72,6 +64,52 @@
     
       <div class="clearfix"></div>
       <hr>
+
+     
+      <dd class="col-md-12">
+          <table class="table table-bordered table-striped table-hover">
+              <thead>
+                  <tr>
+                      <th class="w30px text-center">#</th>
+                      <th class="text-center">File Name</th>
+                      <th class="text-center">Download</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr ng-if="data.Crud.file_0">
+                      <td class="text-center">1</td>
+                      <td class="text-center">{{ data.Crud.file_0 }}</td>
+                      <td class="text-center">
+                          <a href="/Training/files/uploads/{{ data.Crud.file_0 }}" download="{{ data.Crud.file_0 }}">
+                              <i class="fa fa-download"></i> Download
+                          </a>
+                      </td>
+                  </tr>
+                  <tr ng-if="data.Crud.file_1">
+                      <td class="text-center">2</td>
+                      <td class="text-center">{{ data.Crud.file_1 }}</td>
+                      <td class="text-center">
+                          <a href="/Training/files/uploads/{{ data.Crud.file_1 }}" download="{{ data.Crud.file_1 }}">
+                              <i class="fa fa-download"></i> Download
+                          </a>
+                      </td>
+                  </tr>
+                  <tr ng-if="data.Crud.file_2">
+                      <td class="text-center">3</td>
+                      <td class="text-center">{{ data.Crud.file_2 }}</td>
+                      <td class="text-center">
+                          <a href="/Training/files/uploads/{{ data.Crud.file_2 }}" download="{{ data.Crud.file_2 }}">
+                              <i class="fa fa-download"></i> Download
+                          </a>
+                      </td>
+                  </tr>
+                  <tr ng-if="!data.Crud.file_0 && !data.Crud.file_1 && !data.Crud.file_2">
+                      <td colspan="3" class="text-center">No files uploaded.</td>
+                  </tr>
+              </tbody>
+          </table>
+      </dd>
+
 
       <div class="row">
         <div class="col-md-12">
@@ -107,6 +145,15 @@
           </div> 
         </div>
       </div>
+
+
+
+
+
+    
+
+
+
     </div>
   </div>
 </div>

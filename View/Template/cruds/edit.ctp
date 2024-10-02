@@ -91,6 +91,20 @@
         <td class="text-center">
             <div class="btn-group btn-group-xs">
                 <a href="javascript:void(0)" ng-click="editBeneficiary($index, beneficiary)" class="btn btn-success" title="EDIT"><i class="fa fa-edit"></i></a>
+                <button type="button" ng-click="removeBeneficiary($index)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></button>
+               
+               
+                <!-- <a type="button" ng-click="setBeneficiaryVisibility(beneficiary.id, 0)" class="btn btn-warning btn-min" title="HIDE">
+                <i class="fa fa-trash"></i>
+                </a> -->
+
+
+
+
+
+        <!-- <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
+        {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
+        </button> -->
                 <!-- <a href="javascript:void(0)" ng-click="remove(beneficiary)"  class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a> -->
                 <!-- <a href="javascript:void(0)" ng-click=" remove(currentBeneficiary)"  class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a> -->
                 <!-- <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
@@ -173,7 +187,7 @@ $('#form').validationEngine('attach');
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>Beneficiary Age <i class="required">*</i></label>
-                        <input id="age2" type="number" class="form-control" ng-model="newBeneficiary.age" ng-required="true">
+                        <input id="age2" type="number" class="form-control" ng-model="newBeneficiary.age" ng-required="true" readonly>
                     </div>
                 </div>
 
@@ -235,10 +249,10 @@ $('#form').validationEngine('attach');
      
      
      
-     
+<!--      
         <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
         {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
-        </button>
+        </button> -->
         <button type="button" class="btn btn-danger btn-sm btn-min" data-dismiss="modal">CANCEL</button>
         <button type="button" class="btn btn-primary btn-sm btn-min" ng-click="updateBeneficiary()">SAVE</button>
       </div>

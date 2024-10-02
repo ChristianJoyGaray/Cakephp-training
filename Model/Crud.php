@@ -3,6 +3,8 @@ class Crud extends AppModel {
 
   public $actsAs = array('Containable');
 
+  public $disableFileValidation = false;
+
   public $belongsTo = array(
       'CrudStatuses' => array(  
           'className' => 'CrudStatuses',
@@ -35,8 +37,13 @@ class Crud extends AppModel {
             'rule' => 'email',
             'message' => 'Please enter a valid email address'
         ]
-    ]
+    ],
+    //     'file' => array(
+    //     'rule' => array('extension', array('jpeg', 'jpg', 'png', 'pdf')),
+    //     'message' => 'Please supply a valid file (jpeg, jpg, png, pdf).'
+    // )
 ];
+
 
   public function initialize(array $config): void {
       parent::initialize($config);
@@ -45,6 +52,21 @@ class Crud extends AppModel {
       $this->addBehavior('Timestamp');
       $this->setEntityClass('Crud');
   }
+
+
+  public function beforeValidate($options = array())
+  {
+      parent::beforeValidate($options);
+
+      // Check if the disableFileValidation flag is set
+      if ($this->disableFileValidation) {
+          unset($this->validate['file']); // Remove the file validation rule
+      }
+
+      return true;
+  }
+
+
 
   public function getAllCrudsWithStatuses($conditions = array()) {
     // Start building the SQL query

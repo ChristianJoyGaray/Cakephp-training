@@ -52,7 +52,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="file_upload">Upload File:</label>
-                                <input type="file" id="fileUpload" ng-model="data.Crud.file" name="fileUpload" accept="*">
+                                <input type="file" id="fileUpload" multiple ng-model="data.Crud.file" name="fileUpload[]" accept="*">
                                 </div>
                         </div>
 
