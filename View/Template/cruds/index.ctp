@@ -7,8 +7,13 @@
       </div>
       
       <div class="col-md-4 pull-right">
-        <input type="text" class="form-control search" placeholder="SEARCH HERE" ng-model="searchTxt" ng-enter="search(searchTxt)">
-        <sup style="font-size:10px;color:gray">Press Enter to search</sup>
+          <input type="text" class="form-control search" placeholder="SEARCH HERE" ng-model="searchTxt" ng-enter="search(searchTxt)">
+          <sup style="font-size:10px;color:gray">Press Enter to search</sup>
+      </div>
+
+      <div class="col-md-4 pull-right">
+          <input type="text" class="form-control search datepicker" placeholder="SELECT BIRTHDATE" ng-model="birthdateTxt">
+          <sup style="font-size:10px;color:gray">Pick a birthdate to filter</sup>
       </div>
 
       <div class="clearfix"></div><hr>
@@ -85,7 +90,7 @@
     </div>
 
     <div class="btn-group-xs btn-group pull-left">
-      <a     href="/Training/cruds/printCrud?search={{ searchTxt || '' }}&status={{ statusFilter || '' }}" 
+      <a     href="/Training/cruds/printCrud?search={{ searchTxt || '' }}&status={{ statusFilter || '' }}&birthdate={{ birthdateTxt }}&table=true" 
       class="btn btn-primary" target="_blank" title="PRINT">PRINT</a>
     </div>
 

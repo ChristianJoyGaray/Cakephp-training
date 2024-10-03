@@ -16,6 +16,19 @@ Router::connect('/logout', array(
   'action'     => 'logout'
 ));
 
+// Router::connect(
+//   '/api/cruds/:id',
+//   ['controller' => 'Cruds', 'action' => 'edit'],
+//   ['pass' => ['id'], 'id' => '[0-9]+']
+// );
+
+// Router::connect('/api/cruds/:id', 
+//     array('controller' => 'Cruds', 'action' => 'edit'), 
+//     array('pass' => array('id'), 'id' => '[0-9]+', '[method]' => 'PUT')
+// );
+
+
+
 // Beneficiary delete route
 Router::connect(
   '/beneficiary/:id',

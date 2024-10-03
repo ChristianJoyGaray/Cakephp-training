@@ -81,6 +81,11 @@ class Crud extends AppModel {
         $sql .= " AND LOWER(Crud.name) LIKE LOWER('%$search%')";
     }
 
+    if (!empty($this->request->query['birthday'])) {
+        $birthday = $this->request->query['birthday'];
+        $conditions['Crud.birthdate'] = $birthday; 
+    }
+
     // Append approve condition based on the values in the database
     if (isset($conditions['approve'])) {
         switch ($conditions['approve']) {
@@ -115,6 +120,11 @@ class Crud extends AppModel {
           $sql .= " AND Crud.name LIKE $search";
       }
 
+      if (!empty($conditions['birthday'])) {
+        $birthday = $conditions['birthday'];
+        $sql .= " AND Crud.birthdate = '$birthday'"; // Assuming birthdate is stored in 'YYYY-MM-DD' format
+    }
+
       // Append approve condition if provided
       if (isset($conditions['approve'])) {
           if ($conditions['approve'] === 'PENDING') {
@@ -130,6 +140,10 @@ class Crud extends AppModel {
       $results = $this->query($sql);
       return $results[0][0]['total'];
   }
+
+
+
+
 
   // Custom pagination for cruds using raw SQL
   public function paginate($conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {

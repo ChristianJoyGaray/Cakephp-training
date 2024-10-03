@@ -3,9 +3,8 @@
     <div class="panel-heading"><i class="fa fa-dot-circle-o"></i> EDIT </div>
     <div class="panel-body">
     	<div class="col-md-12">
-    	  <form id="form">
+    	  <form id="form" enctype="multipart/form-data">
           <div class="row">
-            
             <div class="col-md-12">
               <div class="form-group">
                 <label> Name <i class="required">*</i></label>
@@ -58,17 +57,89 @@
          
 
           </div>  
+
+<!--           
+        
+          <div class="col-md-12">
+              <div class="form-group">
+                  <label for="file_upload">Upload File:</label>
+                  <input type="file" id="file" name="file" file-model="files" ng-model="files">
+                  </div>
+          </div> -->
+
+          <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="file_upload">Upload File:</label>
+                <input type="file" id="fileUpload" multiple ng-model="data.Crud.file" name="fileUpload[]" accept="*">
+                            </div>
+                        </div>
+
+
+
+
         </form>
 
         <hr>
-        <div class="col-md-3 pull-left">
+  
+        <!-- <div class="col-md-12">
+              <div class="form-group">
+                  <label for="file_upload">Upload File:</label>
+                  <input type="file" id="file" name="file" file-model="fileData" />
+              </div>
+          </div>
+ -->
+
+
+      <dd class="col-md-12">
+          <table class="table table-bordered table-striped table-hover">
+              <thead>
+                  <tr>
+                      <th class="w30px text-center">#</th>
+                      <th class="text-center">File Name</th>
+                      <th class="text-center"></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr ng-if="data.Crud.file_0">
+                      <td class="text-center">1</td>
+                      <td class="text-center">{{ data.Crud.file_0 }}</td>
+                      <td class="text-center">
+                          <a href="/Training/files/uploads/{{ data.Crud.file_0 }}" ng-click="">
+                              <i class="fa fa-trash"></i> Delete
+                          </a>
+                      </td>
+                  </tr>
+                  <tr ng-if="data.Crud.file_1">
+                      <td class="text-center">2</td>
+                      <td class="text-center">{{ data.Crud.file_1 }}</td>
+                      <td class="text-center">
+                          <a href="/Training/files/uploads/{{ data.Crud.file_1 }}" ng-click="">
+                              <i class="fa fa-trash"></i> Delete
+                          </a>
+                      </td>
+                  </tr>
+                  <tr ng-if="data.Crud.file_2">
+                      <td class="text-center">3</td>
+                      <td class="text-center">{{ data.Crud.file_2 }}</td>
+                      <td class="text-center">
+                          <a href="/Training/files/uploads/{{ data.Crud.file_2 }}" ng-click="">
+                              <i class="fa fa-trash"></i> Delete
+                          </a>
+                      </td>
+                  </tr>
+                  <tr ng-if="!data.Crud.file_0 && !data.Crud.file_1 && !data.Crud.file_2">
+                      <td colspan="3" class="text-center">No files uploaded.</td>
+                  </tr>
+              </tbody>
+          </table>
+      </dd>
+      <hr>
+
+      <div class="col-md-3 pull-left">
               <a class="btn btn-warning btn-sm btn-block" id="save" ng-click="addBeneficiary()">ADD BENEFICIARY</a><br/>
         </div>
         
         <div class="clearfix"></div>
-
-
-
 
 
         <div class="col-md-12">
@@ -93,24 +164,7 @@
                 <a href="javascript:void(0)" ng-click="editBeneficiary($index, beneficiary)" class="btn btn-success" title="EDIT"><i class="fa fa-edit"></i></a>
                 <button type="button" ng-click="removeBeneficiary($index)" class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></button>
                
-               
-                <!-- <a type="button" ng-click="setBeneficiaryVisibility(beneficiary.id, 0)" class="btn btn-warning btn-min" title="HIDE">
-                <i class="fa fa-trash"></i>
-                </a> -->
-
-
-
-
-
-        <!-- <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
-        {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
-        </button> -->
-                <!-- <a href="javascript:void(0)" ng-click="remove(beneficiary)"  class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a> -->
-                <!-- <a href="javascript:void(0)" ng-click=" remove(currentBeneficiary)"  class="btn btn-danger" title="DELETE"><i class="fa fa-trash"></i></a> -->
-                <!-- <button type="button" ng-click="editBeneficiaryVisibility(currentBeneficiary)" class="btn btn-warning btn-sm btn-min">
-        {{ currentBeneficiary.visible === 1 ? 'Delete Beneficiary' : 'Delete Beneficiary' }}
-    </button> -->
-
+       
 
 
 
