@@ -68,16 +68,15 @@
           </div> -->
 
           <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="file_upload">Upload File:</label>
-                <input type="file" id="fileUpload" multiple ng-model="data.Crud.file" name="fileUpload[]" accept="*">
-                            </div>
-                        </div>
+              <div class="form-group">
+                  <label for="file_upload">Upload File:</label>
+                  <input type="file" id="fileInput" multiple ng-model="data.Crud.file" name="fileUpload[]" accept="*">
+              </div>
+          </div>
 
 
 
 
-        </form>
 
         <hr>
   
@@ -94,35 +93,35 @@
           <table class="table table-bordered table-striped table-hover">
               <thead>
                   <tr>
-                      <th class="w30px text-center">#</th>
+                 
                       <th class="text-center">File Name</th>
                       <th class="text-center"></th>
                   </tr>
               </thead>
               <tbody>
                   <tr ng-if="data.Crud.file_0">
-                      <td class="text-center">1</td>
-                      <td class="text-center">{{ data.Crud.file_0 }}</td>
+                     
+                      <td class="text-center"><a  href="/Training/files/uploads/{{ data.Crud.file_0 }}" target="_blank">{{ data.Crud.file_0 }}</a></td>
                       <td class="text-center">
-                          <a href="/Training/files/uploads/{{ data.Crud.file_0 }}" ng-click="">
+                          <a ng-click="deleteFile('file_0')">
                               <i class="fa fa-trash"></i> Delete
                           </a>
                       </td>
                   </tr>
                   <tr ng-if="data.Crud.file_1">
-                      <td class="text-center">2</td>
-                      <td class="text-center">{{ data.Crud.file_1 }}</td>
+                     
+                      <td class="text-center"><a  href="/Training/files/uploads/{{ data.Crud.file_1 }}" target="_blank">{{ data.Crud.file_1 }}</a></td>
                       <td class="text-center">
-                          <a href="/Training/files/uploads/{{ data.Crud.file_1 }}" ng-click="">
+                          <a ng-click="deleteFile('file_1')">
                               <i class="fa fa-trash"></i> Delete
                           </a>
                       </td>
                   </tr>
                   <tr ng-if="data.Crud.file_2">
-                      <td class="text-center">3</td>
-                      <td class="text-center">{{ data.Crud.file_2 }}</td>
+                    
+                      <td class="text-center"><a  href="/Training/files/uploads/{{ data.Crud.file_2 }}" target="_blank">{{ data.Crud.file_2 }}</a></td>
                       <td class="text-center">
-                          <a href="/Training/files/uploads/{{ data.Crud.file_2 }}" ng-click="">
+                          <a ng-click="deleteFile('file_2')">
                               <i class="fa fa-trash"></i> Delete
                           </a>
                       </td>
@@ -198,7 +197,8 @@
 					</div>
 				</div>
 
-
+      
+        </form>
  
         
     	</div>

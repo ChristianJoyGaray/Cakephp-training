@@ -12,7 +12,7 @@
       </div>
 
       <div class="col-md-4 pull-right">
-          <input type="text" class="form-control search datepicker" placeholder="SELECT BIRTHDATE" ng-model="birthdateTxt">
+          <input type="text" class="form-control search datepicker" placeholder="SELECT BIRTHDATE" ng-model="birthdateTxt" ng-enter="birthdate(birthdateTxt)">
           <sup style="font-size:10px;color:gray">Pick a birthdate to filter</sup>
       </div>
 

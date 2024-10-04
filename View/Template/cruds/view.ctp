@@ -70,15 +70,15 @@
           <table class="table table-bordered table-striped table-hover">
               <thead>
                   <tr>
-                      <th class="w30px text-center">#</th>
+                     
                       <th class="text-center">File Name</th>
                       <th class="text-center">Download</th>
                   </tr>
               </thead>
               <tbody>
                   <tr ng-if="data.Crud.file_0">
-                      <td class="text-center">1</td>
-                      <td class="text-center">{{ data.Crud.file_0 }}</td>
+                    
+                      <td class="text-center"><a href="/Training/files/uploads/{{ data.Crud.file_0 }}">{{ data.Crud.file_0 }}</a></td>
                       <td class="text-center">
                           <a href="/Training/files/uploads/{{ data.Crud.file_0 }}" download="{{ data.Crud.file_0 }}">
                               <i class="fa fa-download"></i> Download
@@ -86,8 +86,8 @@
                       </td>
                   </tr>
                   <tr ng-if="data.Crud.file_1">
-                      <td class="text-center">2</td>
-                      <td class="text-center">{{ data.Crud.file_1 }}</td>
+                      
+                      <td class="text-center"><a href="/Training/files/uploads/{{ data.Crud.file_1 }}">{{ data.Crud.file_1 }}</a></td>
                       <td class="text-center">
                           <a href="/Training/files/uploads/{{ data.Crud.file_1 }}" download="{{ data.Crud.file_1 }}">
                               <i class="fa fa-download"></i> Download
@@ -95,8 +95,8 @@
                       </td>
                   </tr>
                   <tr ng-if="data.Crud.file_2">
-                      <td class="text-center">3</td>
-                      <td class="text-center">{{ data.Crud.file_2 }}</td>
+                    
+                      <td class="text-center"><a href="/Training/files/uploads/{{ data.Crud.file_2 }}">{{ data.Crud.file_2 }}</a></td>
                       <td class="text-center">
                           <a href="/Training/files/uploads/{{ data.Crud.file_2 }}" download="{{ data.Crud.file_2 }}">
                               <i class="fa fa-download"></i> Download
