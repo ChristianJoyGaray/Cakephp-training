@@ -505,15 +505,8 @@ app.controller('CrudController', function($scope, Crud) {
 
 
 
-        // if ($scope.birthdateTxt) {
-        //     options.birthdate = $scope.birthdateTxt; // Pass the birthdate
-        // }
-
-
         if ($scope.birthdateTxt) { // Split the date into parts
             options.birthdate = $scope.birthdateTxt; 
-            
-            //dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0]; // Format to YYYY-MM-DD
         }
 
         // Apply status filter if set
@@ -4101,6 +4094,91 @@ app.controller('CrudEditController', function($scope, Crud, Select, $routeParams
         deletedBeneficiaries: []
     };
 
+    $('.datepicker').datepicker({
+        format: 'mm/dd/yyyy',
+        autoclose: true,
+        todayHighlight: true,
+        // Call calculateBeneficiaryAge when date is selected
+        onSelect: function(dateText) {
+            $scope.$apply(function() {
+                // $scope.calculateBeneficiaryAge();
+            });
+        }
+    });
+
+    $scope.calculateAge = function() {
+        if ($scope.data.Crud.birthdate) {
+            const birthdate = new Date($scope.data.Crud.birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthdate.getFullYear();
+            const monthDiff = today.getMonth() - birthdate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+                age--;
+            }
+            $scope.data.Crud.age = age;
+        }
+    };
+
+    // Attach change event for manual input in datepicker
+    $('#bday').on('change', function() {
+        $scope.$apply(function() {
+            $scope.calculateAge();
+        });
+    });
+
+
+   $scope.calculateBeneficiaryAge = function() {
+    if ($scope.newBeneficiary.birthdate) {
+        const birthdate = new Date($scope.newBeneficiary.birthdate);
+        const today = new Date();
+        let age = today.getFullYear() - birthdate.getFullYear();
+        const monthDiff = today.getMonth() - birthdate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+            age--;
+        }
+        $scope.newBeneficiary.age = age;
+
+        // Ensure the birthdate is in 'YYYY-MM-DD' format
+        const year = birthdate.getFullYear();
+        const month = (birthdate.getMonth() + 1).toString().padStart(2, '0');
+        const day = birthdate.getDate().toString().padStart(2, '0');
+        $scope.newBeneficiary.birthdate = `${year}-${month}-${day}`;  // YYYY-MM-DD format
+    }
+};
+
+
+    $('#beneficiary-birthdate').on('change', function() {
+        $scope.$apply(function() {
+            $scope.calculateBeneficiaryAge();
+        });
+    });
+
+    $scope.calculateBeneficiaryAge2 = function() {
+        if ($scope.currentBeneficiary.birthdate) {
+            const birthdate = new Date($scope.currentBeneficiary.birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthdate.getFullYear();
+            const monthDiff = today.getMonth() - birthdate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthdate.getDate())) {
+                age--;
+            }
+            $scope.currentBeneficiary.age = age; // Set the calculated age
+
+            const year = birthdate.getFullYear();
+            const month = (birthdate.getMonth() + 1).toString().padStart(2, '0');
+            const day = birthdate.getDate().toString().padStart(2, '0');
+            $scope.currentBeneficiary.birthdate = `${year}-${month}-${day}`;  // YYYY-MM-DD format
+        }
+    };
+
+    $('#beneficiary-birthdate2').on('change', function() {
+        $scope.$apply(function() {
+            $scope.calculateBeneficiaryAge2();
+        });
+    });
+
+
+
      // Variable to store selected file
      $scope.file = null;
 
@@ -4158,7 +4236,7 @@ app.controller('CrudEditController', function($scope, Crud, Select, $routeParams
         $scope.status = e.data; // Store statuses in the scope
     });
   
-  
+    
   
   
     console.log('Deleted Beneficiaries before sending:', $scope.data.deletedBeneficiaries);

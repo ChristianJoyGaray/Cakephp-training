@@ -23,7 +23,7 @@
             <div class="col-md-4">
             <div class="form-group">
               <label> BIRTHDATE <i class="required">*</i></label>
-              <input id="bday" type="date" name="Crud[birthdate]" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]">
+              <input id="bday" type="text" name="Crud[birthdate]" class="form-control datepicker" ng-model="data.Crud.birthdate" data-validation-engine="validate[required]" ng-change="calculateAge()">
             </div>
           </div>
     
@@ -232,16 +232,16 @@ $('#form').validationEngine('attach');
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Beneficiary Birthdate <i class="required">*</i></label>
-                        <input id="bday2" type="date" class="form-control" ng-model="newBeneficiary.birthdate" ng-required="true">
+                        <label for="beneficiary-birthdate">Beneficiary Birthdate <i class="required">*</i></label>
+                        <input id="beneficiary-birthdate" type="text" class="form-control datepicker" ng-model="newBeneficiary.birthdate" ng-required="true" ng-change="calculateBeneficiaryAge()">
                     </div>
                 </div>
 
                 <!-- Remove this section if age is calculated from birthdate -->
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Beneficiary Age <i class="required">*</i></label>
-                        <input id="age2" type="number" class="form-control" ng-model="newBeneficiary.age" ng-required="true" readonly>
+                        <label for="beneficiary-age">Beneficiary Age <i class="required">*</i></label>
+                        <input id="beneficiary-age" type="text" class="form-control" ng-model="newBeneficiary.age" ng-required="true" readonly>
                     </div>
                 </div>
 
@@ -278,17 +278,19 @@ $('#form').validationEngine('attach');
             </div>
           </div> 
           <div class="col-md-4">
-            <div class="form-group">
-              <label>Birthdate<i class="required">*</i></label>
-              <input type="date" class="form-control" ng-model="currentBeneficiary.birthdate" ng-required="true">
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label>Age<i class="required">*</i></label>
-              <input type="number" class="form-control" ng-model="currentBeneficiary.age" ng-required="true">
-            </div>
-          </div>
+                    <div class="form-group">
+                        <label for="beneficiary-birthdate2">Beneficiary Birthdate <i class="required">*</i></label>
+                        <input id="beneficiary-birthdate2" type="text" class="form-control datepicker" ng-model="currentBeneficiary.birthdate" ng-required="true" ng-change="calculateBeneficiaryAge2()">
+                    </div>
+                </div>
+
+                <!-- Remove this section if age is calculated from birthdate -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="beneficiary-age2">Beneficiary Age <i class="required">*</i></label>
+                        <input id="beneficiary-age2" type="text" class="form-control" ng-model="currentBeneficiary.age" ng-required="true" readonly>
+                    </div>
+                </div>
         </form>
       </div>  
       <div class="modal-footer">

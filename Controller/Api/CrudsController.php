@@ -4692,6 +4692,15 @@ public function edit($id = null) {
     // Find the existing Crud record by ID
     $crud = $this->Crud->findById($id);
 
+    // if (!empty($data['birthdate'])) {
+    //     $formattedDate = DateTime::createFromFormat('m/d/Y', $data['birthdate']);
+    //     if ($formattedDate) {
+    //         $data['birthdate'] = $formattedDate->format('Y-m-d');
+    //         $today = new DateTime();
+    //         $data['age'] = $today->diff($formattedDate)->y;
+    //     }
+    // }
+
     if (!$crud) {
         return $this->setResponse(['ok' => false, 'msg' => 'Invalid CRUD ID.']);
     }
